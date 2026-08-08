@@ -213,7 +213,8 @@ function consistency() {
   const stale = [];
   if (!initPy.includes(`__version__ = "${v}"`)) stale.push("python/__init__.py");
   if ((html.match(/1\.\d+\.\d+/g) || []).some((m) => m !== v)) stale.push("preview/index.html");
-  if ((readme.match(/[Pp]russian (1\.\d+\.\d+)/g) || []).some((m) => !m.endsWith(v))) stale.push("README.md");
+  const inReadme = readme.match(/[Pp]russian (1\.\d+\.\d+)/g) || [];
+  if (!inReadme.length || inReadme.some((m) => !m.endsWith(v))) stale.push("README.md");
   check(!stale.length, "versão",
     stale.length ? `divergem de ${v}: ${stale.join(", ")}` : `${v} em json, python, guia e README`);
 

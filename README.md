@@ -1,159 +1,94 @@
 # prussian
 
-**Linguagem visual oficial para todo novo desenvolvimento.** Web e Python, extraída de `madsondeluna.github.io` e formalizada em tokens.
+Design system for web and Python. Four modes, script-verified tokens, plotting themes included.
 
-O resumo operacional das regras vive na seção "Design language: Prussian (official)" do `~/.claude/CLAUDE.md`, de onde alcança qualquer projeto. Ao mudar qualquer coisa aqui, sincronizar três lugares na mesma sessão: este repositório, aquela seção do CLAUDE.md, e a memória `prussian-design-system.md`. Uma mudança que chega em só um deles é um bug.
+Derived from `madsondeluna.github.io`. Numeric token architecture in the format of `devouringdetails.com`. Easing curves from `motion.dev`.
 
-## A premissa
+Prussian 1.1.0.
 
-Três fontes entraram nesta versão e elas não são estilisticamente compatíveis. A leitura adotada, explícita para que possa ser contestada:
+## Use
 
-**A identidade vem do site.** Paleta slate azul (`#0D1321` a `#F4F6F9`), Geist para texto, Geist Mono para metadados, Cormorant Garamond 300 para títulos, superfícies sem raio separadas por filete de 1px, controles em pílula, vidro com saturação alta.
-
-**A arquitetura vem de `devouringdetails.com`.** Tokens numéricos (`--text-13`, `--radius-8`, `--space-12`) em vez de camisetas P/M/G, e a disciplina de rampa numerada para os azuis. Nenhuma cor e nenhuma fonte de lá.
-
-**O vocabulário de movimento vem de `motion.dev`.** As curvas nomeadas, `--ease-out-soft: cubic-bezier(.25,0,0,1)` em particular, que é a curva de saída dominante daquele site. A troca de accent por página que o motion.dev usa é um recurso próprio dele e não foi copiada.
-
-O trabalho de fato não foi escolher cores: o site já tinha uma paleta coerente e nada mais. Não havia escala de tipo, de espaço, de raio, de elevação nem de movimento. Os valores estavam espalhados em estilos inline pelos componentes (`0.6875rem`, `0.9rem`, `0.45rem 1rem`, `0.2rem 0.65rem`, `blur(40px)` num lugar e `blur(72px)` em outro). Promover isso a escalas nomeadas é o que este pacote entrega.
-
-## Arquivos
-
-```
-tokens/tokens.json          fonte única de verdade, legível por máquina
-web/tokens.css              variáveis CSS, :root / :root.dark / :root.paper
-web/theme.css               ponte @theme inline para Tailwind v4
-web/patterns.css            os componentes escritos sobre os tokens
-python/prussian/            pacote: palette, mpl, plotly
-python/prussian-light.mplstyle   estilo matplotlib avulso
-python/prussian-dark.mplstyle
-python/streamlit/config.toml     tema Streamlit
-python/streamlit/app.css         chrome que o config.toml não alcança
-preview/index.html          guia da identidade visual, tudo renderizado ao vivo
-tools/check.mjs             verifica as afirmações deste README
+```html
+<link rel="stylesheet" href="web/tokens.css">
+<link rel="stylesheet" href="web/patterns.css">
 ```
 
-## Cor
+Tailwind v4: import `web/theme.css`, which already pulls `tokens.css` and the `@theme inline` block.
 
-### Quatro modos
+```python
+from prussian import mpl, plotly
+mpl.use("light")        # light | paper-like | deep-blue | dark
+plotly.use("light")
+```
 
-A ordem é do mais claro ao mais escuro, e cada um tem um trabalho:
+Without the package: `plt.style.use("python/prussian-light.mplstyle")`.
 
-| Classe | Rampa | Fundo | Para que serve |
+Streamlit: copy `python/streamlit/config.toml` to `.streamlit/config.toml` and inject `app.css`.
+
+## Files
+
+```
+tokens/tokens.json               source of truth
+web/tokens.css                   variables, four modes
+web/theme.css                    Tailwind v4 bridge
+web/patterns.css                 components and the glass material
+python/prussian/                 palette, mpl, plotly
+python/prussian-{light,dark}.mplstyle
+python/streamlit/                config.toml and app.css
+preview/index.html               visual guide, everything live
+tools/check.mjs                  verification
+```
+
+## Modes
+
+| Class | Ramp | `--bg` | Use |
 |---|---|---|---|
-| `:root` | slate | `#F4F6F9` | o padrão, frio e neutro |
-| `:root.paper-like` | paper | `#FAF8F1` | leitura longa e material impresso |
-| `:root.deep-blue` | slate | `#0D1321` | o escuro azul da identidade original |
-| `:root.dark` | graphite | `#0E0F13` | escuro neutro, cinza chumbo a quase preto |
+| `:root` | slate | `#F4F6F9` | default |
+| `:root.paper-like` | paper | `#FAF8F1` | long reading, print |
+| `:root.deep-blue` | slate | `#0D1321` | blue dark |
+| `:root.dark` | graphite | `#0E0F13` | neutral dark |
 
-Nota de migração importante: até a versão 1.0 a classe `dark` era o azul profundo. Agora `dark` é o neutro e o azul virou `deep-blue`. Quem migra do site `madsondeluna.github.io` e quer manter a aparência atual deve trocar a classe `dark` por `deep-blue`, e o `localStorage` que guarda o tema junto.
+Through 1.0 the `dark` class was the blue one. It is now graphite, and the blue is `deep-blue`. Migrating from `madsondeluna.github.io`: swap the class and the `localStorage` value.
 
-### As rampas
+## Colour
 
-A rampa `slate` tem 15 passos e alimenta os modos claro, paper-like e deep-blue. Os cinco valores originais da paleta Space Cadet continuam sendo os âncoras: `#0D1321`, `#1D2D44`, `#3E5C76`, `#748CAB`, e o quinto, que no site foi trocado do creme `#F0EBD8` pelo frio `#F4F6F9`. O creme voltou como o modo `paper-like`.
+Two 15-step ramps: `--slate-*` (light, paper-like, deep-blue) and `--graphite-*` (dark). Every semantic token resolves to a step.
 
-A rampa `graphite` tem os mesmos 15 passos e alimenta o modo `dark`. É neutra por construção: croma OKLCH entre 0,007 e 0,012, um viés frio quase imperceptível na matiz 265. O modo dark abre mais contraste que o deep-blue em todos os pares. `--muted` sobe de 5,37 para 7,15, `--accent` de 6,94 para 9,86, e `--secondary` deixa de ser apenas decoração ao chegar em 5,53.
+Slate keeps the Space Cadet anchors: `#0D1321`, `#1D2D44`, `#3E5C76`, `#748CAB`, `#F4F6F9`. Graphite is neutral by construction: OKLCH chroma between 0.007 and 0.012 at hue 265.
 
-### Onde cada cor pode ser usada
+### Contrast per pair
 
-Os valores abaixo são razões de contraste WCAG 2.1 calculadas, não estimadas. A regra de uso decorre delas.
+WCAG 2.1 ratios, recomputed by `check.mjs` on every run.
 
-| Token | Modo | Razão | Uso permitido |
-|---|---|---|---|
-| `--text` sobre `--bg` | claro e escuro | 17,13 | qualquer texto |
-| `--muted` sobre `--bg` | claro | 6,47 | qualquer texto |
-| `--muted` sobre `--surface` | claro | 6,02 | qualquer texto |
-| `--muted` sobre `--bg` | escuro | 5,37 | qualquer texto |
-| `--muted` sobre `--surface` | escuro | 4,02 | texto grande (18px ou 14px negrito) e componentes de interface; não usar em texto corrido |
-| `--accent` sobre `--bg` | escuro | 6,94 | qualquer texto, e o anel de foco passa o mínimo de 3:1 |
-| `--secondary` sobre `--bg` | claro | 3,19 | bordas, ícones e estados de foco; nunca texto |
-| `--secondary` sobre `--surface` | claro | 2,97 | apenas decoração; nem texto nem elemento de interface que precise ser percebido |
-| `--secondary` sobre `--bg` | escuro | 2,65 | apenas decoração |
-| `--secondary` sobre `--surface` | escuro | 1,98 | apenas decoração |
-| `--border` sobre `--bg` | ambos | 1,39 e 1,73 | filetes e divisores apenas |
+| Pair | light | paper-like | deep-blue | dark |
+|---|---|---|---|---|
+| `--text` / `--bg` | 17.13 | 17.45 | 17.13 | 17.68 |
+| `--muted` / `--bg` | 6.47 | 6.59 | 5.37 | 7.15 |
+| `--muted` / `--surface` | 6.02 | 5.87 | 4.02 | 5.49 |
+| `--accent` / `--bg` | 6.47 | 6.59 | 6.94 | 9.86 |
+| `--secondary` / `--bg` | 3.19 | 3.25 | 2.65 | 5.53 |
+| `--border` / `--bg` | 1.39 | 1.47 | 1.73 | 1.79 |
 
-Consequência prática: `--secondary` (`#748CAB`) no modo claro é cor de borda, não de texto. Onde o site usa `--muted` para prosa, está correto. Onde qualquer coisa usar `--secondary` para texto claro, está errado.
+Usage rule: above 4.5 any text; 3 to 4.5 large text and UI components; below 3 decoration. `--secondary` is a border colour in light, paper-like and deep-blue.
 
-O modo `paper` fica a meio ponto do modo claro em todos os pares: 17,45 para texto, 6,59 para `--muted` sobre `--bg`, 5,87 sobre `--surface`, 3,25 para `--secondary`. As mesmas regras de uso valem sem alteração. Os oito slots de gráfico ficam entre 3,31 e 5,22 contra o fundo creme, todos acima do mínimo de 3:1 para marca.
+Tags (`congress`, `conference`, `symposium`) sit between 7.7 and 11.6 in both dark modes.
 
-As três cores de tag (`congress`, `conference`, `symposium`) passam 4,5:1 nos dois modos, entre 7,7 e 11,6.
+Status sits between 5.54 and 8.62. Reserved meaning, never a series colour, always paired with a label or icon.
 
-As quatro cores de status (`good`, `warning`, `serious`, `critical`) ficam entre 5,54 e 8,62 nos dois modos, bem acima de 4,5:1, e têm significado reservado. Elas nunca viram "série 5" de um gráfico, e nunca aparecem sozinhas: sempre com ícone ou rótulo ao lado.
-
-## Forma
-
-O raio não é uma escala contínua a se escolher por gosto. A linguagem tem três decisões fixas:
-
-**Superfícies têm raio zero.** Cartão, painel, célula de grade, campo de formulário, tabela. A separação vem do filete de 1px, não do canto arredondado.
-
-**Controles têm raio total.** Botão, chip, pílula de ação, tag, seta de galeria. `--radius-full` ou `--radius-circle`.
-
-**Mídia tem `--radius-8`.** Imagem, miniatura, iframe embutido.
-
-Os passos intermediários (`--radius-2` a `--radius-16`) existem para componentes importados de biblioteca de terceiros que precisem ser aproximados, não para uso novo.
-
-A grade de cartões usa a técnica do filete: as células não têm borda própria, o `gap: 1px` sobre um fundo `--border` desenha a grade inteira. É `.hairline-grid` em `patterns.css`.
-
-### Vidro
-
-O vidro é o material da identidade, não um enfeite de um componente. Ele tem cinco camadas e todas importam: preenchimento em gradiente vertical, desfoque do fundo, saturação, realce especular na aresta de cima e refração na de baixo. Tirar qualquer uma faz o resultado parecer uma superfície translúcida qualquer.
-
-Há quatro texturas, e a diferença entre elas é quanto do fundo sobrevive. `.glass-thin` (4px) deixa quase tudo passar e serve a sobreposições onde o conteúdo de trás precisa continuar legível. `.glass` (16px) é o controle padrão. `.glass-frost` (30px) é o único que leva granulado, um `feTurbulence` dessaturado por cima do preenchimento, e é o que separa fosco de apenas translúcido: use em barra de ferramentas, paleta de comandos, sheet e modal. `.glass-deep` (56px) é para chrome de largura total. `.glass-accent` tinge o material com a cor de acento, e só um controle por grupo pode usá-lo.
-
-As formas são independentes da textura: `.glass-sq`, `.glass-soft`, `.glass-round` e `.glass-circle`. `.glass-panel` monta uma grade interna de filete para barra flutuante. `.glass-stage` existe só para documentação: vidro sobre fundo liso não mostra nada, então o palco dá ao material algo para refratar.
-
-A classe base é `.glass` e serve a qualquer forma: pílula, cartão, barra, popover, tooltip. `.pill` já vem de vidro porque é assim que a identidade usa; `.pill-solid` existe para onde o vidro não pode ir, como dentro de uma tabela densa ou sobre outra superfície translúcida.
-
-O raio do desfoque é escolhido pelo tamanho da superfície, não por gosto. O raio precisa caber na caixa: um raio grande num elemento pequeno faz o navegador amostrar muito além dele, e o Chrome produz artefato de composição quando há vizinhos de vidro. Foi exatamente isso que acontecia com pílulas em `blur(72px)` lado a lado.
-
-| Token | Valor | Onde |
+| Token | light | dark and deep-blue |
 |---|---|---|
-| `--glass-blur` | 16px | pílula, chip, tooltip, qualquer superfície baixa |
-| `--blur-card` | 32px | cartão, barra, painel, superfície grande |
-| `--blur-pill` | 72px | apenas sobre canvas animado em tela cheia |
+| `--status-good` | `#376E48` | `#82BB90` |
+| `--status-warning` | `#79601B` | `#C9AE6D` |
+| `--status-serious` | `#844E31` | `#D89B7C` |
+| `--status-critical` | `#864544` | `#D18885` |
 
-A transição do vidro é longa e amortecida por decisão: `--duration-5` (350ms) com `--ease-out-soft`. Ele assenta, não salta. Nada de deslocamento no hover, que era o que fazia o controle parecer brusco.
+## Data colour
 
-## Tipografia
+A family separate from the interface. The brand slate has OKLCH chroma 0.055, below the 0.10 floor: as a series it reads grey.
 
-Três famílias, três papéis, sem sobreposição.
+Eight slots, chroma between 0.105 and 0.115, fixed order, assigned in sequence, never cycled.
 
-**Cormorant Garamond 300** só em título de seção e no nome. Sempre com `--tracking-display` (-0.02em) e `--leading-none`. Nunca em texto corrido, nunca abaixo de `--text-32`.
-
-**Geist Mono** só em metadado: numeração de seção, rótulo de campo, valor tabular, chip, código, sequência biológica. Com `--tracking-eyebrow` (0.12em) quando é rótulo. Nunca em parágrafo.
-
-**Geist** em todo o resto.
-
-A escala é numérica e os nomes são o tamanho: `--text-11` a `--text-56`. Os dois clamps do site viraram tokens (`--text-display-section`, `--text-display-name`) porque são responsivos por natureza e não cabem na escala fixa.
-
-Medida de linha: `--measure-prose` (480px) é o padrão para texto de apoio. `.prose-justify` existe, mas é opcional e não é base: em coluna estreita o justificado abre rios de espaço entre palavras. O site aplica justificado em toda a coluna direita via `!important`; aqui isso é uma escolha por bloco.
-
-## Movimento
-
-Cinco curvas, cada uma com um trabalho:
-
-| Token | Curva | Onde |
-|---|---|---|
-| `--ease-standard` | `cubic-bezier(.4,0,.2,1)` | troca de cor, fundo e borda em hover |
-| `--ease-out` | `cubic-bezier(0,0,.2,1)` | entrada simples |
-| `--ease-out-soft` | `cubic-bezier(.25,0,0,1)` | entrada de conteúdo, transição de aba |
-| `--ease-out-expo` | `cubic-bezier(.16,1,.3,1)` | troca de slide, mudança de escala |
-| `--ease-swift` | `cubic-bezier(.23,.88,.26,.92)` | deslocamento em hover, o empurrãozinho da pílula |
-
-Durações de `--duration-1` (100ms) a `--duration-6` (500ms). O padrão de hover é `--duration-3` (200ms).
-
-O deslocamento de hover é um token, não um número solto: `--nudge-1` (2px), `--nudge-2` (3px), `--nudge-3` (4px). A pílula grande recua 3px para a esquerda, a pílula dentro do cartão avança 4px para a direita.
-
-Escada de entrada: 60ms por item, no máximo seis degraus, depois todos entram juntos. É `.stagger` em `patterns.css`.
-
-Tudo respeita `prefers-reduced-motion: reduce`.
-
-## Dados
-
-A paleta de gráfico não é a paleta da interface. O azul ardósia da identidade tem croma OKLCH de 0,055, abaixo do piso de 0,10 em que uma cor ainda faz trabalho de identidade: usado como série, ele lê como cinza. A paleta de dados é uma família derivada, com o mesmo azul em versão saturada no slot 1.
-
-Oito slots, ordem fixa, atribuídos em sequência e nunca ciclados:
-
-| Slot | Hex | Nome |
+| Slot | Hex | Name |
 |---|---|---|
 | 1 | `#3973B1` | blue |
 | 2 | `#9F8322` | gold |
@@ -164,104 +99,148 @@ Oito slots, ordem fixa, atribuídos em sequência e nunca ciclados:
 | 7 | `#1990AD` | teal |
 | 8 | `#AC5551` | red |
 
-As oito matizes ficam no piso de croma (OKLCH 0,105 a 0,115) por decisão: a paleta é sóbria, não saturada. A ordem foi determinada por busca exaustiva sobre as permutações, maximizando a separação do pior par adjacente. Resultado verificado nos dois modos:
+Order found by exhaustive search over the permutations, maximising the worst adjacent pair. Verified against all four surfaces:
 
-- Faixa de luminosidade: passa
-- Piso de croma: passa
-- Separação sob daltonismo: pior par adjacente delta-E 10,0 (deuteranopia), acima do alvo de 8
-- Piso de visão normal: pior par adjacente delta-E 19,9, acima do piso de 15
-- Contraste contra a superfície: todos os oito acima de 3:1
+- Lightness band and chroma floor: pass
+- Colour vision deficiency: worst adjacent pair ΔE 10.0 (deuteranopia, Machado 2009 at severity 1.0), target 8
+- Normal vision: worst adjacent pair ΔE 19.9, floor 15
+- Mark contrast: minimum 3.31, floor 3
 
-Em formas onde qualquer par de marcas pode encostar (dispersão, bolha, mapa, pequenos múltiplos), o limite é de **três séries**. Acima disso: agrupe o excedente, faceteie, ou acrescente uma segunda codificação. Não troque a paleta. `prussian.palette.series(n)` levanta erro acima de oito em vez de ciclar.
+Scatter, bubble, map and small multiples: three-series cap. Beyond that, group or facet. `palette.series(n)` raises above eight.
 
-Rampas: `SEQUENTIAL` contínua de nove passos para heatmap e mapa de contato; `ORDINAL_LIGHT` e `ORDINAL_DARK` de sete passos discretos, validadas separadamente (a versão escura não é a clara invertida, são passos próprios ancorados no fundo escuro); `DIVERGING` de azul a âmbar com cinza neutro no centro.
+Ramps: `SEQUENTIAL` continuous, nine steps; `ORDINAL_LIGHT` and `ORDINAL_DARK`, seven discrete steps validated separately; `DIVERGING` blue to amber with grey at the midpoint.
 
-Nunca dois eixos y no mesmo gráfico.
+Never two y-axes on one chart.
 
-## Python
+## Typography
+
+| Family | Role | Constraint |
+|---|---|---|
+| Cormorant Garamond 300 | section titles and names | tracking -0.02em, leading 1, never below 32px, never in running text |
+| Geist | prose, labels, buttons, table cells | |
+| Geist Mono | numbering, field labels, tabular values, code, identifiers | tracking 0.12em when used as a label |
+
+Scale `--text-11` through `--text-56`; the name is the size. Two clamps sit outside it: `--text-display-section` and `--text-display-name`.
+
+Measure: `--measure-prose` 480px. `.prose-justify` is opt-in, not base.
+
+## Space, form, glass
+
+Space: `--space-2` through `--space-96`, base 4 with half-steps at 2, 6 and 10.
+
+Radius:
+
+- Surface: `--radius-0`. Card, panel, grid cell, field, table. Separation comes from the 1px rule.
+- Control: `--radius-full` or `--radius-circle`.
+- Media: `--radius-8`.
+- Steps 2 to 16: only to approximate an imported component.
+
+Card grid: cells carry no border, `gap: 1px` over a `--border` background. Class `.hairline-grid`.
+
+### Glass
+
+Five layers: vertical gradient fill, backdrop blur, saturation, specular highlight on the top edge, refraction on the bottom.
+
+Base class `.glass`, valid on any shape. `.pill` is glass by default. `.pill-solid` for dense tables or already-translucent surfaces.
+
+| Texture | Blur | Fill | Use |
+|---|---|---|---|
+| `.glass-thin` | 4px | 10% to 2% | overlay where the content behind must stay readable |
+| `.glass` | 16px | 42% to 16% | default control: pill, chip, tooltip |
+| `.glass-frost` | 30px | 82% to 62% plus grain | surfaces carrying their own text: toolbar, command palette, sheet, modal |
+| `.glass-deep` | 56px | 58% to 34% | full-width chrome |
+| `.glass-accent` | inherits | accent tint | one control per group |
+
+`.glass-frost` is the only one with grain (desaturated `feTurbulence` in `mix-blend-mode: overlay`). Without it the result is translucent, not frosted.
+
+Shapes: `.glass-sq`, `.glass-soft`, `.glass-round`, `.glass-circle`. `.glass-panel` builds an internal hairline grid. `.glass-lift` is the pointer reaction: rises 2px, edge lights up, shadow opens.
+
+Blur radius follows surface size. A large radius on a short element makes Chrome sample beyond the box and paint a ghost block in the first of a row of glass siblings.
+
+Text on glass uses `--text`, never `--muted`: the backdrop is unpredictable. `.card-glass` is exempt, since it sits on a known surface.
+
+Glass does not go over a flat background (no effect, one compositing layer), over another translucent surface, or behind running text.
+
+## Motion
+
+| Token | Curve | Use |
+|---|---|---|
+| `--ease-standard` | `cubic-bezier(.4,0,.2,1)` | colour, background and border on hover |
+| `--ease-out` | `cubic-bezier(0,0,.2,1)` | simple entrance |
+| `--ease-out-soft` | `cubic-bezier(.25,0,0,1)` | content, tab transition, chart line drawing |
+| `--ease-out-expo` | `cubic-bezier(.16,1,.3,1)` | slide, scale, bar growth |
+| `--ease-swift` | `cubic-bezier(.23,.88,.26,.92)` | hover displacement |
+
+Durations `--duration-1` (100ms) through `--duration-6` (500ms). Hover default 200ms. Glass 350ms with `--ease-out-soft`.
+
+Displacement: `--nudge-1` 2px, `--nudge-2` 3px, `--nudge-3` 4px.
+
+Entrance stagger: 60ms per item, capped at six steps. Class `.stagger`.
+
+Everything collapses under `prefers-reduced-motion: reduce`.
+
+## Components
+
+`patterns.css`: `.eyebrow`, `.display`, `.prose`, `.section-header`, `.surface`, `.hover-surface`, `.card-glass`, `.hairline-grid`, `.glass` and variants, `.pill`, `.pill-sm`, `.pill-solid`, `.link-cta`, `.link-muted`, `.hover-fade`, `.tag`, `.status`, `.media`, `.avatar`, `.control-round`, `.fade-up`, `.fade-scale`, `.stagger`.
+
+Visualisation layer: `.viz`, `.viz-crosshair`, `.viz-dot`, `.viz-mark`, `.viz-tip`, `.viz-legend`, `.viz-draw`, `.viz-grow`, `.viz-appear`.
+
+## Python API
+
+```python
+from prussian import palette
+
+palette.series(n)          # first n colours, raises above 8
+palette.tokens(mode)       # semantic tokens for the mode
+palette.status(mode)
+palette.ordinal(n, mode)   # n steps sampled from the ramp
+```
 
 ```python
 from prussian import mpl
-mpl.use("light")                    # ou "paper-like", "deep-blue", "dark"
 
-fig, ax = plt.subplots()
-ax.plot(x, y)                       # já sai no slot 1
-mpl.finish(ax, title="Cobertura", subtitle="por amostra", ylabel="reads")
+mpl.use(mode)              # applies globally, registers colormaps
+mpl.context(mode)          # context manager
+mpl.rc(mode)               # rcParams without applying
+mpl.finish(ax, title=, subtitle=, xlabel=, ylabel=, mode=, legend=)
+mpl.bar_gap(ax)            # surface gap between stacked segments
 ```
 
-`mpl.use` aceita os quatro modos, aplica o tema global e registra quatro colormaps: `prussian`, `prussian_r`, `prussian_div`, `prussian_div_r`. `mpl.context(mode)` faz o mesmo dentro de um bloco `with`. `mpl.finish` cuida do que o rcParams não alcança: hierarquia de título alinhado à esquerda, rótulos no tom de tinta e nunca na cor da série, legenda sem caixa que aparece só a partir de duas séries, grade desligada em heatmap. `mpl.bar_gap` insere o vão de 2px entre segmentos empilhados.
+Registered colormaps: `prussian`, `prussian_r`, `prussian_div`, `prussian_div_r`.
 
-```python
-from prussian import plotly as pxt
-pxt.use("light")                    # registra os quatro e define o padrão
-```
+`mpl.finish` turns the grid off on heatmaps, left-aligns the title, keeps labels in ink rather than series colour, and shows a legend only from two series up.
 
-Para quem não quer o pacote, `prussian-light.mplstyle` e `prussian-dark.mplstyle` fazem a parte de rcParams sozinhos.
+Plotly templates: `prussian`, `prussian_paper_like`, `prussian_deep_blue`, `prussian_dark`.
 
-Para app: copie `python/streamlit/config.toml` para `.streamlit/config.toml` e injete `app.css`. O `config.toml` não aceita dois temas, então o modo escuro entra pelo CSS via `prefers-color-scheme`.
-
-## O que foi normalizado
-
-Diferenças deliberadas em relação ao que está hoje no site. Nenhuma delas quebra a aparência; todas eliminam um valor solto.
-
-Tamanhos de fonte `0.8rem` e `0.9rem` foram encaixados na escala como `--text-13` e `--text-15`. A diferença é de meio pixel.
-
-Preenchimentos `0.45rem 1rem` e `0.2rem 0.65rem` viraram `--space-8 --space-16` e `--space-4 --space-10`.
-
-`text-align: justify !important` na coluna inteira virou a classe opcional `.prose-justify`.
-
-Os valores de blur passaram a ser escolhidos pelo tamanho da superfície, e a pílula caiu de 72px para 16px. Isso corrige um artefato real: em 72px o Chrome amostrava muito além da caixa e desenhava um bloco fantasma dentro do primeiro botão de uma fileira.
-
-Sombras de vidro, que estavam escritas quatro vezes (repouso e hover, claro e escuro), viraram quatro tokens.
-
-`--accent` subiu um passo no modo escuro. O `globals.css` do site não redefine `--accent` em `:root.dark`, então ele herda `#3E5C76` e o anel de foco fica em 2,65 contra o fundo escuro, abaixo do mínimo de 3:1 que a WCAG pede para indicador de foco. Com `--accent: #8CA0BA` (`--slate-400`) no escuro, a razão sobe para 6,94. `--secondary` continua em `#748CAB`, exatamente como no site.
-
-Esta é a única mudança de valor entre `web/tokens.css` e o bloco de variáveis do `globals.css`, e a única que altera a aparência: os anéis de foco no modo escuro passam a ser visíveis. Todo o resto é idêntico ao que já está publicado, então a substituição não exige tocar em componente nenhum.
-
-`patterns.css` é outra história. Ele mantém o `!important` nos hovers de `.hover-surface` e `.card-glass` porque os cartões do site definem `background` por estilo inline, e estilo inline vence qualquer seletor. Ao migrar um componente para estas classes, tire o `background` inline dele; aí o `!important` pode sair junto.
-
-## Migração dos apps
-
-`apps/biohub/` e os subapps usam uma paleta sem relação com esta: `#0d6efd`, `#dc3545`, `#198754`, `#adb5bd`, ou seja, as cores padrão de Bootstrap. São arquivos CSS escritos à mão, um por app.
-
-O caminho mais curto é importar `web/tokens.css` no topo de cada `style.css` e trocar os hexes literais pelos semânticos correspondentes: `#0d6efd` para `var(--accent)`, `#198754` para `var(--status-good)`, `#dc3545` para `var(--status-critical)`, `#adb5bd` para `var(--muted)`, os cinzas de fundo para `var(--bg)` e `var(--surface)`. Feito isso, os apps herdam o modo escuro de graça, que hoje eles não têm.
-
-Onde esses apps desenham gráfico, a paleta correta é a de dados, não a da interface.
-
-## Verificação
+## Verification
 
 ```
 node tools/check.mjs
 ```
 
-Sem dependência, sai com código 1 em qualquer falha. Ele reexecuta o que este README afirma, lendo os hexes de `tokens/tokens.json`:
+No dependencies, exits 1 on any failure. It checks:
 
-- os cinco checks da paleta categórica nos dois modos, incluindo a simulação de protanopia e deuteranopia por Machado, Oliveira e Fernandes 2009 em severidade 1.0
-- monotonia, passo mínimo e contraste de ponta das duas rampas ordinais
-- as razões de contraste dos tokens semânticos nos três modos, cada uma contra o piso declarado
-- consistência entre `tokens.json`, `web/tokens.css`, `python/prussian/palette.py` e `python/streamlit/app.css`, que carregam as mesmas cores em quatro sintaxes
-- ausência de um nono slot de gráfico
+- categorical palette against all four surfaces: lightness band, chroma floor, protanopia and deuteranopia separation (Machado, Oliveira and Fernandes 2009 at severity 1.0), normal-vision floor, mark contrast
+- ordinal ramps: monotonicity, minimum lightness step, end contrast
+- semantic tokens in all four modes against the declared floor
+- colour consistency across `tokens.json`, `web/tokens.css`, `python/prussian/palette.py` and `python/streamlit/app.css`
+- version across `tokens.json`, `__init__.py`, the guide and this README
+- absence of a ninth chart slot
 
-Se alguém empurrar `--chart-4` meio passo, o delta-E de 10,0 citado acima deixa de ser verdade e o script acusa. É o que impede este README de virar ficção.
+## Visual guide
 
-## O guia da identidade
-
-`preview/index.html` é o guia: sete seções cobrindo cor, cor de dados, tipografia, espaço e forma, movimento, componentes e uso. Tudo renderizado ao vivo nos três modos, com a tabela de contraste recalculada a cada troca e um clique em qualquer cor copiando o nome do token.
-
-A diagramação do guia segue quatro regras declaradas no topo do arquivo, e elas valem para qualquer página construída nesta linguagem:
-
-**Dois eixos verticais.** Todo texto começa na coluna 1 ou na coluna 9 de uma grade de doze. Não existe terceiro ponto de partida. Grades de espécime são exceção declarada, porque leem como tabela e não como texto corrido.
-
-**Três degraus de espaço.** 24px aproxima o que pertence ao mesmo bloco, 48px separa blocos dentro de uma seção, 96px separa seções. Nenhum quarto valor.
-
-**Uma capitalização.** Sentence case em tudo. Nenhum texto em caixa alta, nenhum título em minúscula deliberada. As únicas maiúsculas fora do início de frase são nomes próprios e siglas.
-
-**Um tamanho por classe.** Controle é `--text-12`, prosa é `--text-15`, metadado é `--text-12` em mono. Dois controles lado a lado nunca têm corpos diferentes.
-
-O guia carrega `../web/tokens.css` e `../web/patterns.css` de propósito, para testar os arquivos de verdade e não uma cópia, e busca as três fontes no Google Fonts. Abra pelo servidor local, não por `file://`:
+`preview/index.html` renders every token and component in all four modes, with the contrast table recomputed on mode change and a click on any colour copying its token. It loads `../web/*.css` on purpose, to test the files rather than a copy.
 
 ```
 python3 -m http.server 8731
 ```
 
-Depois `http://localhost:8731/preview/index.html`.
+Guide layout rules, applicable to any page built on the language: two vertical axes (columns 1 and 9 of twelve), three spacing steps (24, 48, 96), sentence case, one size per control class.
+
+## Migrating existing apps
+
+`apps/biohub` and its subapps use Bootstrap colours. Import `web/tokens.css` at the top of each `style.css` and swap: `#0d6efd` to `var(--accent)`, `#198754` to `var(--status-good)`, `#dc3545` to `var(--status-critical)`, `#adb5bd` to `var(--muted)`, background greys to `var(--bg)` and `var(--surface)`. Charts move to the data palette.
+
+## Keeping in sync
+
+A change to the language updates three places in the same session: this repository, the "Design language: Prussian" section of `~/.claude/CLAUDE.md`, and the `prussian-design-system.md` memory file.
