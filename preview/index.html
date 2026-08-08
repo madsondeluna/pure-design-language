@@ -1,0 +1,1178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prussian — visual blueprint</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&family=Cormorant+Garamond:wght@300;400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../web/tokens.css">
+<link rel="stylesheet" href="../web/patterns.css">
+<style>
+/* =========================================================
+   Regras de diagramação desta página. São quatro, e nada as quebra.
+
+   1. DOIS EIXOS VERTICAIS. Todo texto começa na coluna 1 ou na
+      coluna 9. Grades de espécime são exceção declarada: leem
+      como tabela, não como texto corrido.
+
+   2. TRÊS DEGRAUS DE ESPAÇO. 24 aproxima o que pertence ao mesmo
+      bloco, 48 separa blocos dentro de uma seção, 96 separa seções.
+
+   3. UMA CAPITALIZAÇÃO. Sentence case em tudo. Nenhum texto em
+      caixa alta, nenhum título em minúscula deliberada. As únicas
+      maiúsculas fora do início de frase são nomes próprios e siglas.
+
+   4. UM TAMANHO POR CLASSE. Controle é --text-12, prosa é --text-15,
+      metadado é --text-12 mono.
+
+   Nenhum valor literal de cor, tipo, raio, sombra ou curva.
+   ========================================================= */
+
+.shell { max-width: var(--container-xl); margin: 0 auto; padding: 0 var(--space-32); }
+.grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: var(--space-24); }
+
+.axis-a { grid-column: 1 / 7; }
+.axis-a-wide { grid-column: 1 / 10; }
+.axis-a-chart { grid-column: 1 / 9; }
+.axis-b { grid-column: 9 / 13; }
+.bleed { grid-column: 1 / 13; }
+
+.rule { grid-column: 1 / 13; height: var(--hairline); background: var(--border); }
+
+.step-1 { margin-top: var(--space-24); }
+.step-2 { margin-top: var(--space-48); }
+.step-3 { margin-top: 96px; }
+
+.band { padding: 96px 0; }
+.optical { margin-left: -0.048em; }
+
+/* ---------- navegação ---------- */
+
+.progress { position: fixed; top: 0; left: 0; height: 2px; width: 0;
+            background: var(--text); z-index: 60; }
+
+.nav { position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+       background: var(--surface-glass);
+       backdrop-filter: blur(var(--blur-card)) saturate(var(--blur-saturate));
+       -webkit-backdrop-filter: blur(var(--blur-card)) saturate(var(--blur-saturate));
+       border-bottom: var(--hairline) solid var(--border); }
+.nav-in { max-width: var(--container-xl); margin: 0 auto;
+          padding: var(--space-16) var(--space-32); display: flex; align-items: center; }
+.nav .sig { font-family: var(--font-mono); font-size: var(--text-12);
+            letter-spacing: var(--tracking-wide); color: var(--text); }
+.nav .sig span { color: var(--secondary); }
+.nav .links { display: flex; gap: var(--space-20); margin-left: auto; }
+.nav .links a { position: relative; font-family: var(--font-mono); font-size: var(--text-12);
+                letter-spacing: var(--tracking-wide); color: var(--secondary);
+                padding-bottom: var(--space-4);
+                transition: color var(--duration-3) var(--ease-standard); }
+.nav .links a::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0;
+                       height: var(--hairline); background: var(--text);
+                       transform: scaleX(0); transform-origin: left;
+                       transition: transform var(--duration-4) var(--ease-out-expo); }
+.nav .links a:hover, .nav .links a[aria-current="true"] { color: var(--text); }
+.nav .links a:hover::after, .nav .links a[aria-current="true"]::after { transform: scaleX(1); }
+.nav .modes { display: flex; gap: var(--space-6); margin-left: var(--space-32); }
+
+/* o seletor de modo usa o mesmo material das pílulas */
+.mode-btn { font-family: var(--font-mono); font-size: var(--text-12); color: var(--muted);
+            border-radius: var(--radius-full); padding: var(--space-6) var(--space-12);
+            cursor: pointer; line-height: var(--leading-snug);
+            background-image: var(--glass-fill); background-color: transparent;
+            border: var(--hairline) solid var(--glass-edge);
+            backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+            -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+            box-shadow: var(--shadow-glass-rest); isolation: isolate;
+            transition: background-image var(--duration-5) var(--ease-out-soft),
+                        border-color var(--duration-5) var(--ease-out-soft),
+                        box-shadow var(--duration-5) var(--ease-out-soft),
+                        color var(--duration-4) var(--ease-out-soft); }
+.mode-btn:hover { color: var(--text); background-image: var(--glass-fill-hover);
+                  border-color: var(--glass-edge-hover); box-shadow: var(--shadow-glass-hover); }
+.mode-btn[aria-pressed="true"] { color: var(--text); border-color: var(--text); }
+
+.pill { font-size: var(--text-12); }
+
+/* ---------- revelação ---------- */
+
+.rv { opacity: 0; transform: translateY(16px);
+      transition: opacity var(--duration-6) var(--ease-out-soft),
+                  transform var(--duration-6) var(--ease-out-soft);
+      transition-delay: var(--d, 0ms); }
+.rv.seen { opacity: 1; transform: none; }
+
+/* ---------- títulos ---------- */
+
+.label { font-family: var(--font-mono); font-size: var(--text-12);
+         letter-spacing: var(--tracking-eyebrow); color: var(--secondary); display: block; }
+.label b { color: var(--muted); font-weight: var(--weight-regular); }
+
+h1.hero-title { font-family: var(--font-display); font-weight: var(--weight-light);
+                font-size: clamp(3rem, 7.4vw, 6.25rem); line-height: 0.9;
+                letter-spacing: -0.03em; color: var(--text); }
+h2.section-title { font-family: var(--font-display); font-weight: var(--weight-light);
+                   font-size: clamp(2.25rem, 4.4vw, 3.5rem); line-height: 0.94;
+                   letter-spacing: var(--tracking-display); color: var(--text); }
+h3.block-title { font-size: var(--text-18); color: var(--text);
+                 font-weight: var(--weight-regular); line-height: var(--leading-snug); }
+
+.lede { font-size: var(--text-18); line-height: var(--leading-normal); color: var(--muted); }
+.body p { font-size: var(--text-15); line-height: var(--leading-normal); color: var(--muted); }
+.body p + p { margin-top: var(--space-16); }
+.note { font-size: var(--text-13); line-height: var(--leading-normal); color: var(--muted); }
+
+.aside-note { padding-top: var(--space-16); border-top: var(--hairline) solid var(--border); }
+.aside-note h4 { font-family: var(--font-mono); font-size: var(--text-12);
+                 letter-spacing: var(--tracking-eyebrow); color: var(--secondary);
+                 font-weight: var(--weight-regular); margin-bottom: var(--space-12); }
+.aside-note p { font-size: var(--text-13); line-height: var(--leading-normal); color: var(--muted); }
+.aside-note p + p { margin-top: var(--space-12); }
+
+/* ---------- tabela de fatos ---------- */
+
+.facts { display: flex; flex-direction: column; }
+.facts > div { display: grid; grid-template-columns: 116px 1fr; gap: var(--space-16);
+               padding: var(--space-10) 0; border-bottom: var(--hairline) solid var(--border);
+               font-size: var(--text-13); }
+.facts > div:first-child { border-top: var(--hairline) solid var(--border); }
+.facts dt { font-family: var(--font-mono); font-size: var(--text-12);
+            letter-spacing: var(--tracking-wide); color: var(--secondary); }
+.facts dd { color: var(--text); }
+
+/* ---------- espécimes ---------- */
+
+/* rampa: uma faixa contínua, rótulo dentro, clique copia o token */
+.ramp { display: grid; grid-template-columns: repeat(15, 1fr);
+        border: var(--hairline) solid var(--border); }
+.ramp button { position: relative; height: 96px; border: 0; padding: 0; cursor: copy;
+               display: block; width: 100%; }
+.ramp button span { position: absolute; left: 0; right: 0; bottom: var(--space-8);
+                    text-align: center; font-family: var(--font-mono); font-size: 10px;
+                    letter-spacing: var(--tracking-wide);
+                    transition: opacity var(--duration-2) var(--ease-standard); }
+.ramp button::after { content: ""; position: absolute; inset: 0;
+                      box-shadow: inset 0 0 0 0 var(--text);
+                      transition: box-shadow var(--duration-3) var(--ease-standard); }
+.ramp button:hover::after { box-shadow: inset 0 0 0 2px var(--text); }
+
+/* tokens semânticos: bloco de cor com nome e valor abaixo */
+.swatches { display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--space-16); }
+.swatch { display: flex; flex-direction: column; gap: var(--space-8); cursor: copy;
+          border: 0; background: transparent; padding: 0; text-align: left; }
+.swatch .chip { height: 72px; border: var(--hairline) solid var(--border);
+                transition: transform var(--duration-3) var(--ease-swift); }
+.swatch:hover .chip { transform: translateY(-2px); }
+.swatch .n { font-family: var(--font-mono); font-size: var(--text-12); color: var(--text); display: inline-grid; place-items: center; text-align: center; }
+.swatch .h { font-family: var(--font-mono); font-size: var(--text-11); color: var(--secondary); }
+
+/* tabela */
+.table { width: 100%; border-collapse: collapse; font-size: var(--text-13);
+         table-layout: auto; }
+.table th:not(:last-child), .table td:not(:last-child) { width: 1%; }
+.table th:last-child, .table td:last-child { width: auto; }
+.table th { text-align: left; white-space: nowrap; font-family: var(--font-mono); font-size: var(--text-12);
+            letter-spacing: var(--tracking-eyebrow); color: var(--secondary);
+            font-weight: var(--weight-regular);
+            padding: var(--space-10) var(--space-16) var(--space-10) 0;
+            border-bottom: var(--hairline) solid var(--text); }
+.table td { padding: var(--space-12) var(--space-16) var(--space-12) 0;
+            border-bottom: var(--hairline) solid var(--border); color: var(--muted);
+            vertical-align: top; }
+.table td.mono { font-family: var(--font-mono); font-size: var(--text-12); color: var(--text); display: inline-grid; place-items: center; text-align: center; }
+.table td b { color: var(--text); font-weight: var(--weight-regular);
+              font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.table tr { transition: background var(--duration-2) var(--ease-standard); }
+.table tbody tr:hover { background: var(--surface); }
+
+/* tipografia */
+.type-row { display: grid; grid-template-columns: 196px 1fr; gap: var(--space-24);
+            align-items: baseline; padding: var(--space-12) 0;
+            border-bottom: var(--hairline) solid var(--border); }
+.type-row .meta { font-family: var(--font-mono); font-size: var(--text-11);
+                  letter-spacing: var(--tracking-wide); color: var(--secondary); }
+.type-row .sample { color: var(--text); overflow: hidden; text-overflow: ellipsis;
+                    white-space: nowrap; }
+
+.specimen { padding: var(--space-32); border: var(--hairline) solid var(--border);
+            background: var(--surface); display: flex; flex-direction: column;
+            gap: var(--space-16); }
+.specimen .glyphs { font-size: var(--text-56); line-height: 1; color: var(--text); }
+.specimen .role { font-family: var(--font-mono); font-size: var(--text-12);
+                  letter-spacing: var(--tracking-wide); color: var(--secondary); }
+.specimen .rule-line { font-size: var(--text-13); color: var(--muted);
+                       line-height: var(--leading-normal); }
+
+/* espaço e forma */
+.space-row { display: grid; grid-template-columns: 90px 1fr; gap: var(--space-24);
+             align-items: center; padding: var(--space-8) 0; }
+.space-row .k { font-family: var(--font-mono); font-size: var(--text-12); color: var(--secondary); }
+.space-row .bar { height: 12px; background: var(--accent); }
+
+.shape-row { display: flex; gap: var(--space-24); align-items: flex-end; flex-wrap: wrap; }
+.shape { display: flex; flex-direction: column; gap: var(--space-10); align-items: center; }
+.shape .box { width: 72px; height: 72px; background: var(--surface);
+              border: var(--hairline) solid var(--border); }
+.shape .k { font-family: var(--font-mono); font-size: var(--text-11); color: var(--secondary); }
+
+/* movimento */
+.motion-row { display: grid; grid-template-columns: 168px 1fr 76px; gap: var(--space-24);
+              align-items: center; padding: var(--space-16) 0;
+              border-bottom: var(--hairline) solid var(--border); }
+.motion-row .k { font-family: var(--font-mono); font-size: var(--text-12); color: var(--text); display: inline-grid; place-items: center; text-align: center; }
+.motion-row .use { font-family: var(--font-mono); font-size: var(--text-11);
+                   color: var(--secondary); text-align: right; }
+.lane { position: relative; height: var(--hairline); background: var(--border); }
+.lane .dot { position: absolute; top: -6px; left: 0; width: 13px; height: 13px;
+             border-radius: var(--radius-circle); background: var(--accent); }
+.lane.run .dot { left: calc(100% - 13px); }
+
+/* componentes */
+.demo-block { display: flex; flex-direction: column; gap: var(--space-16);
+              padding-top: var(--space-16); border-top: var(--hairline) solid var(--text); }
+.demo-block .k { font-family: var(--font-mono); font-size: var(--text-12);
+                 letter-spacing: var(--tracking-eyebrow); color: var(--secondary); }
+.demo-row { display: flex; gap: var(--space-8); flex-wrap: wrap; align-items: center; }
+
+.card-demo { background: var(--surface); padding: var(--space-20);
+             display: flex; flex-direction: column; gap: var(--space-10); min-height: 148px; }
+.card-demo .t { font-size: var(--text-15); color: var(--text); }
+.card-demo .d { font-size: var(--text-13); color: var(--muted); }
+
+/* toast de cópia */
+.toast { position: fixed; left: 50%; bottom: var(--space-32); transform: translate(-50%, 16px);
+         padding: var(--space-8) var(--space-16); background: var(--text); color: var(--bg);
+         font-family: var(--font-mono); font-size: var(--text-12);
+         border-radius: var(--radius-full); opacity: 0; pointer-events: none; z-index: 70;
+         transition: opacity var(--duration-3) var(--ease-standard),
+                     transform var(--duration-4) var(--ease-out-expo); }
+.toast.on { opacity: 1; transform: translate(-50%, 0); }
+
+/* rodapé */
+.colophon { display: flex; justify-content: space-between; gap: var(--space-16);
+            flex-wrap: wrap; padding-top: var(--space-24);
+            border-top: var(--hairline) solid var(--border);
+            font-family: var(--font-mono); font-size: var(--text-12);
+            color: var(--secondary); letter-spacing: var(--tracking-wide); }
+
+@media (max-width: 1080px) {
+  .shell { padding: 0 var(--space-24); }
+  .grid { gap: var(--space-16); }
+  .axis-a, .axis-a-wide, .axis-a-chart, .axis-b { grid-column: 1 / 13; }
+  .band { padding: 72px 0; }
+  .swatches { grid-template-columns: repeat(3, 1fr); }
+  .nav .links { display: none; }
+  .motion-row { grid-template-columns: 140px 1fr; }
+  .motion-row .use { display: none; }
+}
+@media (max-width: 640px) {
+  .swatches { grid-template-columns: repeat(2, 1fr); }
+  .ramp { grid-template-columns: repeat(5, 1fr); }
+  .type-row { grid-template-columns: 1fr; gap: var(--space-6); }
+}
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+<div class="toast" id="toast">Copied</div>
+
+<nav class="nav">
+  <div class="nav-in">
+    <span class="sig">Prussian <span>1.1.0</span></span>
+    <div class="links">
+      <a href="#color" data-spy="color">Color</a>
+      <a href="#data" data-spy="data">Data</a>
+      <a href="#type" data-spy="type">Type</a>
+      <a href="#form" data-spy="form">Form</a>
+      <a href="#glass" data-spy="glass">Glass</a>
+      <a href="#motion" data-spy="motion">Motion</a>
+      <a href="#components" data-spy="components">Components</a>
+      <a href="#use" data-spy="use">Use</a>
+    </div>
+    <div class="modes">
+      <button class="mode-btn" data-mode="" aria-pressed="true">Light</button>
+      <button class="mode-btn" data-mode="paper-like" aria-pressed="false">Paper-like</button>
+      <button class="mode-btn" data-mode="deep-blue" aria-pressed="false">Deep blue</button>
+      <button class="mode-btn" data-mode="dark" aria-pressed="false">Dark</button>
+    </div>
+  </div>
+</nav>
+
+<div class="shell">
+
+  <!-- ============ abertura ============ -->
+  <header class="band" style="padding-top: 152px">
+    <div class="grid">
+      <span class="label axis-a rv">Visual blueprint</span>
+      <span class="label axis-b rv" style="--d: 40ms">Version 1.1.0</span>
+      <h1 class="hero-title axis-a-wide optical rv step-1" style="--d: 80ms">The whole<br>system, on<br>one page</h1>
+      <p class="lede axis-a rv step-2" style="--d: 140ms">Every token, every component and every
+      motion curve available in Prussian, rendered live in all four modes. Click any colour to
+      copy its token name.</p>
+      <div class="axis-b rv step-2" style="--d: 180ms">
+        <dl class="facts">
+          <div><dt>Identity</dt><dd>madsondeluna.github.io</dd></div>
+          <div><dt>Architecture</dt><dd>devouringdetails.com</dd></div>
+          <div><dt>Motion</dt><dd>motion.dev</dd></div>
+          <div><dt>Verified by</dt><dd>tools/check.mjs</dd></div>
+        </dl>
+      </div>
+    </div>
+  </header>
+
+  <div class="grid"><div class="rule"></div></div>
+
+  <!-- ============ cor ============ -->
+  <section id="color" class="band">
+    <div class="grid">
+      <span class="label axis-a rv">01 <b>· Colour</b></span>
+      <h2 class="section-title axis-a-wide optical rv step-1" style="--d: 60ms">The slate ramp</h2>
+    </div>
+
+    <div class="grid step-2">
+      <p class="body axis-a rv"><span style="font-size: var(--text-15); line-height: var(--leading-normal); color: var(--muted); display: block">Fifteen
+      steps, and every semantic token in the light, paper-like and deep-blue modes resolves to one of them. The five anchors of
+      the original palette are still here: 950, 850, 700, 500 and 50.</span></p>
+      <aside class="aside-note axis-b rv" style="--d: 60ms">
+        <h4>Why a ramp</h4>
+        <p>A flat list of named colours drifts. A ramp makes every new value a choice between
+        existing steps, which is a much harder thing to get wrong.</p>
+      </aside>
+    </div>
+
+    <div class="grid step-2">
+      <div class="bleed rv">
+        <span class="label" style="margin-bottom: var(--space-10)">Slate <b>· light, paper-like and deep blue</b></span>
+        <div class="ramp" id="ramp"></div>
+      </div>
+      <div class="bleed rv step-2" style="--d: 60ms">
+        <span class="label" style="margin-bottom: var(--space-10)">Graphite <b>· dark</b></span>
+        <div class="ramp" id="ramp-graphite"></div>
+      </div>
+    </div>
+
+    <div class="grid step-3">
+      <span class="label axis-a rv">Semantic tokens <b>· current mode</b></span>
+      <div class="bleed step-1 rv">
+        <div class="swatches" id="semantic"></div>
+      </div>
+    </div>
+
+    <div class="grid step-3">
+      <div class="axis-a-chart rv">
+        <span class="label" style="margin-bottom: var(--space-16)">Where each colour may legally be used</span>
+        <table class="table">
+          <thead><tr><th>Pair</th><th>Ratio</th><th>WCAG verdict</th><th>Role</th></tr></thead>
+          <tbody id="contrast"></tbody>
+        </table>
+      </div>
+      <aside class="aside-note axis-b rv" style="--d: 60ms">
+        <h4>Read this before using a colour</h4>
+        <p>Ratios are computed live against the mode on screen, not copied from a spec. Switch
+        modes and the table recalculates.</p>
+        <p>Consequence worth stating: secondary is a border colour in light mode, not a text
+        colour. Anything that fails 3:1 is decoration and nothing else.</p>
+      </aside>
+    </div>
+  </section>
+
+  <div class="grid"><div class="rule"></div></div>
+
+  <!-- ============ dados ============ -->
+  <section id="data" class="band">
+    <div class="grid">
+      <span class="label axis-a rv">02 <b>· Data colour</b></span>
+      <h2 class="section-title axis-a-wide optical rv step-1" style="--d: 60ms">Eight slots,<br>fixed order</h2>
+    </div>
+
+    <div class="grid step-2">
+      <div class="body axis-a rv">
+        <p>The interface palette cannot carry series identity. The brand slate has an OKLCH
+        chroma of 0.055, below the 0.10 floor where a hue stops doing identity work: used as a
+        series it reads as grey. The data family is derived, with the same blue saturated into
+        slot one.</p>
+        <p>Order is the safety mechanism, so slots are assigned in sequence and never cycled.
+        A ninth group folds into Other, becomes facets, or gains a second encoding.</p>
+      </div>
+      <aside class="aside-note axis-b rv" style="--d: 60ms">
+        <h4>Verified, not asserted</h4>
+        <p>Worst adjacent pair is ΔE 9.5 under deuteranopia against a target of 8, and ΔE 21.5
+        under normal vision against a floor of 15, in both modes.</p>
+        <p>In scatter, bubble and map forms, where any two marks can touch, the cap is three
+        series.</p>
+      </aside>
+    </div>
+
+    <div class="grid step-2">
+      <div class="bleed rv"><div class="swatches" id="chart-swatches"></div></div>
+    </div>
+
+    <div class="grid step-3">
+      <div class="axis-a-chart rv">
+        <span class="label" style="margin-bottom: var(--space-16)">Live example <b>· hover to read, hover a legend entry to isolate</b></span>
+        <div class="viz" id="viz-lines">
+          <svg id="lines" viewBox="0 0 900 320" role="img"
+               aria-label="Four series demonstrating the categorical palette"></svg>
+          <div class="viz-tip" id="tip-lines"></div>
+        </div>
+        <div class="viz-legend" id="legend-lines" style="margin-top: var(--space-16)"></div>
+      </div>
+      <aside class="aside-note axis-b rv" style="--d: 60ms">
+        <h4>The interaction layer</h4>
+        <p>A crosshair reads every series at the same x, a tooltip carries the values in
+        tabular figures, and the legend isolates one series on hover.</p>
+        <p>These are classes in patterns.css, not one-off code: viz-crosshair, viz-tip,
+        viz-dot, viz-mark.</p>
+      </aside>
+    </div>
+
+    <div class="grid step-3">
+      <span class="label axis-a rv">Ramps <b>· sequential, ordinal, diverging</b></span>
+      <div class="bleed step-1 rv" id="ramps" style="display: flex; flex-direction: column; gap: var(--space-16)"></div>
+    </div>
+
+    <div class="grid step-3">
+      <span class="label axis-a rv">Status <b>· reserved meaning, never a series colour</b></span>
+      <div class="axis-a-wide step-1 rv">
+        <div class="demo-row">
+          <span class="status status-good">Shipped</span>
+          <span class="status status-warning">At risk</span>
+          <span class="status status-serious">Blocked</span>
+          <span class="status status-critical">Failed</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="grid"><div class="rule"></div></div>
+
+  <!-- ============ tipografia ============ -->
+  <section id="type" class="band">
+    <div class="grid">
+      <span class="label axis-a rv">03 <b>· Typography</b></span>
+      <h2 class="section-title axis-a-wide optical rv step-1" style="--d: 60ms">Three families,<br>three jobs</h2>
+    </div>
+
+    <div class="grid step-2">
+      <div class="specimen rv" style="grid-column: 1 / 5">
+        <span class="glyphs display">Aa</span>
+        <span class="role">Cormorant Garamond 300</span>
+        <span class="rule-line">Section titles and names only. Always with display tracking and
+        leading of one. Never in running text, never below 32px.</span>
+      </div>
+      <div class="specimen rv" style="grid-column: 5 / 9; --d: 60ms">
+        <span class="glyphs">Aa</span>
+        <span class="role">Geist 400</span>
+        <span class="rule-line">Everything that is read as language: prose, labels, buttons,
+        table cells, navigation.</span>
+      </div>
+      <div class="specimen rv" style="grid-column: 9 / 13; --d: 120ms">
+        <span class="glyphs mono">Aa</span>
+        <span class="role">Geist Mono 400</span>
+        <span class="rule-line">Everything that is read as data: section numbers, field labels,
+        tabular values, code, identifiers.</span>
+      </div>
+    </div>
+
+    <div class="grid step-3">
+      <div class="axis-a-chart rv">
+        <span class="label" style="margin-bottom: var(--space-16)">The scale</span>
+        <div id="typescale"></div>
+      </div>
+      <aside class="aside-note axis-b rv" style="--d: 60ms">
+        <h4>Names are sizes</h4>
+        <p>The scale is numeric, so the token says what it does: text-13 is thirteen pixels.
+        No small, medium, large, and no argument about what large means.</p>
+        <p>Two responsive sizes sit outside it, for the section title and the name, because
+        they are fluid by nature.</p>
+      </aside>
+    </div>
+  </section>
+
+  <div class="grid"><div class="rule"></div></div>
+
+  <!-- ============ espaço e forma ============ -->
+  <section id="form" class="band">
+    <div class="grid">
+      <span class="label axis-a rv">04 <b>· Space and form</b></span>
+      <h2 class="section-title axis-a-wide optical rv step-1" style="--d: 60ms">Radius is a rule,<br>not a taste</h2>
+    </div>
+
+    <div class="grid step-2">
+      <div class="axis-a rv">
+        <span class="label" style="margin-bottom: var(--space-16)">Spacing scale</span>
+        <div id="spacescale"></div>
+      </div>
+      <aside class="aside-note axis-b rv" style="--d: 60ms">
+        <h4>Three decisions, no fourth</h4>
+        <p>Surfaces take radius zero: card, panel, grid cell, form field, table. Separation
+        comes from the one-pixel rule, not from a rounded corner.</p>
+        <p>Controls take full radius: button, chip, tag, pill. Media takes radius 8. The
+        intermediate steps exist only to approximate imported components.</p>
+      </aside>
+    </div>
+
+    <div class="grid step-3">
+      <span class="label axis-a rv">Shape</span>
+      <div class="axis-a-wide step-1 rv">
+        <div class="shape-row">
+          <div class="shape"><div class="box"></div><span class="k">radius-0 · surface</span></div>
+          <div class="shape"><div class="box" style="border-radius: var(--radius-8)"></div><span class="k">radius-8 · media</span></div>
+          <div class="shape"><div class="box" style="border-radius: var(--radius-full); width: 132px; height: 40px"></div><span class="k">radius-full · control</span></div>
+          <div class="shape"><div class="box" style="border-radius: var(--radius-circle)"></div><span class="k">radius-circle · avatar</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid step-3">
+      <span class="label axis-a rv">Hairline grid <b>· the cells have no border of their own</b></span>
+      <div class="bleed step-1 rv">
+        <div class="hairline-grid" style="grid-template-columns: repeat(4, 1fr); border: var(--hairline) solid var(--border)">
+          <div class="card-demo hover-surface">
+            <span class="eyebrow">Surface</span>
+            <span class="t">Grid cell</span>
+            <span class="d">Gap of one pixel over a border-coloured background</span>
+          </div>
+          <div class="card-demo hover-surface">
+            <span class="eyebrow">Surface</span>
+            <span class="t">Grid cell</span>
+            <span class="d">Hover lifts the fill, never the geometry</span>
+          </div>
+          <div class="card-demo hover-surface">
+            <span class="eyebrow">Surface</span>
+            <span class="t">Grid cell</span>
+            <span class="d">Radius zero, always</span>
+          </div>
+          <div class="card-demo hover-surface">
+            <span class="eyebrow">Surface</span>
+            <span class="t">Grid cell</span>
+            <span class="d">One rule draws the whole grid</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="grid"><div class="rule"></div></div>
+
+  <!-- ============ vidro ============ -->
+  <section id="glass" class="band">
+    <div class="grid">
+      <span class="label axis-a rv">05 <b>· Glass</b></span>
+      <h2 class="section-title axis-a-wide optical rv step-1" style="--d: 60ms">Four textures,<br>one material</h2>
+    </div>
+
+    <div class="grid step-2">
+      <div class="body axis-a rv">
+        <p>Glass is the material of every control in this system. It has five layers and all of
+        them matter: a vertical gradient fill, a backdrop blur, saturation, a specular highlight
+        on the top edge and refraction on the bottom. Remove any one and the result reads as a
+        plain translucent panel.</p>
+        <p>The four textures differ in how much of the background survives. Thin lets almost
+        everything through, deep almost nothing. Frost is the only one that carries grain: a
+        desaturated turbulence over the fill, which is what separates frosted from merely
+        translucent.</p>
+      </div>
+      <aside class="aside-note axis-b rv" style="--d: 60ms">
+        <h4>Blur radius is chosen by size</h4>
+        <p>The radius has to fit the box. A large radius on a small element makes the browser
+        sample far beyond it, and Chrome then draws a ghost block inside the first of a row of
+        glass siblings.</p>
+        <p>16px for a pill or a tooltip, 32px for a card or a bar, 72px only over a full-screen
+        animated canvas.</p>
+      </aside>
+    </div>
+
+    <div class="grid step-2">
+      <div class="glass-stage bleed rv">
+        <svg class="stage-art" id="stage-art" viewBox="0 0 1260 460" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>
+        <div class="stage-content">
+          <span class="glass glass-lift glass-thin glass-round pill">Thin</span>
+          <span class="glass glass-lift glass-round pill">Default</span>
+          <span class="glass glass-lift glass-frost glass-round pill">Frost</span>
+          <span class="glass glass-lift glass-deep glass-round pill">Deep</span>
+          <span class="glass glass-lift glass-accent glass-round pill">Tinted</span>
+        </div>
+        <div class="stage-content" style="padding-top: 0">
+          <span class="glass glass-lift glass-frost glass-sq" style="padding: var(--space-16) var(--space-24); font-family: var(--font-mono); font-size: var(--text-12); color: var(--text); display: inline-grid; place-items: center; text-align: center">Radius 0</span>
+          <span class="glass glass-lift glass-frost glass-soft" style="padding: var(--space-16) var(--space-24); font-family: var(--font-mono); font-size: var(--text-12); color: var(--text); display: inline-grid; place-items: center; text-align: center">Radius 8</span>
+          <span class="glass glass-lift glass-frost glass-round" style="padding: var(--space-16) var(--space-24); font-family: var(--font-mono); font-size: var(--text-12); color: var(--text); display: inline-grid; place-items: center; text-align: center">Radius full</span>
+          <span class="glass glass-lift glass-frost glass-circle" style="display: grid; place-items: center; width: 56px; font-family: var(--font-mono); font-size: var(--text-12); color: var(--text); display: inline-grid; place-items: center; text-align: center">56</span>
+        </div>
+        <div class="stage-readout" id="stage-readout">
+          <span class="name">Hover a sample</span>
+          <div class="row"><span>blur</span><span>—</span></div>
+          <div class="row"><span>fill</span><span>—</span></div>
+        </div>
+        <div class="stage-content" style="padding-top: 0; align-items: flex-start">
+          <div class="glass glass-lift glass-frost glass-soft glass-panel" style="grid-template-columns: repeat(4, 1fr); min-width: 320px">
+            <span>Select</span><span>Pan</span><span>Zoom</span><span>Reset</span>
+          </div>
+          <div class="glass glass-lift glass-deep glass-soft glass-panel" style="grid-template-columns: 1fr; min-width: 200px">
+            <span>Export PNG</span><span>Export SVG</span><span>Copy tokens</span>
+          </div>
+          <div class="glass glass-lift glass-thin glass-soft glass-panel" style="grid-template-columns: repeat(3, 1fr); min-width: 260px">
+            <span>Light</span><span>Dark</span><span>Paper</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid step-3">
+      <div class="axis-a-chart rv">
+        <span class="label" style="margin-bottom: var(--space-16)">When to use which</span>
+        <table class="table">
+          <thead><tr><th>Texture</th><th>Blur</th><th>Use it for</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">.glass-thin</td><td class="mono">4px</td><td>Overlay where the content behind must stay readable: a legend over a chart, a caption over an image</td></tr>
+            <tr><td class="mono">.glass</td><td class="mono">16px</td><td>The default control: pill, chip, tooltip, small floating panel</td></tr>
+            <tr><td class="mono">.glass-frost</td><td class="mono">30px</td><td>Anything that carries text of its own: toolbar, command palette, sheet, modal</td></tr>
+            <tr><td class="mono">.glass-deep</td><td class="mono">56px</td><td>Full-width chrome that must separate itself from the page: navigation bar, docked footer</td></tr>
+            <tr><td class="mono">.glass-accent</td><td class="mono">inherits</td><td>The one selected or primary control in a group, never more than one at a time</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <aside class="aside-note axis-b rv" style="--d: 60ms">
+        <h4>Where glass may not go</h4>
+        <p>Over a flat background it does nothing and costs a compositing layer. Over another
+        translucent surface it compounds into mud. Behind body text it lowers contrast below
+        anything the ratio table would allow.</p>
+        <p>In those three cases the answer is <span class="mono" style="color: var(--text)">.pill-solid</span>
+        or a plain surface.</p>
+      </aside>
+    </div>
+  </section>
+
+  <div class="grid"><div class="rule"></div></div>
+
+  <!-- ============ movimento ============ -->
+  <section id="motion" class="band">
+    <div class="grid">
+      <span class="label axis-a rv">05 <b>· Motion</b></span>
+      <h2 class="section-title axis-a-wide optical rv step-1" style="--d: 60ms">Five curves,<br>each with a job</h2>
+    </div>
+
+    <div class="grid step-2">
+      <div class="axis-a-chart rv">
+        <div id="eases"></div>
+        <button class="pill" id="replay" style="margin-top: var(--space-24)">Play again</button>
+      </div>
+      <aside class="aside-note axis-b rv" style="--d: 60ms">
+        <h4>Durations</h4>
+        <p>Six steps from 100ms to 500ms. The hover default is duration-3 at 200ms; content
+        entrance is duration-6 at 500ms.</p>
+        <p>Hover displacement is a token too: nudge-1 at 2px, nudge-2 at 3px, nudge-3 at 4px.
+        Entrance stagger is 60ms per item, capped at six steps.</p>
+        <p>Everything here collapses to nothing under prefers-reduced-motion.</p>
+      </aside>
+    </div>
+
+    <div class="grid step-3">
+      <span class="label axis-a rv">Where motion is allowed</span>
+      <div class="axis-a-chart step-1 rv">
+        <table class="table">
+          <thead><tr><th>Pattern</th><th>Curve</th><th>Duration</th></tr></thead>
+          <tbody>
+            <tr><td>Colour, background and border on hover</td><td class="mono">ease-standard</td><td class="mono">200ms</td></tr>
+            <tr><td>Content and section entrance</td><td class="mono">ease-out-soft</td><td class="mono">500ms</td></tr>
+            <tr><td>Slide change, scale change</td><td class="mono">ease-out-expo</td><td class="mono">300ms</td></tr>
+            <tr><td>Hover displacement, the pill nudge</td><td class="mono">ease-swift</td><td class="mono">200ms</td></tr>
+            <tr><td>Chart line drawing itself in</td><td class="mono">ease-out-soft</td><td class="mono">500ms</td></tr>
+            <tr><td>Chart bar growing from its base</td><td class="mono">ease-out-expo</td><td class="mono">350ms</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <div class="grid"><div class="rule"></div></div>
+
+  <!-- ============ componentes ============ -->
+  <section id="components" class="band">
+    <div class="grid">
+      <span class="label axis-a rv">06 <b>· Components</b></span>
+      <h2 class="section-title axis-a-wide optical rv step-1" style="--d: 60ms">What is<br>already built</h2>
+    </div>
+
+    <div class="grid step-2">
+      <div class="demo-block rv" style="grid-column: 1 / 5">
+        <span class="k">Controls</span>
+        <div class="demo-row">
+          <span class="pill">Primary</span>
+          <span class="pill">Secondary</span>
+        </div>
+        <div class="demo-row">
+          <span class="pill pill-sm">Small</span>
+          <span class="pill pill-solid">Solid</span>
+        </div>
+        <p class="note">Glass is the default material: gradient fill, backdrop blur, saturation,
+        a specular highlight on the top edge and refraction on the bottom. The solid variant is
+        for dense tables and for surfaces that are already translucent.</p>
+      </div>
+
+      <div class="demo-block rv" style="grid-column: 5 / 9; --d: 60ms">
+        <span class="k">Links</span>
+        <div class="demo-row"><a class="link-cta" href="#">Call to action</a></div>
+        <div class="demo-row"><a class="link-muted" href="#">Muted link</a></div>
+        <div class="demo-row"><span class="hover-fade" style="cursor: pointer">Fades on hover</span></div>
+        <p class="note">Three levels: underlined action, muted inline, and fade for anything
+        already carrying its own affordance.</p>
+      </div>
+
+      <div class="demo-block rv" style="grid-column: 9 / 13; --d: 120ms">
+        <span class="k">Tags</span>
+        <div class="demo-row">
+          <span class="tag tag-congress">Congress</span>
+          <span class="tag tag-conference">Conference</span>
+          <span class="tag tag-symposium">Symposium</span>
+        </div>
+        <p class="note">Three reserved hues with their own tint and border, all clearing 4.5:1
+        in both modes.</p>
+      </div>
+    </div>
+
+    <div class="grid step-3">
+      <div class="axis-a-chart rv">
+        <span class="label" style="margin-bottom: var(--space-16)">Section header</span>
+        <div class="section-header">
+          <span class="eyebrow">07</span>
+          <h2 class="display display-section">Section title</h2>
+          <p class="prose">Number in mono with eyebrow tracking, title in the display face, a
+          rule below, and nothing else.</p>
+        </div>
+      </div>
+      <aside class="aside-note axis-b rv" style="--d: 60ms">
+        <h4>Also in patterns.css</h4>
+        <p>Glass card, hairline grid, avatar, round control, prose measure, justified prose as
+        an opt-in class, the fade-up and fade-scale keyframes, and the stagger ladder.</p>
+      </aside>
+    </div>
+  </section>
+
+  <div class="grid"><div class="rule"></div></div>
+
+  <!-- ============ uso ============ -->
+  <section id="use" class="band">
+    <div class="grid">
+      <span class="label axis-a rv">07 <b>· Use</b></span>
+      <h2 class="section-title axis-a-wide optical rv step-1" style="--d: 60ms">How to<br>pull it in</h2>
+    </div>
+
+    <div class="grid step-2">
+      <div class="axis-a rv">
+        <dl class="facts">
+          <div><dt>Web, tokens</dt><dd>web/tokens.css</dd></div>
+          <div><dt>Web, Tailwind</dt><dd>web/theme.css</dd></div>
+          <div><dt>Web, components</dt><dd>web/patterns.css</dd></div>
+          <div><dt>Python, plots</dt><dd>prussian.mpl.use("light")</dd></div>
+          <div><dt>Python, plotly</dt><dd>prussian.plotly.use("light")</dd></div>
+          <div><dt>Streamlit</dt><dd>python/streamlit/config.toml</dd></div>
+          <div><dt>Verify</dt><dd>node tools/check.mjs</dd></div>
+        </dl>
+      </div>
+      <aside class="aside-note axis-b rv" style="--d: 60ms">
+        <h4>The check script</h4>
+        <p>It reads the hexes out of tokens.json and re-runs every claim the documentation
+        makes: contrast in three modes, colour-blind separation, ramp monotonicity, and
+        agreement between the four files that carry the same colours.</p>
+        <p>Move a slot half a step and the build fails. That is the difference between a
+        design system and a style guide.</p>
+      </aside>
+    </div>
+  </section>
+
+  <footer class="band" style="padding-bottom: var(--space-48)">
+    <div class="grid">
+      <div class="colophon bleed">
+        <span>Set in Geist, Geist Mono and Cormorant Garamond</span>
+        <span>Prussian 1.1.0</span>
+      </div>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+"use strict";
+
+const REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+const probe = document.createElement("div");
+probe.style.cssText = "position:absolute;visibility:hidden";
+document.body.appendChild(probe);
+const resolve = (name) => {
+  probe.style.color = `var(${name})`;
+  const m = getComputedStyle(probe).color.match(/\d+(\.\d+)?/g);
+  return "#" + m.slice(0, 3).map((c) => (+c).toString(16).padStart(2, "0")).join("");
+};
+
+const relLum = (hex) => {
+  const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255);
+  const f = (c) => (c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4));
+  return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b);
+};
+const ratio = (a, b) => {
+  const [hi, lo] = [relLum(a), relLum(b)].sort((x, y) => y - x);
+  return (hi + 0.05) / (lo + 0.05);
+};
+
+/* ---------- progresso, revelação, spy ---------- */
+
+const progress = document.getElementById("progress");
+addEventListener("scroll", () => {
+  const max = document.body.scrollHeight - innerHeight;
+  progress.style.width = (max > 0 ? (scrollY / max) * 100 : 0) + "%";
+}, { passive: true });
+
+if (REDUCED) {
+  document.querySelectorAll(".rv").forEach((el) => el.classList.add("seen"));
+} else {
+  const revealer = new IntersectionObserver((entries) => {
+    for (const e of entries) if (e.isIntersecting) { e.target.classList.add("seen"); revealer.unobserve(e.target); }
+  }, { rootMargin: "0px 0px -8% 0px", threshold: 0.02 });
+  document.querySelectorAll(".rv").forEach((el) => revealer.observe(el));
+}
+
+const spies = [...document.querySelectorAll("[data-spy]")];
+const spyObs = new IntersectionObserver((entries) => {
+  for (const e of entries) {
+    if (!e.isIntersecting) continue;
+    spies.forEach((a) => a.setAttribute("aria-current", String(a.dataset.spy === e.target.id)));
+  }
+}, { rootMargin: "-40% 0px -55% 0px" });
+spies.map((a) => document.getElementById(a.dataset.spy)).filter(Boolean).forEach((t) => spyObs.observe(t));
+
+/* ---------- copiar token ---------- */
+
+const toast = document.getElementById("toast");
+let toastTimer = null;
+function copyToken(token) {
+  navigator.clipboard?.writeText(token).catch(() => {});
+  toast.textContent = "Copied  " + token;
+  toast.classList.add("on");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove("on"), 1400);
+}
+
+/* ---------- espécimes de cor ---------- */
+
+const RAMP_STEPS = ["50", "100", "150", "200", "250", "300", "400", "500", "600", "700", "800", "820", "850", "900", "950"];
+
+/* leitor do palco: cada amostra declara textura, blur e preenchimento */
+const TEXTURES = {
+  "glass-thin":  ["Thin",    "4px",  "10% to 2%"],
+  "glass":       ["Default", "16px", "42% to 16%"],
+  "glass-frost": ["Frost",   "30px", "82% to 62% + grain"],
+  "glass-deep":  ["Deep",    "56px", "58% to 34%"],
+  "glass-accent":["Tinted",  "16px", "accent 28% to 12%"],
+};
+const SEMANTIC = ["bg", "surface", "surface-hover", "dim", "border", "border-hover", "text", "muted", "accent", "secondary"];
+const CHART = [1, 2, 3, 4, 5, 6, 7, 8];
+const CHART_NAMES = ["Blue", "Gold", "Magenta", "Green", "Violet", "Orange", "Teal", "Red"];
+
+/* arte do palco: o vidro precisa de algo atras para refratar */
+function stageArt() {
+  const svg = document.getElementById("stage-art");
+  if (!svg) return;
+  const W = 1260, H = 460;
+  let out = `<rect width="${W}" height="${H}" fill="${resolve("--dim")}"/>`;
+  // faixas diagonais da paleta de dados, esmaecidas
+  for (let i = 0; i < 8; i++) {
+    const x = -180 + i * 190;
+    out += `<rect x="${x}" y="-80" width="120" height="${H + 160}"
+             fill="${resolve(`--chart-${i + 1}`)}" opacity="0.34"
+             transform="rotate(14 ${x + 60} ${H / 2})"/>`;
+  }
+  // discos da rampa slate por cima, para dar profundidade ao desfoque
+  const discs = [[210, 130, 130, "700"], [640, 330, 170, "500"], [1010, 150, 120, "850"], [420, 380, 90, "300"]];
+  for (const [cx, cy, r, step] of discs) {
+    out += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${resolve(`--slate-${step}`)}" opacity="0.4"/>`;
+  }
+  svg.innerHTML = out;
+}
+
+function paintRamp(id, family) {
+  document.getElementById(id).innerHTML = RAMP_STEPS.map((s) => {
+    const c = resolve(`--${family}-${s}`);
+    const ink = relLum(c) > 0.4 ? "#0d1321" : "#f4f6f9";
+    return `<button data-token="--${family}-${s}" style="background:${c}" title="--${family}-${s}">
+              <span style="color:${ink}">${s}</span></button>`;
+  }).join("");
+}
+
+function paintColor() {
+  paintRamp("ramp", "slate");
+  paintRamp("ramp-graphite", "graphite");
+
+  document.getElementById("semantic").innerHTML = SEMANTIC.map((n) => {
+    const c = resolve(`--${n}`);
+    return `<button class="swatch" data-token="--${n}">
+              <span class="chip" style="background:${c}"></span>
+              <span class="n">--${n}</span><span class="h">${c}</span></button>`;
+  }).join("");
+
+  document.getElementById("chart-swatches").innerHTML = CHART.map((i) => {
+    const c = resolve(`--chart-${i}`);
+    return `<button class="swatch" data-token="--chart-${i}">
+              <span class="chip" style="background:${c}"></span>
+              <span class="n">${i}. ${CHART_NAMES[i - 1]}</span><span class="h">${c}</span></button>`;
+  }).join("");
+
+  const bg = resolve("--bg"), surface = resolve("--surface");
+  const rows = [
+    ["--text on --bg", resolve("--text"), bg, "Primary text"],
+    ["--muted on --bg", resolve("--muted"), bg, "Supporting prose and labels"],
+    ["--muted on --surface", resolve("--muted"), surface, "Prose inside a card"],
+    ["--accent on --bg", resolve("--accent"), bg, "Focus ring, active border"],
+    ["--secondary on --bg", resolve("--secondary"), bg, "Borders, icons, focus"],
+    ["--secondary on --surface", resolve("--secondary"), surface, "Decoration inside a card"],
+    ["--border on --bg", resolve("--border"), bg, "Rules and dividers"],
+  ];
+  document.getElementById("contrast").innerHTML = rows.map(([label, fg, back, role]) => {
+    const r = ratio(fg, back);
+    const verdict = r >= 4.5 ? "Any text" : r >= 3 ? "Large text and UI" : "Decoration only";
+    return `<tr><td class="mono">${label}</td><td><b>${r.toFixed(2)}</b></td><td>${verdict}</td><td>${role}</td></tr>`;
+  }).join("");
+
+  const bands = [
+    ["Sequential · continuous", ["#e5f0fc", "#cbe1f8", "#aacbee", "#82b3e5", "#5497d9", "#2b7ec9", "#1666aa", "#0e4f86", "#0e375c"]],
+    ["Ordinal · discrete steps", [1, 2, 3, 4, 5, 6, 7].map((i) => resolve(`--seq-${i}`))],
+    ["Diverging · blue to amber", ["#0e4f86", "#1f74bf", "#6da3da", "#b3ceeb", "#e2e5e8", "#eacab1", "#dc9a6c", "#c7692c", "#9e4421"]],
+  ];
+  document.getElementById("ramps").innerHTML = bands.map(([name, cols]) => `
+    <div>
+      <span class="label" style="margin-bottom: var(--space-8)">${name}</span>
+      <div style="display:grid;grid-template-columns:repeat(${cols.length},1fr);height:44px;border:var(--hairline) solid var(--border)">
+        ${cols.map((c) => `<div style="background:${c}"></div>`).join("")}
+      </div>
+    </div>`).join("");
+}
+
+document.addEventListener("click", (ev) => {
+  const el = ev.target.closest("[data-token]");
+  if (el) copyToken(el.dataset.token);
+});
+
+/* ---------- tipografia e espaço ---------- */
+
+const SCALE = [
+  ["11", "Eyebrow, tag"], ["12", "Control, metadata"], ["13", "Small prose, table"],
+  ["14", "Link, secondary"], ["15", "Body prose"], ["16", "Card title"],
+  ["18", "Lede, block title"], ["20", "Standfirst"], ["24", "Small display"],
+  ["32", "Stat value"], ["40", "Display"], ["56", "Name"],
+];
+document.getElementById("typescale").innerHTML = SCALE.map(([s, use]) => `
+  <div class="type-row">
+    <span class="meta">--text-${s} · ${use}</span>
+    <span class="sample" style="font-size: var(--text-${s})">Grid, rule, ramp and measure</span>
+  </div>`).join("");
+
+const SPACE = ["4", "8", "12", "16", "24", "32", "48", "64", "96"];
+document.getElementById("spacescale").innerHTML = SPACE.map((s) => `
+  <div class="space-row">
+    <span class="k">--space-${s}</span>
+    <span class="bar" style="width: var(--space-${s})"></span>
+  </div>`).join("");
+
+/* ---------- curvas ---------- */
+
+const EASES = [
+  ["--ease-standard", "Hover"],
+  ["--ease-out", "Simple entrance"],
+  ["--ease-out-soft", "Content"],
+  ["--ease-out-expo", "Slide, scale"],
+  ["--ease-swift", "Displacement"],
+];
+document.getElementById("eases").innerHTML = EASES.map(([tok, use]) => `
+  <div class="motion-row">
+    <span class="k">${tok}</span>
+    <div class="lane"><span class="dot" style="transition: left var(--duration-6) var(${tok})"></span></div>
+    <span class="use">${use}</span>
+  </div>`).join("");
+
+function playEases() {
+  const lanes = document.querySelectorAll(".lane");
+  lanes.forEach((l) => l.classList.remove("run"));
+  if (REDUCED) return lanes.forEach((l) => l.classList.add("run"));
+  requestAnimationFrame(() => requestAnimationFrame(() => lanes.forEach((l) => l.classList.add("run"))));
+}
+document.getElementById("replay").addEventListener("click", playEases);
+
+const motionObs = new IntersectionObserver((entries) => {
+  for (const e of entries) if (e.isIntersecting) { playEases(); motionObs.unobserve(e.target); }
+}, { threshold: 0.4 });
+motionObs.observe(document.getElementById("eases"));
+
+/* ---------- gráfico de exemplo ---------- */
+
+const SERIES = [
+  { label: "First party", slot: 1, base: 96, gain: 3.4 },
+  { label: "Partner", slot: 2, base: 94, gain: 1.7 },
+  { label: "Community", slot: 3, base: 92, gain: 0.9 },
+  { label: "Legacy", slot: 4, base: 90, gain: 0.2 },
+];
+const STEPS = 12;
+const val = (s, m) => s.base + s.gain * m - Math.sin(m / 2.6) * 1.6;
+
+const L = { W: 900, H: 320, padL: 48, padR: 108, padT: 18, padB: 40, lo: 84, hi: 140 };
+const lx = (m) => L.padL + (m / STEPS) * (L.W - L.padL - L.padR);
+const ly = (v) => L.padT + (1 - (v - L.lo) / (L.hi - L.lo)) * (L.H - L.padT - L.padB);
+
+let isolated = null;
+
+function drawLines() {
+  const svg = document.getElementById("lines");
+  const grid = resolve("--chart-grid"), ink = resolve("--chart-ink-muted");
+  let out = "";
+
+  for (const v of [90, 100, 110, 120, 130, 140]) {
+    out += `<line class="viz-appear" x1="${L.padL}" y1="${ly(v)}" x2="${L.W - L.padR}" y2="${ly(v)}"
+             stroke="${grid}" stroke-width="1"${v === 100 ? ' stroke-dasharray="4 4"' : ""}/>`;
+    out += `<text class="viz-appear" x="${L.padL - 12}" y="${ly(v) + 3}" text-anchor="end" font-size="10">${v}</text>`;
+  }
+  for (let m = 0; m <= STEPS; m += 3) {
+    out += `<text class="viz-appear" x="${lx(m)}" y="${L.H - 14}" text-anchor="middle" font-size="10">${m}</text>`;
+  }
+
+  SERIES.forEach((s, i) => {
+    const color = resolve(`--chart-${s.slot}`);
+    let d = "";
+    for (let m = 0; m <= STEPS; m++) d += (m ? " L" : "M") + lx(m).toFixed(1) + " " + ly(val(s, m)).toFixed(1);
+    out += `<path class="viz-draw viz-mark" data-series="${i}" style="--delay:${i * 90}ms"
+             d="${d}" fill="none" stroke="${color}" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round"/>`;
+    out += `<text class="viz-appear viz-mark" data-series="${i}" style="--delay:${500 + i * 90}ms"
+             x="${lx(STEPS) + 12}" y="${ly(val(s, STEPS)) + 3.5}" fill="${ink}" font-size="10">${s.label}</text>`;
+  });
+
+  out += `<line class="viz-crosshair" id="hair" x1="0" y1="${L.padT}" x2="0" y2="${L.H - L.padB}"/>`;
+  SERIES.forEach((s, i) => {
+    out += `<circle class="viz-dot" id="dot-${i}" r="4.5" fill="${resolve(`--chart-${s.slot}`)}"/>`;
+  });
+
+  svg.innerHTML = out;
+  svg.querySelectorAll(".viz-draw").forEach((p) => p.style.setProperty("--len", p.getTotalLength()));
+
+  document.getElementById("legend-lines").innerHTML = SERIES.map((s, i) =>
+    `<span data-series="${i}"><i style="background:${resolve(`--chart-${s.slot}`)}"></i>${s.label}</span>`).join("");
+  bindLegend();
+}
+
+function bindLines() {
+  const box = document.getElementById("viz-lines");
+  const svg = document.getElementById("lines");
+  const tip = document.getElementById("tip-lines");
+
+  svg.addEventListener("pointermove", (ev) => {
+    const r = svg.getBoundingClientRect();
+    const vx = ((ev.clientX - r.left) / r.width) * L.W;
+    const m = Math.max(0, Math.min(STEPS, Math.round(((vx - L.padL) / (L.W - L.padL - L.padR)) * STEPS)));
+    const x = lx(m);
+    box.classList.add("is-active");
+    const hair = document.getElementById("hair");
+    hair.setAttribute("x1", x); hair.setAttribute("x2", x);
+
+    SERIES.forEach((s, i) => {
+      const dot = document.getElementById(`dot-${i}`);
+      dot.setAttribute("cx", x); dot.setAttribute("cy", ly(val(s, m)));
+      dot.style.display = isolated === null || isolated === i ? "" : "none";
+    });
+
+    tip.innerHTML = `<div class="head">Step ${m}</div>` + SERIES.map((s, i) =>
+      `<div class="line" style="opacity:${isolated === null || isolated === i ? 1 : 0.4}">
+         <i style="background:${resolve(`--chart-${s.slot}`)}"></i>${s.label}
+         <b>${val(s, m).toFixed(1)}</b></div>`).join("");
+
+    const px = (x / L.W) * r.width;
+    const flip = px > r.width - (tip.offsetWidth + 32);
+    tip.style.left = (flip ? px - tip.offsetWidth - 16 : px + 16) + "px";
+    tip.style.top = Math.max(0, Math.min(r.height - tip.offsetHeight,
+      (ev.clientY - r.top) - tip.offsetHeight / 2)) + "px";
+  });
+
+  svg.addEventListener("pointerleave", () => box.classList.remove("is-active"));
+}
+
+function bindLegend() {
+  const legend = document.getElementById("legend-lines");
+  const box = document.getElementById("viz-lines");
+  legend.querySelectorAll("[data-series]").forEach((item) => {
+    item.addEventListener("pointerenter", () => {
+      isolated = +item.dataset.series;
+      box.classList.add("is-dimmed");
+      box.querySelectorAll(".viz-mark").forEach((m) => m.classList.toggle("is-hot", +m.dataset.series === isolated));
+    });
+    item.addEventListener("pointerleave", () => {
+      isolated = null;
+      box.classList.remove("is-dimmed");
+      box.querySelectorAll(".viz-mark").forEach((m) => m.classList.remove("is-hot"));
+    });
+  });
+}
+
+const vizObs = new IntersectionObserver((entries) => {
+  for (const e of entries) if (e.isIntersecting) { e.target.classList.add("is-in"); vizObs.unobserve(e.target); }
+}, { threshold: 0.25 });
+
+function armViz() {
+  document.querySelectorAll(".viz").forEach((box) => {
+    if (REDUCED) return box.classList.add("is-in");
+    vizObs.observe(box);
+  });
+}
+
+/* ---------- ciclo ---------- */
+
+/* o leitor nomeia a textura sob o cursor; as quatro so se distinguem
+   quando comparadas, e nomeadas elas se aprendem */
+function bindStage() {
+  const stage = document.querySelector(".glass-stage");
+  const out = document.getElementById("stage-readout");
+  if (!stage || !out) return;
+
+  const blank = `<span class="name">Hover a sample</span>
+    <div class="row"><span>blur</span><span>—</span></div>
+    <div class="row"><span>fill</span><span>—</span></div>`;
+
+  stage.addEventListener("pointerover", (ev) => {
+    const el = ev.target.closest(".glass");
+    if (!el) return;
+    const key = ["glass-thin", "glass-frost", "glass-deep", "glass-accent"]
+      .find((k) => el.classList.contains(k)) || "glass";
+    const [name, blur, fill] = TEXTURES[key];
+    out.innerHTML = `<span class="name">${name}</span>
+      <div class="row"><span>class</span><span>.${key}</span></div>
+      <div class="row"><span>blur</span><span>${blur}</span></div>
+      <div class="row"><span>fill</span><span>${fill}</span></div>`;
+  });
+  stage.addEventListener("pointerleave", () => { out.innerHTML = blank; });
+}
+
+function repaint() {
+  paintColor();
+  stageArt();
+  drawLines();
+  document.querySelectorAll(".viz").forEach((box) => {
+    const r = box.getBoundingClientRect();
+    if (r.top < innerHeight && r.bottom > 0) box.classList.add("is-in");
+  });
+}
+
+document.querySelectorAll(".mode-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    document.documentElement.className = btn.dataset.mode;
+    document.querySelectorAll(".mode-btn").forEach((b) =>
+      b.setAttribute("aria-pressed", String(b === btn)));
+    repaint();
+  });
+});
+
+repaint();
+bindLines();
+bindStage();
+armViz();
+</script>
+</body>
+</html>
