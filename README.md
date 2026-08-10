@@ -4,7 +4,7 @@ Design system for web and Python. Four modes, script-verified tokens, plotting t
 
 Derived from `madsondeluna.github.io`. Numeric token architecture in the format of `devouringdetails.com`. Easing curves from `motion.dev`.
 
-Prussian 1.1.0.
+Prussian 1.2.0.
 
 ## Use
 
@@ -128,14 +128,20 @@ Measure: `--measure-prose` 480px. `.prose-justify` is opt-in, not base.
 
 Space: `--space-2` through `--space-96`, base 4 with half-steps at 2, 6 and 10.
 
-Radius:
+Radius follows the role, not the taste. Nothing in the language has a live corner.
 
-- Surface: `--radius-0`. Card, panel, grid cell, field, table. Separation comes from the 1px rule.
-- Control: `--radius-full` or `--radius-circle`.
-- Media: `--radius-8`.
-- Steps 2 to 16: only to approximate an imported component.
+| Token | Value | Applies to |
+|---|---|---|
+| `--radius-surface` | 12px | card, panel, grid cell, sheet, state box, hairline grid |
+| `--radius-field` | 8px | input, textarea, select, any text entry |
+| `--radius-media` | 8px | image, video, thumbnail, avatar frame |
+| `--radius-control` | full | button, pill, chip, tag |
+| `--radius-mark` | 4px | native checkbox box, skeleton bar, anything under 20px |
+| `--radius-circle` | 50% | avatar, dot, radio, round control |
 
-Card grid: cells carry no border, `gap: 1px` over a `--border` background. Class `.hairline-grid`.
+The ladder is concentric: a child never rounds harder than its parent, so a field at 8 inside a card at 12 reads as one object. The numeric steps and `--radius-0` stay in the scale for imported components only.
+
+Card grid: cells carry no border, `gap: 1px` over a `--border` background, radius and `overflow: hidden` on the grid rather than the cell. Class `.hairline-grid`.
 
 ### Glass
 
@@ -153,7 +159,7 @@ Base class `.glass`, valid on any shape. `.pill` is glass by default. `.pill-sol
 
 `.glass-frost` is the only one with grain (desaturated `feTurbulence` in `mix-blend-mode: overlay`). Without it the result is translucent, not frosted.
 
-Shapes: `.glass-sq`, `.glass-soft`, `.glass-round`, `.glass-circle`. `.glass-panel` builds an internal hairline grid. `.glass-lift` is the pointer reaction: rises 2px, edge lights up, shadow opens.
+Shapes: `.glass-sq` (surface radius, the name is kept for compatibility), `.glass-soft` (media), `.glass-round` (control), `.glass-circle`. `.glass-panel` builds an internal hairline grid. `.glass-lift` is the pointer reaction: rises 2px, edge lights up, shadow opens.
 
 Blur radius follows surface size. A large radius on a short element makes Chrome sample beyond the box and paint a ghost block in the first of a row of glass siblings.
 
@@ -179,9 +185,171 @@ Entrance stagger: 60ms per item, capped at six steps. Class `.stagger`.
 
 Everything collapses under `prefers-reduced-motion: reduce`.
 
+## Craft rules
+
+Behaviour, not material. Must fails the build or the review, should is the default and leaving it needs a written reason, never has no exception. The binding column names the class or token that already implements the rule.
+
+Five are script checked: `color-scheme` in all four modes, no `transition: all`, no transition of a layout property, the interaction tokens agreeing between `tokens.json` and `tokens.css`, and the presence of a focus ring.
+
+### Interaction tokens
+
+| Token | Value | Role |
+|---|---|---|
+| `--hit-min` | 24px | floor for a hit area |
+| `--hit-min-touch` | 44px | same floor under `pointer: coarse` |
+| `--focus-ring` | 2px | outline width, colour `--accent`, `--text` over glass |
+| `--focus-offset` | 2px | outline offset |
+| `--field-height` | 40px | minimum field height, 44px on touch |
+| `--text-field` | 1rem | field text size, the one exception to one size per control class |
+| `--scroll-offset` | 88px | `scroll-margin-top` under a fixed bar |
+| `--stroke` | 2px | drawn stroke: spinner ring, checkbox mark |
+| `--tap-highlight` | transparent | the native tap flash, replaced by `:active` |
+
+### Keyboard and focus
+
+| Rule | Level | Bound to |
+|---|---|---|
+| Every interactive element reachable and operable from the keyboard, following the authoring practice for its pattern | Must | native semantics |
+| Focus ring visible on `:focus-visible`, group lit on `:focus-within` | Must | `--focus-ring` |
+| Focus managed on open, close and delete: trapped in the panel, returned to the trigger | Must | `.modal`, `.overlay` |
+| Outline removed without a visible replacement | Never | `check.mjs` |
+| Ring switches to `--text` over glass, where the backdrop is unpredictable | Should | `.glass:focus-visible` |
+
+### Target and input
+
+| Rule | Level | Bound to |
+|---|---|---|
+| Hit area clears 24px, and 44px under a coarse pointer | Must | `--hit-min` |
+| Visual size may go under the floor, the hit area may not | Must | `.hit` |
+| Text field at 16px: below it iOS zooms the page on focus | Must | `--text-field` |
+| Browser zoom disabled through `user-scalable` or `maximum-scale` | Never | viewport |
+| Double tap delay removed | Must | `touch-action: manipulation` |
+| Native tap flash replaced by the language's own pressed state | Should | `--tap-highlight` |
+
+### Forms
+
+| Rule | Level | Bound to |
+|---|---|---|
+| Paste blocked in a field | Never | any field |
+| Free text accepted and validated after, never blocked while typing | Must | `.input` |
+| Incomplete form submittable, so validation surfaces | Must | `novalidate` |
+| Error next to its field, focus moved to the first one | Must | `.field-error` |
+| Submit enabled until the request starts, then a ring and the same label | Must | `[data-loading]` |
+| Enter submits a single line field, Cmd or Ctrl with Enter submits a textarea | Must | `.textarea` |
+| `autocomplete`, a meaningful name, the right type and inputmode | Must | `.field` |
+| Label and control share one hit target, no dead zone | Must | `.check` |
+| Checkbox rounds at `--radius-mark` as a field, only the radio is a circle | Must | `.check input` |
+| Password managers and one time codes work, pasted codes included | Must | `autocomplete` |
+| Values trimmed before they are read | Must | submit handler |
+| Unsaved changes warn before navigation | Must | `beforeunload` |
+| Spellcheck off for email, code and username | Should | `spellcheck` |
+| Placeholder shows the shape of the answer, ellipsis when it is an instruction | Should | `placeholder` |
+| Autofocus on desktop with a single primary field, rarely on mobile | Should | `autofocus` |
+
+### State, navigation and feedback
+
+| Rule | Level | Bound to |
+|---|---|---|
+| URL carries the state: filter, tab, page, open panel, colour mode | Must | `history` |
+| Back and forward restore the scroll position | Must | `scrollRestoration` |
+| Navigation is an anchor, so modifier and middle click work | Must | `a href` |
+| A div with a click handler used to navigate | Never | `a href` |
+| Destructive action confirmed, or reversible inside a stated window | Must | `.modal` |
+| Toast and inline validation announced through a polite live region | Must | `aria-live` |
+| Every state offers the next step, a dead end is a defect | Must | `.empty` |
+| Optimistic update reconciled on response, rolled back or undoable on failure | Should | app layer |
+| An option that opens a follow up ends in an ellipsis | Should | copy |
+
+### Motion, touch and drag
+
+| Rule | Level | Bound to |
+|---|---|---|
+| Reduced motion honoured with a reduced variant or with nothing | Must | `patterns.css` |
+| Only `transform` and `opacity` animated | Must | `check.mjs` |
+| A layout property animated: top, left, width, height | Never | `check.mjs` |
+| `transition: all` | Never | `check.mjs` |
+| Motion interruptible and driven by input, nothing autoplays | Must | `.viz` |
+| `transform-origin` where the movement physically starts | Must | `.viz-grow` |
+| SVG transform on a `g` wrapper with `transform-box: fill-box` | Must | svg |
+| Overscroll contained in a sheet or drawer | Must | `.drawer` |
+| First tooltip in a group waits, its neighbours open at once | Must | `.tip-group` |
+| Text selection off during a drag, dragged element inert | Must | `[data-dragging]` |
+| CSS first, then the animation API, then a library | Should | five curves |
+| Curve matched to size and distance, controls settle rather than jump | Should | `--ease-out-soft` |
+
+### Layout and content
+
+| Rule | Level | Bound to |
+|---|---|---|
+| Checked on mobile, laptop and ultra wide, the last simulated at half zoom | Must | two axes |
+| Safe areas respected | Must | `env(safe-area-inset-*)` |
+| No unwanted scrollbar, overflow fixed where it appears | Must | `overflow` |
+| Text container survives short, average and far too long content | Must | `.truncate`, `.clamp-2` |
+| Flex child carries min-width zero before it can truncate | Must | `.min-w-0` |
+| Empty string and empty array render a state, not a broken box | Must | `.empty` |
+| Empty, sparse, dense and error are four designs | Must | `.empty`, `.skeleton` |
+| Skeleton copies the box of the final content | Must | `.skeleton-line` |
+| Contrast rises on hover, active and focus | Must | `--border-hover` |
+| Alignment deliberate: grid, baseline or edge | Must | `.grid` |
+| Optical alignment wins over geometry by a pixel where perception disagrees | Should | `.optical` |
+| Grid and flex do the layout, not measurement in script | Should | `.grid` |
+| Nested radius never exceeds the parent, the two stay concentric | Should | `--radius-field` |
+
+### Text and accessibility
+
+| Rule | Level | Bound to |
+|---|---|---|
+| Document title says where the reader is | Must | `title` |
+| Heading levels in order, first keyboard stop skips to the content | Must | `.skip-link` |
+| Anything an anchor lands on clears the fixed bar | Must | `--scroll-offset` |
+| Numbers that will be compared use tabular figures | Must | `.num` |
+| Status carries a second cue beyond colour, icons carry text labels | Must | `.status` |
+| Icon only button carries a descriptive accessible name | Must | `.sr-only` |
+| Decorative element hidden from the accessibility tree | Must | `aria-hidden` |
+| Native element before an ARIA role | Must | semantics |
+| Ellipsis is one character, non breaking space holds 10 MB and Cmd K | Must | copy |
+| Dates, times and numbers formatted for the locale | Must | `Intl` |
+| Curly quotes, short heading balanced across its lines | Should | `.balance` |
+| Brand names, tokens and identifiers marked against machine translation | Should | `translate="no"` |
+| Inline help first, tooltip last | Should | `.tip` |
+
+### Delivery
+
+| Rule | Level | Bound to |
+|---|---|---|
+| Mode declared to the browser | Must | `color-scheme` |
+| Native select with explicit background colour and text colour | Must | `.select` |
+| Mutation answers in under 500ms | Must | app layer |
+| List past fifty items virtualised | Must | app layer |
+| Above the fold images preloaded, the rest lazy, all declaring their size | Must | `img` |
+| Layout reads and writes batched | Must | app layer |
+| Profiling with CPU and network throttled, extensions off | Must | devtools |
+| Contrast measured, not judged by eye | Must | `check.mjs` |
+| Chart colour survives protanopia and deuteranopia at full severity | Must | `check.mjs` |
+| Browser frame colour matches the page background | Should | `theme-color` |
+| Preconnect for a CDN, preload with swap for a critical font | Should | `link rel` |
+| Tested in low power mode and in Safari | Should | device |
+| Layered shadows, ambient under direct, borders tinted toward the background | Should | `--shadow-glass-rest` |
+
+Contrast method: `check.mjs` computes WCAG 2.1 ratios and every number published here comes from it. Perceptual contrast is advice on top of that floor, not a replacement: one measure in the build.
+
+### Consuming apps
+
+Framework layer, outside this repository.
+
+| Rule | Level |
+|---|---|
+| Field keeps focus and value across hydration | Must |
+| Field with a value needs a change handler, otherwise a default value | Must |
+| Re-renders counted and cut down | Must |
+| Date and time rendering guarded against a server and client mismatch | Should |
+| Uncontrolled fields by default, a controlled one cheap per keystroke | Should |
+
 ## Components
 
 `patterns.css`: `.eyebrow`, `.display`, `.prose`, `.section-header`, `.surface`, `.hover-surface`, `.card-glass`, `.hairline-grid`, `.glass` and variants, `.pill`, `.pill-sm`, `.pill-solid`, `.link-cta`, `.link-muted`, `.hover-fade`, `.tag`, `.status`, `.media`, `.avatar`, `.control-round`, `.fade-up`, `.fade-scale`, `.stagger`.
+
+Interaction layer, new in 1.2: `.hit`, `.field`, `.field-label`, `.input`, `.textarea`, `.select`, `.select-shell`, `.check`, `.field-error`, `.form-actions`, `[data-loading]`, `.truncate`, `.clamp-2`, `.clamp-3`, `.break-words`, `.min-w-0`, `.num`, `.balance`, `.pretty`, `.empty`, `.skeleton`, `.skeleton-line`, `.overlay`, `.modal`, `.drawer`, `[data-dragging]`, `.tip`, `.tip-group`, `.sr-only`, `.skip-link`.
 
 Visualisation layer: `.viz`, `.viz-crosshair`, `.viz-dot`, `.viz-mark`, `.viz-tip`, `.viz-legend`, `.viz-draw`, `.viz-grow`, `.viz-appear`.
 
@@ -226,13 +394,22 @@ No dependencies, exits 1 on any failure. It checks:
 - colour consistency across `tokens.json`, `web/tokens.css`, `python/prussian/palette.py` and `python/streamlit/app.css`
 - version across `tokens.json`, `__init__.py`, the guide and this README
 - absence of a ninth chart slot
+- `color-scheme` declared in all four mode blocks
+- no `transition: all` and no transition of a layout property in `web/` or the guide
+- interaction tokens agreeing between `tokens.json` and `web/tokens.css`
+- a focus ring that exists
 
 ## Visual guide
 
 `preview/index.html` renders every token and component in all four modes, with the contrast table recomputed on mode change and a click on any colour copying its token. It loads `../web/*.css` on purpose, to test the files rather than a copy.
 
+Nine chapters: colour, data colour, typography, space and form, glass, motion, craft, components, use. The craft chapter carries the rule tables above with live demonstrations: focus ring and hit area, a form that surfaces its errors on an empty submit, the three content lengths side by side, and the empty, loading and error states.
+
+Serve from the repository root, not from `preview/`, or the `../web/*.css` imports return 404.
+
 ```
 python3 -m http.server 8731
+# http://localhost:8731/preview/index.html
 ```
 
 Guide layout rules, applicable to any page built on the language: two vertical axes (columns 1 and 9 of twelve), three spacing steps (24, 48, 96), sentence case, one size per control class.

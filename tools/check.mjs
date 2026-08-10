@@ -225,6 +225,57 @@ function consistency() {
     beyond.length ? `a paleta não gera matiz nova: ${beyond}` : "a paleta para em 8, como manda a regra");
 }
 
+// 5. regras de ofício verificáveis em CSS
+
+function craft() {
+  console.log("\nregras de ofício");
+  const css = read("web/tokens.css");
+  const patterns = read("web/patterns.css");
+  const html = read("preview/index.html");
+
+  // color-scheme: sem ele o navegador pinta barra de rolagem, cursor de
+  // texto e controle nativo com o tema do sistema, não com o da página
+  const blocks = {
+    light: /:root\s*\{[\s\S]*?\n\}/,
+    "paper-like": /:root\.paper-like\s*\{[\s\S]*?\n\}/,
+    "deep-blue": /:root\.deep-blue\s*\{[\s\S]*?\n\}/,
+    dark: /:root\.dark\s*\{[\s\S]*?\n\}/,
+  };
+  const missing = Object.entries(blocks).filter(([mode, re]) => {
+    const block = css.match(re)?.[0] ?? "";
+    return !block.includes(`color-scheme: ${T.scheme[mode]}`);
+  });
+  check(!missing.length, "color-scheme por modo",
+    missing.length ? `faltando em: ${missing.map(([m]) => m).join(", ")}`
+                   : "os quatro modos declaram claro ou escuro ao navegador");
+
+  // transition: all pega propriedade de layout sem querer e é proibida
+  const wildcard = [["web/patterns.css", patterns], ["preview/index.html", html]]
+    .filter(([, src]) => /transition:\s*all\b/.test(src));
+  check(!wildcard.length, "sem transition all",
+    wildcard.length ? `curinga em: ${wildcard.map(([f]) => f).join(", ")}`
+                    : "toda transição lista as propriedades que anima");
+
+  // só transform e opacity são compostas fora da thread principal
+  const LAYOUT_PROPS = /transition:[^;]*\b(top|left|right|bottom|width|height|margin|padding)\b/g;
+  const animated = (patterns.match(LAYOUT_PROPS) || []).concat(html.match(LAYOUT_PROPS) || []);
+  check(!animated.length, "sem transição de layout",
+    animated.length ? `${animated.length} transição(ões) de propriedade de layout`
+                    : "nada anima top, left, width ou height");
+
+  // os tokens de interação precisam existir nos dois lados
+  const iface = Object.entries(T.interaction).filter(([k]) => !k.startsWith("$"));
+  const drift = iface.filter(([k, v]) => !css.includes(`--${k}: ${v}`));
+  check(!drift.length, "tokens de interação",
+    drift.length ? `divergem de tokens.json: ${drift.map(([k]) => k).join(", ")}`
+                 : `${iface.length} valores batem em json e css`);
+
+  // foco visível: outline none só é aceitável com substituto declarado
+  const bareNone = /outline:\s*none/.test(patterns) && !/:focus-visible/.test(patterns);
+  check(!bareNone, "foco visível",
+    bareNone ? "outline removido sem :focus-visible no lugar" : "o anel de foco existe e usa --accent");
+}
+
 // execução
 
 console.log("prussian: verificação das afirmações do README");
@@ -238,6 +289,7 @@ ordinal("ordinal deep-blue", T.chart.sequential["ordinal-dark"], T.chart.surface
 ordinal("ordinal dark", T.chart.sequential["ordinal-dark"], T.chart.surface.dark);
 semantic();
 consistency();
+craft();
 
 console.log(failures ? `\n${failures} falha(s)` : "\ntudo passa");
 process.exit(failures ? 1 : 0);

@@ -24,16 +24,48 @@ body {
 
 a { color: inherit; text-decoration: none; }
 
+/* midia nunca estoura a coluna, e img mantem proporcao. Largura e altura
+   no atributo continuam obrigatorias: sao elas que reservam a caixa e
+   evitam o salto de layout enquanto o arquivo baixa. */
+img, svg, video, canvas, iframe { max-width: 100%; }
+img, video { height: auto; }
+
+/* ancora sob barra fixa: sem isto o titulo alvo para atras da nav */
+:where(h1, h2, h3, h4, h5, h6, section[id], [id][data-anchor]) {
+  scroll-margin-top: var(--scroll-offset);
+}
+
+/* toque: o realce cinza do iOS sai e o :active da linguagem responde no
+   lugar dele. touch-action derruba os 300ms de espera do duplo toque. */
+:where(a, button, summary, label, select, [role="button"], [role="tab"], [role="option"]) {
+  -webkit-tap-highlight-color: var(--tap-highlight);
+  touch-action: manipulation;
+}
+
 /* dd nasce com margin-inline-start de 40px no navegador, o que desalinha
    qualquer lista de definicao usada como tabela de metadados */
 dl, dd { margin: 0; }
 
 ::selection { background: var(--text); color: var(--bg); }
 
+/* foco: --accent passa de 3:1 contra --bg nos quatro modos, que e o piso
+   de indicador de foco. O anel so aparece quando o navegador julga que o
+   foco veio do teclado; remover outline sem substituto e proibido. */
 :focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
+  outline: var(--focus-ring) solid var(--accent);
+  outline-offset: var(--focus-offset);
 }
+
+/* sobre vidro o fundo e imprevisivel, entao o anel usa --text, pela mesma
+   razao que o texto sobre vidro usa --text e nunca --muted */
+.glass:focus-visible,
+.pill:focus-visible,
+.control-round:focus-visible {
+  outline-color: var(--text);
+}
+
+/* o grupo inteiro se acende quando o controle interno recebe foco */
+.field:focus-within .field-label { color: var(--text); }
 
 /* tipografia */
 
@@ -84,7 +116,7 @@ dl, dd { margin: 0; }
 .surface {
   background: var(--surface);
   border: var(--hairline) solid var(--border);
-  border-radius: var(--radius-0);
+  border-radius: var(--radius-surface);
 }
 
 /* o !important existe porque os cartoes do site definem background por
@@ -96,8 +128,9 @@ dl, dd { margin: 0; }
 }
 .hover-surface:hover { background: var(--surface-hover) !important; }
 
-/* cartao de vidro: superficie translucida sobre conteudo, raio zero */
+/* cartao de vidro: superficie translucida sobre conteudo */
 .card-glass {
+  border-radius: var(--radius-surface);
   background-image: var(--glass-fill);
   background-color: var(--surface-glass);
   border: var(--hairline) solid var(--glass-edge);
@@ -118,11 +151,14 @@ dl, dd { margin: 0; }
 }
 
 /* grade de cartoes: as celulas nao tem borda propria, o vao de 1px
-   sobre o fundo --border desenha a grade inteira */
+   sobre o fundo --border desenha a grade inteira. O raio fica na grade,
+   nao na celula: overflow recorta os cantos das quatro pontas. */
 .hairline-grid {
   display: grid;
   gap: var(--hairline);
   background: var(--border);
+  border-radius: var(--radius-surface);
+  overflow: hidden;
 }
 
 /* ---------- vidro ----------
@@ -215,10 +251,12 @@ dl, dd { margin: 0; }
   filter: brightness(1.06);
 }
 
-/* formas: o material e o mesmo, so o raio muda */
-.glass-sq { border-radius: var(--radius-0); }
-.glass-soft { border-radius: var(--radius-8); }
-.glass-round { border-radius: var(--radius-full); }
+/* formas: o material e o mesmo, so o raio muda. .glass-sq guarda o nome
+   antigo por compatibilidade, mas hoje carrega o raio de superficie:
+   nada na linguagem tem canto vivo. */
+.glass-sq { border-radius: var(--radius-surface); }
+.glass-soft { border-radius: var(--radius-media); }
+.glass-round { border-radius: var(--radius-control); }
 .glass-circle { border-radius: var(--radius-circle); aspect-ratio: 1; }
 
 /* painel flutuante: vidro com grade interna, para barra de ferramentas,
@@ -272,6 +310,7 @@ dl, dd { margin: 0; }
   overflow: hidden;
   background: var(--dim);
   border: var(--hairline) solid var(--border);
+  border-radius: var(--radius-surface);
 }
 .glass-stage > .stage-art { position: absolute; inset: 0; }
 .glass-stage > .stage-content {
@@ -292,7 +331,7 @@ dl, dd { margin: 0; }
   z-index: 3;
   min-width: 232px;
   padding: var(--space-12) var(--space-16);
-  border-radius: var(--radius-8);
+  border-radius: var(--radius-surface);
   background-image: var(--glass-fill-frost);
   backdrop-filter: blur(var(--glass-blur-frost)) saturate(130%);
   -webkit-backdrop-filter: blur(var(--glass-blur-frost)) saturate(130%);
@@ -329,7 +368,7 @@ dl, dd { margin: 0; }
   justify-content: center;
   gap: var(--space-8);
   padding: var(--space-8) var(--space-16);
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-control);
   font-family: var(--font-mono);
   font-size: var(--text-13);
   line-height: var(--leading-snug);
@@ -423,7 +462,7 @@ dl, dd { margin: 0; }
   display: inline-flex;
   align-items: center;
   padding: var(--space-2) var(--space-8);
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-control);
   font-family: var(--font-mono);
   font-size: var(--text-11);
   letter-spacing: var(--tracking-wide);
@@ -458,7 +497,7 @@ dl, dd { margin: 0; }
 /* midia */
 
 .media {
-  border-radius: var(--radius-8);
+  border-radius: var(--radius-media);
   overflow: hidden;
   background: var(--dim);
 }
@@ -522,6 +561,7 @@ dl, dd { margin: 0; }
   z-index: 5;
   min-width: 148px;
   padding: var(--space-10) var(--space-12);
+  border-radius: var(--radius-surface);
   background-image: var(--glass-fill);
   background-color: var(--surface-glass);
   backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
@@ -613,7 +653,325 @@ dl, dd { margin: 0; }
   border-radius: var(--radius-circle);
 }
 
+/* ---------- alvo de toque ----------
+
+   O piso e 24px de area clicavel, 44px em ponteiro grosso. O tamanho
+   VISUAL do controle pode ficar abaixo do piso; a AREA nao pode.
+   .hit projeta a area por um pseudo-elemento centrado, sem tocar no
+   desenho. Nao aplicar em .glass-frost, que ja usa ::after para o
+   granulado: naquele caso o alvo vai num invólucro. */
+
+.hit { position: relative; }
+.hit::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  min-width: var(--hit-min);
+  min-height: var(--hit-min);
+}
+
+@media (pointer: coarse) {
+  .hit::after {
+    min-width: var(--hit-min-touch);
+    min-height: var(--hit-min-touch);
+  }
+  .input, .textarea, .select { min-height: var(--field-height-touch); }
+}
+
+/* ---------- formulario ----------
+
+   Campo e superficie: raio 0. Botao e controle: raio full. O checkbox
+   fica em raio 0 por ser campo; so o radio e circulo. Sem isso os dois
+   viram a mesma marca e a escolha unica deixa de se ler como unica.
+
+   O tamanho do texto do campo e a unica excecao a regra de um tamanho
+   por classe de controle: abaixo de 16px o iOS da zoom ao focar e a
+   pagina inteira sai de escala. */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  min-width: 0;
+}
+
+.field-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-12);
+  letter-spacing: var(--tracking-wide);
+  color: var(--secondary);
+  transition: color var(--duration-3) var(--ease-standard);
+}
+
+.input,
+.textarea,
+.select {
+  width: 100%;
+  min-height: var(--field-height);
+  padding: var(--space-10) var(--space-12);
+  font-family: var(--font-sans);
+  font-size: var(--text-field);
+  line-height: var(--leading-snug);
+  color: var(--text);
+  background-color: var(--surface);
+  border: var(--hairline) solid var(--border);
+  border-radius: var(--radius-field);
+  transition:
+    border-color var(--duration-3) var(--ease-standard),
+    background-color var(--duration-3) var(--ease-standard);
+}
+
+.input::placeholder,
+.textarea::placeholder { color: var(--secondary); }
+
+.input:hover,
+.textarea:hover,
+.select:hover { border-color: var(--border-hover); }
+
+.textarea {
+  min-height: calc(var(--field-height) * 2.5);
+  resize: vertical;
+}
+
+/* o select nativo herda cor do sistema no Windows e some no modo escuro.
+   Fundo e tinta explicitos resolvem, e a seta e desenhada por fora. */
+.select {
+  appearance: none;
+  padding-right: var(--space-32);
+  cursor: pointer;
+}
+
+.select-shell { position: relative; display: block; min-width: 0; }
+.select-shell::after {
+  content: "";
+  position: absolute;
+  right: var(--space-12);
+  top: 50%;
+  width: var(--space-6);
+  height: var(--space-6);
+  border-right: var(--hairline) solid var(--muted);
+  border-bottom: var(--hairline) solid var(--muted);
+  transform: translateY(-70%) rotate(45deg);
+  pointer-events: none;
+}
+
+/* rotulo e controle num alvo so: o label inteiro e clicavel, sem zona
+   morta entre a caixa e o texto */
+.check {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-10);
+  min-height: var(--hit-min);
+  padding: var(--space-6) 0;
+  font-size: var(--text-15);
+  color: var(--text);
+  cursor: pointer;
+}
+.check input {
+  flex-shrink: 0;
+  width: var(--space-16);
+  height: var(--space-16);
+  margin: 0;
+  accent-color: var(--accent);
+  border-radius: var(--radius-mark);
+}
+.check input[type="radio"] { border-radius: var(--radius-circle); }
+
+/* erro: fica ao lado do campo, nunca em caixa flutuante, e a cor vem
+   acompanhada de texto, jamais sozinha */
+.input[aria-invalid="true"],
+.textarea[aria-invalid="true"],
+.select[aria-invalid="true"] { border-color: var(--status-critical); }
+
+.field-error {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  font-size: var(--text-13);
+  line-height: var(--leading-snug);
+  color: var(--status-critical);
+}
+.field-error::before {
+  content: "";
+  width: var(--space-8);
+  height: var(--space-8);
+  border-radius: var(--radius-circle);
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+.form-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  flex-wrap: wrap;
+}
+
+/* botao em carga: o rotulo permanece e o anel entra ao lado. Trocar o
+   texto por "carregando" apaga o que o botao faz e muda a largura. */
+[data-loading="true"] { pointer-events: none; }
+[data-loading="true"]::before {
+  content: "";
+  width: var(--space-12);
+  height: var(--space-12);
+  flex-shrink: 0;
+  border: var(--stroke) solid currentColor;
+  border-top-color: transparent;
+  border-radius: var(--radius-circle);
+  animation: prussian-spin var(--duration-6) linear infinite;
+}
+
+/* ---------- conteudo ----------
+
+   Todo container de texto recebe conteudo curto, medio e longo demais.
+   Em filho de flex a truncagem so funciona com min-width zero: sem ele
+   a caixa cresce ate o texto caber e empurra o vizinho para fora. */
+
+.truncate {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.clamp-2, .clamp-3 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.clamp-2 { -webkit-line-clamp: 2; line-clamp: 2; }
+.clamp-3 { -webkit-line-clamp: 3; line-clamp: 3; }
+
+.break-words { overflow-wrap: anywhere; }
+.min-w-0 { min-width: 0; }
+
+/* numero que sera comparado com outro numero anda em coluna fixa */
+.num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* titulo curto nao deve deixar uma palavra sozinha na ultima linha */
+.balance { text-wrap: balance; }
+.pretty  { text-wrap: pretty; }
+
+/* ---------- estados ----------
+
+   Vazio, esparso, denso e erro sao quatro desenhos, nao um. O vazio
+   sempre oferece o proximo passo: pagina sem saida e defeito. */
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-12);
+  padding: var(--space-32);
+  border: var(--hairline) dashed var(--border);
+  border-radius: var(--radius-surface);
+  color: var(--muted);
+  font-size: var(--text-15);
+}
+
+/* o esqueleto copia a caixa do conteudo final, senao ele proprio causa
+   o salto de layout que existia para evitar */
+.skeleton {
+  background: var(--dim);
+  animation: prussian-pulse var(--duration-6) var(--ease-standard) infinite alternate;
+}
+.skeleton-line {
+  height: var(--space-12);
+  border-radius: var(--radius-mark);
+}
+.skeleton-line + .skeleton-line { margin-top: var(--space-10); }
+
+/* ---------- sobreposicao ----------
+
+   O scroll de um painel sobreposto para nele: sem contain, o dedo
+   continua rolando a pagina atras quando o painel chega ao fim. */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  padding: var(--space-24);
+  background-image: var(--glass-fill-deep);
+  backdrop-filter: blur(var(--blur-pill)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--blur-pill)) saturate(var(--glass-saturate));
+}
+
+.modal, .drawer {
+  overscroll-behavior: contain;
+  max-height: 100%;
+  overflow: auto;
+}
+
+/* arrasto: nada de selecao de texto, e o elemento arrastado sai da
+   arvore de eventos ate o gesto terminar */
+[data-dragging] {
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: grabbing;
+}
+[data-dragging] [inert] { pointer-events: none; }
+
+/* dica: a primeira espera, as vizinhas do mesmo grupo entram na hora */
+.tip { position: relative; }
+.tip [role="tooltip"] {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--duration-2) var(--ease-standard);
+  transition-delay: var(--duration-6);
+}
+.tip:hover [role="tooltip"],
+.tip:focus-within [role="tooltip"] { opacity: 1; }
+
+/* o grupo fica quente enquanto uma dica dele acabou de abrir; ate esfriar,
+   as vizinhas entram sem espera. Quem marca data-warm e o script. */
+.tip-group[data-warm="true"] .tip [role="tooltip"] { transition-delay: 0ms; }
+
+/* ---------- acesso ----------
+
+   Nome acessivel existe mesmo quando o desenho dispensa rotulo. E a
+   primeira parada do teclado pula a navegacao e vai para o conteudo. */
+
+.sr-only {
+  position: absolute;
+  width: var(--hairline);
+  height: var(--hairline);
+  padding: 0;
+  margin: calc(var(--hairline) * -1);
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: fixed;
+  top: var(--space-8);
+  left: var(--space-8);
+  z-index: 100;
+  transform: translateY(calc(-100% - var(--space-16)));
+  transition: transform var(--duration-4) var(--ease-out-expo);
+}
+.skip-link:focus-visible { transform: translateY(0); }
+
 /* movimento */
+
+@keyframes prussian-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes prussian-pulse {
+  from { opacity: 1; }
+  to   { opacity: 0.55; }
+}
 
 @keyframes prussian-fade-up {
   from { opacity: 0; transform: translateY(var(--space-12)); }
@@ -649,5 +1007,18 @@ dl, dd { margin: 0; }
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+
+  /* carga e esqueleto sao excecao declarada: eles nao decoram, informam.
+     A rotacao vira pulso de opacidade, que nao desloca nada na tela. */
+  [data-loading="true"]::before {
+    border-top-color: currentColor;
+    animation: prussian-pulse var(--duration-6) var(--ease-standard) infinite alternate !important;
+    animation-duration: var(--duration-6) !important;
+    animation-iteration-count: infinite !important;
+  }
+  .skeleton {
+    animation-duration: var(--duration-6) !important;
+    animation-iteration-count: infinite !important;
   }
 }

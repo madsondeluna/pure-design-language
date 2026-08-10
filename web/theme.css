@@ -92,6 +92,14 @@
   --spacing-80: var(--space-80);
   --spacing-96: var(--space-96);
 
+  /* o papel vem primeiro: rounded-surface, rounded-field, rounded-media,
+     rounded-control. A escala numérica fica para componente importado. */
+  --radius-surface: var(--radius-surface);
+  --radius-field: var(--radius-field);
+  --radius-media: var(--radius-media);
+  --radius-control: var(--radius-control);
+  --radius-mark: var(--radius-mark);
+
   --radius-0: var(--radius-0);
   --radius-2: var(--radius-2);
   --radius-4: var(--radius-4);
@@ -118,6 +126,14 @@
   --animate-duration-4: var(--duration-4);
   --animate-duration-5: var(--duration-5);
   --animate-duration-6: var(--duration-6);
+
+  /* interacao: alvo, foco, campo e ancora viram min-w-hit, size-field,
+     text-field e scroll-mt-anchor */
+  --spacing-hit: var(--hit-min);
+  --spacing-hit-touch: var(--hit-min-touch);
+  --spacing-field: var(--field-height);
+  --spacing-anchor: var(--scroll-offset);
+  --text-field: var(--text-field);
 
   --container-sm: var(--container-sm);
   --container-md: var(--container-md);

@@ -221,8 +221,18 @@
   --space-80: 80px;
   --space-96: 96px;
 
-  /* raio: a linguagem so usa 0 para superficies e full para controles.
-     2 a 16 existem para midia, popovers e casos importados. */
+  /* raio por PAPEL, nao por gosto. Nada na linguagem e de canto vivo:
+     superficie 12, campo e midia 8, controle full. A escada e concentrica,
+     o filho nunca passa do pai. A escala numerica continua abaixo para
+     componente importado, e --radius-0 so sobrevive para esse caso. */
+  --radius-surface: var(--radius-12);
+  --radius-field:   var(--radius-8);
+  --radius-media:   var(--radius-8);
+  --radius-control: var(--radius-full);
+  /* marca: caixa nativa de checkbox e barra de esqueleto, pequenas
+     demais para o passo de campo */
+  --radius-mark:    var(--radius-4);
+
   --radius-0: 0;
   --radius-2: 2px;
   --radius-4: 4px;
@@ -274,12 +284,37 @@
   --hairline: 1px;
   --photo-sm: 96px;
   --control-lg: 2.75rem;
+
+  /* interacao: alvo, foco, campo e ancora.
+     hit-min e o piso de area clicavel; o tamanho VISUAL pode ficar
+     abaixo dele, a area nao. Em ponteiro grosso o piso sobe para 44.
+     text-field e 16px de proposito: abaixo disso o iOS da zoom no
+     campo ao receber foco, e a pagina inteira sai de escala. */
+  --hit-min: 24px;
+  --hit-min-touch: 44px;
+  --focus-ring: 2px;
+  --focus-offset: 2px;
+  /* espessura de traco desenhado: anel do spinner, marca de checkbox */
+  --stroke: 2px;
+  --field-height: 40px;
+  --field-height-touch: 44px;
+  --text-field: 1rem;
+  /* altura da barra fixa + folga, usada por scroll-margin-top em ancora */
+  --scroll-offset: 88px;
+  /* o realce nativo de toque some: o :active da linguagem o substitui */
+  --tap-highlight: transparent;
+
+  /* o navegador precisa saber o modo para pintar scrollbar, caret,
+     controle nativo e a moldura da janela */
+  color-scheme: light;
 }
 
 /* ---------- paper-like ----------
    Superficie quente, mesma tinta e mesma estrutura do modo claro.
    Para leitura longa, material impresso e pagina de texto. */
 :root.paper-like {
+  color-scheme: light;
+
   --bg:                  var(--paper-50);
   --surface:             var(--paper-100);
   --surface-hover:       var(--paper-150);
@@ -299,6 +334,8 @@
    Era o modo chamado de dark ate a versao 1.1. Quem migra do site
    madsondeluna.github.io quer este, nao o dark neutro. */
 :root.deep-blue {
+  color-scheme: dark;
+
   --bg:                  var(--slate-950);
   --surface:             var(--slate-850);
   --surface-hover:       var(--slate-820);
@@ -382,6 +419,8 @@
    Todo par semantico aqui abre mais contraste que no deep-blue: muted
    sobe de 5,37 para 7,15 e secondary deixa de ser so decoracao. */
 :root.dark {
+  color-scheme: dark;
+
   --bg:                  var(--graphite-950);
   --surface:             var(--graphite-850);
   --surface-hover:       var(--graphite-820);

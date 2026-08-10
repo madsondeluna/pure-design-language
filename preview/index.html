@@ -3,7 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Prussian — visual blueprint</title>
+<!-- a moldura do navegador acompanha o fundo do modo; o script reescreve na troca -->
+<meta name="theme-color" content="#F4F6F9">
+<title>Prussian: visual blueprint</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&family=Cormorant+Garamond:wght@300;400&display=swap" rel="stylesheet">
@@ -63,7 +65,9 @@
 .nav .sig { font-family: var(--font-mono); font-size: var(--text-12);
             letter-spacing: var(--tracking-wide); color: var(--text); }
 .nav .sig span { color: var(--secondary); }
-.nav .links { display: flex; gap: var(--space-20); margin-left: auto; }
+/* os links seguem a assinatura pela esquerda; quem vai para a borda
+   direita e o seletor de modo */
+.nav .links { display: flex; gap: var(--space-20); }
 .nav .links a { position: relative; font-family: var(--font-mono); font-size: var(--text-12);
                 letter-spacing: var(--tracking-wide); color: var(--secondary);
                 padding-bottom: var(--space-4);
@@ -74,7 +78,7 @@
                        transition: transform var(--duration-4) var(--ease-out-expo); }
 .nav .links a:hover, .nav .links a[aria-current="true"] { color: var(--text); }
 .nav .links a:hover::after, .nav .links a[aria-current="true"]::after { transform: scaleX(1); }
-.nav .modes { display: flex; gap: var(--space-6); margin-left: var(--space-32); }
+.nav .modes { display: flex; gap: var(--space-6); margin-left: auto; }
 
 /* o seletor de modo usa o mesmo material das pílulas */
 .mode-btn { font-family: var(--font-mono); font-size: var(--text-12); color: var(--muted);
@@ -145,7 +149,8 @@ h3.block-title { font-size: var(--text-18); color: var(--text);
 
 /* rampa: uma faixa contínua, rótulo dentro, clique copia o token */
 .ramp { display: grid; grid-template-columns: repeat(15, 1fr);
-        border: var(--hairline) solid var(--border); }
+        border: var(--hairline) solid var(--border);
+        border-radius: var(--radius-surface); overflow: hidden; }
 .ramp button { position: relative; height: 96px; border: 0; padding: 0; cursor: copy;
                display: block; width: 100%; }
 .ramp button span { position: absolute; left: 0; right: 0; bottom: var(--space-8);
@@ -162,6 +167,7 @@ h3.block-title { font-size: var(--text-18); color: var(--text);
 .swatch { display: flex; flex-direction: column; gap: var(--space-8); cursor: copy;
           border: 0; background: transparent; padding: 0; text-align: left; }
 .swatch .chip { height: 72px; border: var(--hairline) solid var(--border);
+                border-radius: var(--radius-field);
                 transition: transform var(--duration-3) var(--ease-swift); }
 .swatch:hover .chip { transform: translateY(-2px); }
 .swatch .n { font-family: var(--font-mono); font-size: var(--text-12); color: var(--text); display: inline-grid; place-items: center; text-align: center; }
@@ -180,7 +186,10 @@ h3.block-title { font-size: var(--text-18); color: var(--text);
 .table td { padding: var(--space-12) var(--space-16) var(--space-12) 0;
             border-bottom: var(--hairline) solid var(--border); color: var(--muted);
             vertical-align: top; }
-.table td.mono { font-family: var(--font-mono); font-size: var(--text-12); color: var(--text); display: inline-grid; place-items: center; text-align: center; }
+/* a célula mono continua sendo célula: inline-grid a tira do fluxo da
+   tabela, e em coluna estreita ela passa por cima da vizinha */
+.table td.mono { font-family: var(--font-mono); font-size: var(--text-12);
+                 color: var(--text); text-align: left; white-space: nowrap; }
 .table td b { color: var(--text); font-weight: var(--weight-regular);
               font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
 .table tr { transition: background var(--duration-2) var(--ease-standard); }
@@ -196,6 +205,7 @@ h3.block-title { font-size: var(--text-18); color: var(--text);
                     white-space: nowrap; }
 
 .specimen { padding: var(--space-32); border: var(--hairline) solid var(--border);
+            border-radius: var(--radius-surface);
             background: var(--surface); display: flex; flex-direction: column;
             gap: var(--space-16); }
 .specimen .glyphs { font-size: var(--text-56); line-height: 1; color: var(--text); }
@@ -213,7 +223,9 @@ h3.block-title { font-size: var(--text-18); color: var(--text);
 .shape-row { display: flex; gap: var(--space-24); align-items: flex-end; flex-wrap: wrap; }
 .shape { display: flex; flex-direction: column; gap: var(--space-10); align-items: center; }
 .shape .box { width: 72px; height: 72px; background: var(--surface);
-              border: var(--hairline) solid var(--border); }
+              border: var(--hairline) solid var(--border);
+              border-radius: var(--radius-surface); }
+.space-row .bar { border-radius: var(--radius-4); }
 .shape .k { font-family: var(--font-mono); font-size: var(--text-11); color: var(--secondary); }
 
 /* movimento */
@@ -223,10 +235,13 @@ h3.block-title { font-size: var(--text-18); color: var(--text);
 .motion-row .k { font-family: var(--font-mono); font-size: var(--text-12); color: var(--text); display: inline-grid; place-items: center; text-align: center; }
 .motion-row .use { font-family: var(--font-mono); font-size: var(--text-11);
                    color: var(--secondary); text-align: right; }
-.lane { position: relative; height: var(--hairline); background: var(--border); }
+.lane { position: relative; height: var(--hairline); background: var(--border);
+        container-type: inline-size; }
 .lane .dot { position: absolute; top: -6px; left: 0; width: 13px; height: 13px;
              border-radius: var(--radius-circle); background: var(--accent); }
-.lane.run .dot { left: calc(100% - 13px); }
+/* o ponto anda em transform, nunca em left: so transform e opacity
+   sao compostos fora da thread principal */
+.lane.run .dot { transform: translateX(calc(100cqw - 13px)); }
 
 /* componentes */
 .demo-block { display: flex; flex-direction: column; gap: var(--space-16);
@@ -235,13 +250,110 @@ h3.block-title { font-size: var(--text-18); color: var(--text);
                  letter-spacing: var(--tracking-eyebrow); color: var(--secondary); }
 .demo-row { display: flex; gap: var(--space-8); flex-wrap: wrap; align-items: center; }
 
+/* a célula da grade não arredonda sozinha: o raio é da grade, e o
+   overflow dela recorta as quatro pontas. Arredondar a célula abriria
+   entalhes na cor da borda em cada canto interno. */
 .card-demo { background: var(--surface); padding: var(--space-20);
              display: flex; flex-direction: column; gap: var(--space-10); min-height: 148px; }
 .card-demo .t { font-size: var(--text-15); color: var(--text); }
 .card-demo .d { font-size: var(--text-13); color: var(--muted); }
 
+/* ---------- ofício ----------
+   Três níveis, e a palavra é o sinal: a cor sozinha nunca carrega o
+   significado. Must quebra o build, should é o padrão e sair dele
+   precisa de motivo escrito, never não tem exceção. */
+
+.lvl { font-family: var(--font-mono); font-size: var(--text-11);
+       letter-spacing: var(--tracking-wide); white-space: nowrap; }
+.lvl-must   { color: var(--text); }
+.lvl-should { color: var(--muted); }
+.lvl-never  { color: var(--status-critical); }
+
+/* a tabela base dá a coluna larga para a última célula, porque lá a
+   prosa fica no fim. Aqui a prosa é a primeira coluna: nível e vínculo
+   são curtos e não devem quebrar. */
+/* conteúdo largo rola dentro da própria caixa: o corpo da página nunca
+   ganha barra horizontal por causa de uma tabela */
+.table-scroll { overflow-x: auto; overscroll-behavior-x: contain; }
+.table-scroll .table { min-width: 34rem; }
+
+.table-rules th:first-child, .table-rules td:first-child { width: auto; }
+.table-rules th:not(:first-child), .table-rules td:not(:first-child) { width: 1%; white-space: nowrap; }
+.table-rules td:first-child { color: var(--text); padding-right: var(--space-32); }
+/* prosa em 13, nível e vínculo em 12 mono: alinhados pelo topo cada um
+   cairia numa linha de base própria. Baseline amarra os três na mesma. */
+.table-rules td { vertical-align: baseline; }
+.table-rules .lvl { font-size: var(--text-12); }
+
+/* controle menor que o piso de alvo: 16px de desenho, 24px de área */
+.dot-btn { width: 16px; height: 16px; padding: 0; flex-shrink: 0;
+           border: var(--hairline) solid var(--border-hover);
+           border-radius: var(--radius-circle); background: var(--surface);
+           cursor: pointer; display: inline-grid; place-items: center;
+           transition: background var(--duration-3) var(--ease-standard),
+                       border-color var(--duration-3) var(--ease-standard); }
+.dot-btn:hover { background: var(--surface-hover); border-color: var(--text); }
+.dot-mark { width: var(--space-6); height: var(--space-6);
+            border-radius: var(--radius-circle); background: var(--muted); }
+
+/* o grupo de dicas precisa gerar caixa: pointerleave não borbulha, e com
+   display: contents o grupo nunca esfriaria */
+.tip-group { display: inline-flex; align-items: center; gap: var(--space-8); }
+
+.craft-box { border: var(--hairline) solid var(--border); background: var(--surface);
+             border-radius: var(--radius-surface);
+             padding: var(--space-24); display: flex; flex-direction: column;
+             gap: var(--space-16); min-width: 0; }
+.craft-box .k { font-family: var(--font-mono); font-size: var(--text-12);
+                letter-spacing: var(--tracking-eyebrow); color: var(--secondary); }
+.craft-box .note { color: var(--muted); }
+
+/* o alvo é invisível por definição; o interruptor o revela */
+.show-hit .hit::after { outline: var(--hairline) dashed var(--accent); }
+
+/* resiliência a conteúdo: curto, médio e longo demais, lado a lado */
+.res-grid { display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: var(--hairline); background: var(--border);
+            border-radius: var(--radius-surface); overflow: hidden; }
+.res-grid > div { background: var(--bg); padding: var(--space-16);
+                  display: flex; gap: var(--space-12); min-width: 0; }
+.res-grid .who { font-family: var(--font-mono); font-size: var(--text-11);
+                 color: var(--secondary); flex-shrink: 0; }
+.res-grid .what { font-size: var(--text-13); color: var(--text); min-width: 0; }
+
+/* estados: vazio, carregando e erro são três desenhos, não um */
+.state-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-24); }
+.state-grid > div { display: flex; flex-direction: column; gap: var(--space-12); }
+.state-grid .k { font-family: var(--font-mono); font-size: var(--text-12);
+                 letter-spacing: var(--tracking-eyebrow); color: var(--secondary); }
+.state-card { border: var(--hairline) solid var(--border); background: var(--surface);
+              border-radius: var(--radius-surface);
+              padding: var(--space-16); min-height: 132px;
+              display: flex; flex-direction: column; gap: var(--space-10); }
+
+/* o esqueleto copia a caixa final: mesma altura de linha, mesma largura */
+.skeleton { border-radius: var(--radius-4); }
+.sk-title { width: 55%; height: var(--text-15); }
+.sk-line  { width: 100%; height: var(--text-12); }
+.sk-short { width: 72%; height: var(--text-12); }
+
+.craft-form { display: flex; flex-direction: column; gap: var(--space-16); }
+.craft-form .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-16); }
+
+/* a dica espera na primeira, e entra na hora nas vizinhas do grupo */
+.tip [role="tooltip"] { position: absolute; bottom: calc(100% + var(--space-8)); left: 50%;
+                        transform: translateX(-50%); white-space: nowrap;
+                        padding: var(--space-6) var(--space-10);
+                        font-family: var(--font-mono); font-size: var(--text-11);
+                        color: var(--text); border-radius: var(--radius-full);
+                        background-image: var(--glass-fill);
+                        border: var(--hairline) solid var(--glass-edge);
+                        backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+                        -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+                        box-shadow: var(--shadow-glass-rest); }
+
 /* toast de cópia */
-.toast { position: fixed; left: 50%; bottom: var(--space-32); transform: translate(-50%, 16px);
+.toast { position: fixed; left: 50%; bottom: var(--space-80); transform: translate(-50%, 16px);
          padding: var(--space-8) var(--space-16); background: var(--text); color: var(--bg);
          font-family: var(--font-mono); font-size: var(--text-12);
          border-radius: var(--radius-full); opacity: 0; pointer-events: none; z-index: 70;
@@ -249,12 +361,23 @@ h3.block-title { font-size: var(--text-18); color: var(--text);
                      transform var(--duration-4) var(--ease-out-expo); }
 .toast.on { opacity: 1; transform: translate(-50%, 0); }
 
-/* rodapé */
-.colophon { display: flex; justify-content: space-between; gap: var(--space-16);
-            flex-wrap: wrap; padding-top: var(--space-24);
-            border-top: var(--hairline) solid var(--border);
-            font-family: var(--font-mono); font-size: var(--text-12);
-            color: var(--secondary); letter-spacing: var(--tracking-wide); }
+/* rodapé: mesma barra da navegação, ancorada embaixo */
+.foot { position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
+        background: var(--surface-glass);
+        backdrop-filter: blur(var(--blur-card)) saturate(var(--blur-saturate));
+        -webkit-backdrop-filter: blur(var(--blur-card)) saturate(var(--blur-saturate));
+        border-top: var(--hairline) solid var(--border); }
+.foot-in { max-width: var(--container-xl); margin: 0 auto;
+           padding: var(--space-16) var(--space-32); display: flex;
+           align-items: center; gap: var(--space-16);
+           font-family: var(--font-mono); font-size: var(--text-12);
+           letter-spacing: var(--tracking-wide); color: var(--secondary); }
+.foot .sig { margin-left: auto; color: var(--text); }
+.foot .sig span { color: var(--secondary); }
+
+/* a barra de baixo é fixa: o conteúdo precisa de fôlego para não passar
+   por baixo dela, e o toast sobe acima do rodapé */
+body { padding-bottom: var(--space-96); }
 
 @media (max-width: 1080px) {
   .shell { padding: 0 var(--space-24); }
@@ -270,17 +393,18 @@ h3.block-title { font-size: var(--text-18); color: var(--text);
   .swatches { grid-template-columns: repeat(2, 1fr); }
   .ramp { grid-template-columns: repeat(5, 1fr); }
   .type-row { grid-template-columns: 1fr; gap: var(--space-6); }
+  .res-grid, .state-grid, .craft-form .row2 { grid-template-columns: 1fr; }
 }
 </style>
 </head>
 <body>
 
+<a class="skip-link pill" href="#main">Skip to content</a>
 <div class="progress" id="progress"></div>
 <div class="toast" id="toast">Copied</div>
 
 <nav class="nav">
   <div class="nav-in">
-    <span class="sig">Prussian <span>1.1.0</span></span>
     <div class="links">
       <a href="#color" data-spy="color">Color</a>
       <a href="#data" data-spy="data">Data</a>
@@ -288,6 +412,7 @@ h3.block-title { font-size: var(--text-18); color: var(--text);
       <a href="#form" data-spy="form">Form</a>
       <a href="#glass" data-spy="glass">Glass</a>
       <a href="#motion" data-spy="motion">Motion</a>
+      <a href="#craft" data-spy="craft">Craft</a>
       <a href="#components" data-spy="components">Components</a>
       <a href="#use" data-spy="use">Use</a>
     </div>
@@ -300,13 +425,13 @@ h3.block-title { font-size: var(--text-18); color: var(--text);
   </div>
 </nav>
 
-<div class="shell">
+<div class="shell" id="main" tabindex="-1">
 
   <!-- ============ abertura ============ -->
   <header class="band" style="padding-top: 152px">
     <div class="grid">
       <span class="label axis-a rv">Visual blueprint</span>
-      <span class="label axis-b rv" style="--d: 40ms">Version 1.1.0</span>
+      <span class="label axis-b rv" style="--d: 40ms">Version 1.2.0</span>
       <h1 class="hero-title axis-a-wide optical rv step-1" style="--d: 80ms">The whole<br>system, on<br>one page</h1>
       <p class="lede axis-a rv step-2" style="--d: 140ms">Every token, every component and every
       motion curve available in Prussian, rendered live in all four modes. Click any colour to
@@ -497,7 +622,7 @@ h3.block-title { font-size: var(--text-18); color: var(--text);
   <section id="form" class="band">
     <div class="grid">
       <span class="label axis-a rv">04 <b>· Space and form</b></span>
-      <h2 class="section-title axis-a-wide optical rv step-1" style="--d: 60ms">Radius is a rule,<br>not a taste</h2>
+      <h2 class="section-title axis-a-wide optical rv step-1" style="--d: 60ms">Radius follows<br>the role</h2>
     </div>
 
     <div class="grid step-2">
@@ -506,11 +631,13 @@ h3.block-title { font-size: var(--text-18); color: var(--text);
         <div id="spacescale"></div>
       </div>
       <aside class="aside-note axis-b rv" style="--d: 60ms">
-        <h4>Three decisions, no fourth</h4>
-        <p>Surfaces take radius zero: card, panel, grid cell, form field, table. Separation
-        comes from the one-pixel rule, not from a rounded corner.</p>
-        <p>Controls take full radius: button, chip, tag, pill. Media takes radius 8. The
-        intermediate steps exist only to approximate imported components.</p>
+        <h4>The role decides</h4>
+        <p>Surface takes 12: card, panel, grid cell, sheet, state box. Field takes 8, and so does
+        media. Control takes full: button, chip, tag, pill. Mark takes 4, for the native checkbox
+        box and the skeleton bar. Nothing in the language has a live corner.</p>
+        <p>The ladder is concentric, so a child never rounds harder than its parent: a field at 8
+        inside a card at 12 reads as one object. The numeric steps survive in the scale for an
+        imported component and for nothing else.</p>
       </aside>
     </div>
 
@@ -518,9 +645,11 @@ h3.block-title { font-size: var(--text-18); color: var(--text);
       <span class="label axis-a rv">Shape</span>
       <div class="axis-a-wide step-1 rv">
         <div class="shape-row">
-          <div class="shape"><div class="box"></div><span class="k">radius-0 · surface</span></div>
-          <div class="shape"><div class="box" style="border-radius: var(--radius-8)"></div><span class="k">radius-8 · media</span></div>
-          <div class="shape"><div class="box" style="border-radius: var(--radius-full); width: 132px; height: 40px"></div><span class="k">radius-full · control</span></div>
+          <div class="shape"><div class="box" style="border-radius: var(--radius-surface)"></div><span class="k">radius-surface · 12</span></div>
+          <div class="shape"><div class="box" style="border-radius: var(--radius-field)"></div><span class="k">radius-field · 8</span></div>
+          <div class="shape"><div class="box" style="border-radius: var(--radius-media)"></div><span class="k">radius-media · 8</span></div>
+          <div class="shape"><div class="box" style="border-radius: var(--radius-control); width: 132px; height: 40px"></div><span class="k">radius-control · full</span></div>
+          <div class="shape"><div class="box" style="border-radius: var(--radius-mark); width: 40px; height: 40px"></div><span class="k">radius-mark · 4</span></div>
           <div class="shape"><div class="box" style="border-radius: var(--radius-circle)"></div><span class="k">radius-circle · avatar</span></div>
         </div>
       </div>
@@ -529,7 +658,7 @@ h3.block-title { font-size: var(--text-18); color: var(--text);
     <div class="grid step-3">
       <span class="label axis-a rv">Hairline grid <b>· the cells have no border of their own</b></span>
       <div class="bleed step-1 rv">
-        <div class="hairline-grid" style="grid-template-columns: repeat(4, 1fr); border: var(--hairline) solid var(--border)">
+        <div class="hairline-grid" style="grid-template-columns: repeat(4, 1fr); border: var(--hairline) solid var(--border); border-radius: var(--radius-surface); overflow: hidden">
           <div class="card-demo hover-surface">
             <span class="eyebrow">Surface</span>
             <span class="t">Grid cell</span>
@@ -543,7 +672,7 @@ h3.block-title { font-size: var(--text-18); color: var(--text);
           <div class="card-demo hover-surface">
             <span class="eyebrow">Surface</span>
             <span class="t">Grid cell</span>
-            <span class="d">Radius zero, always</span>
+            <span class="d">The cell rounds at the surface step</span>
           </div>
           <div class="card-demo hover-surface">
             <span class="eyebrow">Surface</span>
@@ -596,15 +725,15 @@ h3.block-title { font-size: var(--text-18); color: var(--text);
           <span class="glass glass-lift glass-accent glass-round pill">Tinted</span>
         </div>
         <div class="stage-content" style="padding-top: 0">
-          <span class="glass glass-lift glass-frost glass-sq" style="padding: var(--space-16) var(--space-24); font-family: var(--font-mono); font-size: var(--text-12); color: var(--text); display: inline-grid; place-items: center; text-align: center">Radius 0</span>
-          <span class="glass glass-lift glass-frost glass-soft" style="padding: var(--space-16) var(--space-24); font-family: var(--font-mono); font-size: var(--text-12); color: var(--text); display: inline-grid; place-items: center; text-align: center">Radius 8</span>
-          <span class="glass glass-lift glass-frost glass-round" style="padding: var(--space-16) var(--space-24); font-family: var(--font-mono); font-size: var(--text-12); color: var(--text); display: inline-grid; place-items: center; text-align: center">Radius full</span>
+          <span class="glass glass-lift glass-frost glass-sq" style="padding: var(--space-16) var(--space-24); font-family: var(--font-mono); font-size: var(--text-12); color: var(--text); display: inline-grid; place-items: center; text-align: center">Surface 12</span>
+          <span class="glass glass-lift glass-frost glass-soft" style="padding: var(--space-16) var(--space-24); font-family: var(--font-mono); font-size: var(--text-12); color: var(--text); display: inline-grid; place-items: center; text-align: center">Media 8</span>
+          <span class="glass glass-lift glass-frost glass-round" style="padding: var(--space-16) var(--space-24); font-family: var(--font-mono); font-size: var(--text-12); color: var(--text); display: inline-grid; place-items: center; text-align: center">Control full</span>
           <span class="glass glass-lift glass-frost glass-circle" style="display: grid; place-items: center; width: 56px; font-family: var(--font-mono); font-size: var(--text-12); color: var(--text); display: inline-grid; place-items: center; text-align: center">56</span>
         </div>
         <div class="stage-readout" id="stage-readout">
           <span class="name">Hover a sample</span>
-          <div class="row"><span>blur</span><span>—</span></div>
-          <div class="row"><span>fill</span><span>—</span></div>
+          <div class="row"><span>blur</span><span>n/a</span></div>
+          <div class="row"><span>fill</span><span>n/a</span></div>
         </div>
         <div class="stage-content" style="padding-top: 0; align-items: flex-start">
           <div class="glass glass-lift glass-frost glass-soft glass-panel" style="grid-template-columns: repeat(4, 1fr); min-width: 320px">
@@ -650,7 +779,7 @@ h3.block-title { font-size: var(--text-18); color: var(--text);
   <!-- ============ movimento ============ -->
   <section id="motion" class="band">
     <div class="grid">
-      <span class="label axis-a rv">05 <b>· Motion</b></span>
+      <span class="label axis-a rv">06 <b>· Motion</b></span>
       <h2 class="section-title axis-a-wide optical rv step-1" style="--d: 60ms">Five curves,<br>each with a job</h2>
     </div>
 
@@ -689,10 +818,403 @@ h3.block-title { font-size: var(--text-18); color: var(--text);
 
   <div class="grid"><div class="rule"></div></div>
 
+  <!-- ============ ofício ============ -->
+  <section id="craft" class="band">
+    <div class="grid">
+      <span class="label axis-a rv">07 <b>· Craft</b></span>
+      <h2 class="section-title axis-a-wide optical rv step-1">Rules the build<br>has to pass</h2>
+    </div>
+
+    <div class="grid step-2">
+      <div class="body axis-a rv">
+        <p>Everything before this section is material: colour, type, space, glass, motion. This one
+        is behaviour. It is the part no screenshot shows and every user meets in the first ten
+        seconds: whether the keyboard reaches the control, whether the tap lands, whether the form
+        hands the error back before the round trip or after it.</p>
+        <p>Three levels. Must fails the build or the review. Should is the default, and leaving it
+        needs a written reason. Never has no exception.</p>
+      </div>
+      <aside class="aside-note axis-b rv" style="--d: 60ms">
+        <h4>Five of these are script checked</h4>
+        <p>Colour scheme declared in all four modes, no transition curtain over every property,
+        nothing animating a layout property, the interaction tokens agreeing between tokens.json and
+        tokens.css, and a focus ring that exists.</p>
+        <p>The rest are read by a person. The table names the class or token that already
+        implements the rule, so the answer is import it, not write it again.</p>
+      </aside>
+    </div>
+
+    <div class="grid step-3">
+      <span class="label axis-a rv">Keyboard and focus</span>
+      <div class="axis-a-chart step-1 rv">
+        <div class="table-scroll">
+          <table class="table table-rules">
+          <thead><tr><th>Rule</th><th>Level</th><th>Bound to</th></tr></thead>
+          <tbody>
+            <tr><td>Every interactive element is reachable and operable from the keyboard, following the authoring practice for its pattern</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">native semantics</td></tr>
+            <tr><td>The focus ring is visible on <span class="mono">:focus-visible</span>, and the group lights up on <span class="mono">:focus-within</span></td><td><span class="lvl lvl-must">Must</span></td><td class="mono">--focus-ring</td></tr>
+            <tr><td>Focus is managed on open, close and delete: trapped inside the panel, returned to the control that opened it</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">.modal .overlay</td></tr>
+            <tr><td>The outline is removed without a visible replacement</td><td><span class="lvl lvl-never">Never</span></td><td class="mono">check.mjs</td></tr>
+            <tr><td>Over glass the ring switches to the ink colour, for the same reason the text does: the backdrop is unpredictable</td><td><span class="lvl lvl-should">Should</span></td><td class="mono">.glass:focus-visible</td></tr>
+          </tbody>
+        </table>
+          </div>
+      </div>
+    </div>
+
+    <div class="grid step-3">
+      <span class="label axis-a rv">Target and input</span>
+      <div class="axis-a-chart step-1 rv">
+        <div class="table-scroll">
+          <table class="table table-rules">
+          <thead><tr><th>Rule</th><th>Level</th><th>Bound to</th></tr></thead>
+          <tbody>
+            <tr><td>The hit area clears 24px, and 44px under a coarse pointer</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">--hit-min</td></tr>
+            <tr><td>The visual size may go under that floor. The hit area may not</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">.hit</td></tr>
+            <tr><td>A text field is 16px, the single exception to one size per control class: below it iOS zooms the page on focus</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">--text-field</td></tr>
+            <tr><td>Browser zoom is disabled through <span class="mono">user-scalable</span> or <span class="mono">maximum-scale</span></td><td><span class="lvl lvl-never">Never</span></td><td class="mono">viewport</td></tr>
+            <tr><td>The double tap delay is removed, so the first tap acts immediately</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">touch-action</td></tr>
+            <tr><td>The grey native tap flash is replaced by the language&rsquo;s own pressed state</td><td><span class="lvl lvl-should">Should</span></td><td class="mono">--tap-highlight</td></tr>
+          </tbody>
+        </table>
+          </div>
+      </div>
+      <aside class="aside-note axis-b rv" style="--d: 60ms">
+        <h4>Why the area is not the box</h4>
+        <p>A small pill reads better at 20px than at 24px, and a finger still misses it. The
+        pseudo-element takes the floor without touching the drawing, so the two decisions stay
+        separate.</p>
+      </aside>
+    </div>
+
+    <div class="grid step-2">
+      <div class="craft-box bleed rv">
+        <span class="k">Live: focus and target</span>
+        <div class="demo-row">
+          <button class="pill hit" type="button">Tab reaches this</button>
+          <button class="pill pill-sm hit" type="button">Small, still 24px</button>
+          <span class="tip-group">
+            <span class="tip"><button class="pill pill-sm hit" type="button">Waits</button><span role="tooltip">The first one waits</span></span>
+            <span class="tip"><button class="pill pill-sm hit" type="button">Instant</button><span role="tooltip">Its neighbour opens at once</span></span>
+          </span>
+          <button class="dot-btn hit" type="button" aria-label="Reset the sample row">
+            <span class="dot-mark" aria-hidden="true"></span>
+          </button>
+          <button class="pill hit" type="button" id="hit-toggle" aria-pressed="false">Show hit areas</button>
+        </div>
+        <p class="note">Press Tab. The ring appears from the keyboard and stays hidden from the
+        pointer, and it turns to ink over glass. The small round control is 16px of drawing and
+        24px of target: switch the outline on and its hit area shows up well outside the shape,
+        while the pills already clear the floor on their own. It carries no label, so it carries
+        an accessible name instead.</p>
+      </div>
+    </div>
+
+    <div class="grid step-3">
+      <span class="label axis-a rv">Forms</span>
+      <div class="axis-a-chart step-1 rv">
+        <div class="table-scroll">
+          <table class="table table-rules">
+          <thead><tr><th>Rule</th><th>Level</th><th>Bound to</th></tr></thead>
+          <tbody>
+            <tr><td>Paste is blocked in a field</td><td><span class="lvl lvl-never">Never</span></td><td class="mono">any field</td></tr>
+            <tr><td>Free text is accepted and validated after, never blocked while typing</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">.input</td></tr>
+            <tr><td>An incomplete form can be submitted, so validation surfaces instead of hiding</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">novalidate</td></tr>
+            <tr><td>The error sits next to its field, and focus moves to the first one</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">.field-error</td></tr>
+            <tr><td>Submit stays enabled until the request starts, then shows the ring and keeps its label</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">[data-loading]</td></tr>
+            <tr><td>Enter submits from a single line field; Cmd or Ctrl with Enter submits from a textarea</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">.textarea</td></tr>
+            <tr><td>Every field carries <span class="mono">autocomplete</span>, a meaningful name, and the right type and inputmode</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">.field</td></tr>
+            <tr><td>Label and control share one hit target, with no dead zone between the box and the text</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">.check</td></tr>
+            <tr><td>The checkbox rounds at the mark step as a field. Only the radio is a circle</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">.check input</td></tr>
+            <tr><td>Password managers and one time codes work, pasted codes included</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">autocomplete</td></tr>
+            <tr><td>Values are trimmed before they are read</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">submit handler</td></tr>
+            <tr><td>Unsaved changes warn before navigation</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">beforeunload</td></tr>
+            <tr><td>Spellcheck is off for email, code and username</td><td><span class="lvl lvl-should">Should</span></td><td class="mono">spellcheck</td></tr>
+            <tr><td>The placeholder shows the shape of the answer, and ends in an ellipsis when it is an instruction</td><td><span class="lvl lvl-should">Should</span></td><td class="mono">placeholder</td></tr>
+            <tr><td>Autofocus on desktop when there is a single primary field, rarely on mobile</td><td><span class="lvl lvl-should">Should</span></td><td class="mono">autofocus</td></tr>
+          </tbody>
+        </table>
+          </div>
+      </div>
+      <aside class="aside-note axis-b rv" style="--d: 60ms">
+        <h4>The field is a surface</h4>
+        <p>Radius 8, one hairline border, the surface tint behind it. The card around it rounds at
+        12, so the two stay concentric. The button next to the field is a control, so it goes to
+        full: three radii in one block are the rule working, not a clash.</p>
+        <p>Sixteen pixels in the field is the one place the size scale bends, and it bends for a
+        platform behaviour rather than for taste.</p>
+      </aside>
+    </div>
+
+    <div class="grid step-2">
+      <div class="craft-box rv" style="grid-column: 1 / 7">
+        <span class="k">Live: submit an empty form</span>
+        <form class="craft-form" id="demo-form" novalidate>
+          <div class="row2">
+            <div class="field">
+              <label class="field-label" for="cf-name">Full name</label>
+              <input class="input" id="cf-name" name="name" type="text" autocomplete="name" placeholder="Ada Lovelace">
+            </div>
+            <div class="field">
+              <label class="field-label" for="cf-mail">Email</label>
+              <input class="input" id="cf-mail" name="email" type="email" inputmode="email"
+                     autocomplete="email" spellcheck="false" placeholder="ada@example.org">
+            </div>
+          </div>
+          <div class="field">
+            <label class="field-label" for="cf-env">Environment</label>
+            <span class="select-shell">
+              <select class="select" id="cf-env" name="env">
+                <option>Local</option>
+                <option>Staging</option>
+                <option>Production</option>
+              </select>
+            </span>
+          </div>
+          <div class="field">
+            <label class="field-label" for="cf-note">Note</label>
+            <textarea class="textarea" id="cf-note" name="note" placeholder="Cmd and Enter submits…"></textarea>
+          </div>
+          <label class="check">
+            <input type="checkbox" name="verified">
+            <span>The verification script passed on this branch</span>
+          </label>
+          <div class="form-actions">
+            <button class="pill" type="submit" id="cf-send">Send</button>
+            <span class="note num" id="cf-status" role="status" aria-live="polite"></span>
+          </div>
+        </form>
+      </div>
+
+      <div class="craft-box rv" style="grid-column: 7 / 13; --d: 60ms">
+        <span class="k">What the demo proves</span>
+        <p class="note">Send it empty. Nothing was disabled, the browser did not take over, the two
+        errors land under their own fields and the caret goes to the first one. Fix them and send
+        again: the button keeps its label and grows a ring, and the result is announced to a screen
+        reader through a polite live region rather than only drawn.</p>
+        <p class="note">The textarea takes Cmd or Ctrl with Enter. The email field has its own
+        keyboard on a phone, its own autofill entry, and spellcheck off. Every value is trimmed
+        before it is read, which is what stops a pasted address with a trailing space from failing
+        validation for a reason nobody can see.</p>
+        <div class="demo-row">
+          <span class="status status-good">Trim on read</span>
+          <span class="status status-warning">Validate after typing</span>
+          <span class="status status-critical">Focus first error</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid step-3">
+      <span class="label axis-a rv">State, navigation and feedback</span>
+      <div class="axis-a-chart step-1 rv">
+        <div class="table-scroll">
+          <table class="table table-rules">
+          <thead><tr><th>Rule</th><th>Level</th><th>Bound to</th></tr></thead>
+          <tbody>
+            <tr><td>The URL carries the state: filter, tab, page, open panel, colour mode</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">history</td></tr>
+            <tr><td>Back and forward restore the scroll position</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">scrollRestoration</td></tr>
+            <tr><td>Navigation is an anchor, so modifier click and middle click still work</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">a href</td></tr>
+            <tr><td>A div with a click handler is used to navigate</td><td><span class="lvl lvl-never">Never</span></td><td class="mono">a href</td></tr>
+            <tr><td>A destructive action is confirmed, or reversible inside a stated window</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">.modal</td></tr>
+            <tr><td>A toast or an inline validation is announced through a polite live region</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">aria-live</td></tr>
+            <tr><td>Every state offers the next step. A dead end is a defect</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">.empty</td></tr>
+            <tr><td>An optimistic update reconciles on response, and rolls back or offers undo on failure</td><td><span class="lvl lvl-should">Should</span></td><td class="mono">app layer</td></tr>
+            <tr><td>An option that opens a follow up ends in an ellipsis, as does a loading label</td><td><span class="lvl lvl-should">Should</span></td><td class="mono">copy</td></tr>
+          </tbody>
+        </table>
+          </div>
+      </div>
+      <aside class="aside-note axis-b rv" style="--d: 60ms">
+        <h4>This page obeys its own rule</h4>
+        <p>Switch the colour mode and the address bar changes with it. Copy the address, open it in
+        another window, and the mode comes back. The browser frame colour follows the page
+        background at the same time.</p>
+      </aside>
+    </div>
+
+    <div class="grid step-3">
+      <span class="label axis-a rv">Motion, touch and drag</span>
+      <div class="axis-a-chart step-1 rv">
+        <div class="table-scroll">
+          <table class="table table-rules">
+          <thead><tr><th>Rule</th><th>Level</th><th>Bound to</th></tr></thead>
+          <tbody>
+            <tr><td>Reduced motion is honoured with a reduced variant, or with nothing at all</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">patterns.css</td></tr>
+            <tr><td>Only transform and opacity are animated, since only those are composited</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">check.mjs</td></tr>
+            <tr><td>A layout property is animated: top, left, width, height</td><td><span class="lvl lvl-never">Never</span></td><td class="mono">check.mjs</td></tr>
+            <tr><td>A transition covers every property at once instead of naming the ones it animates</td><td><span class="lvl lvl-never">Never</span></td><td class="mono">check.mjs</td></tr>
+            <tr><td>Motion is interruptible and driven by input. Nothing plays on its own</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">.viz</td></tr>
+            <tr><td>The transform origin sits where the movement physically starts</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">.viz-grow</td></tr>
+            <tr><td>An SVG transform goes on a group wrapper with <span class="mono">transform-box: fill-box</span></td><td><span class="lvl lvl-must">Must</span></td><td class="mono">svg g</td></tr>
+            <tr><td>A sheet or a drawer contains its own overscroll, so the page behind stays put</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">.drawer</td></tr>
+            <tr><td>The first tooltip in a group waits. Its neighbours open at once</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">.tip-group</td></tr>
+            <tr><td>During a drag, text selection is off and the dragged element leaves the event tree</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">[data-dragging]</td></tr>
+            <tr><td>CSS first, then the animation API, then a library</td><td><span class="lvl lvl-should">Should</span></td><td class="mono">five curves</td></tr>
+            <tr><td>The curve matches the size and distance of the change, and controls settle rather than jump</td><td><span class="lvl lvl-should">Should</span></td><td class="mono">--ease-out-soft</td></tr>
+          </tbody>
+        </table>
+          </div>
+      </div>
+    </div>
+
+    <div class="grid step-3">
+      <span class="label axis-a rv">Layout and content</span>
+      <div class="axis-a-chart step-1 rv">
+        <div class="table-scroll">
+          <table class="table table-rules">
+          <thead><tr><th>Rule</th><th>Level</th><th>Bound to</th></tr></thead>
+          <tbody>
+            <tr><td>Checked on mobile, on a laptop and on an ultra wide screen, the last one simulated at half zoom</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">two axes</td></tr>
+            <tr><td>Safe areas are respected on a notched screen</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">env(safe-area-inset)</td></tr>
+            <tr><td>No unwanted scrollbar. Overflow is fixed where it appears, not hidden</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">overflow</td></tr>
+            <tr><td>A text container survives short, average and far too long content</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">.truncate .clamp-2</td></tr>
+            <tr><td>A flex child gets min-width zero before it can truncate at all</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">.min-w-0</td></tr>
+            <tr><td>An empty string and an empty array render a state, not a broken box</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">.empty</td></tr>
+            <tr><td>Empty, sparse, dense and error are four designs</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">.empty .skeleton</td></tr>
+            <tr><td>The skeleton copies the box of the final content, so nothing shifts when it arrives</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">.skeleton-line</td></tr>
+            <tr><td>Contrast rises on hover, active and focus, never falls</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">--border-hover</td></tr>
+            <tr><td>Alignment is deliberate, to the grid, the baseline or an edge</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">.grid</td></tr>
+            <tr><td>Optical alignment wins over geometry when perception disagrees, by a pixel</td><td><span class="lvl lvl-should">Should</span></td><td class="mono">.optical</td></tr>
+            <tr><td>Grid and flex do the layout, not measurement in script</td><td><span class="lvl lvl-should">Should</span></td><td class="mono">.grid</td></tr>
+            <tr><td>A nested radius never exceeds its parent, and the two stay concentric</td><td><span class="lvl lvl-should">Should</span></td><td class="mono">--radius-8</td></tr>
+          </tbody>
+        </table>
+          </div>
+      </div>
+    </div>
+
+    <div class="grid step-2">
+      <div class="bleed rv">
+        <span class="label" style="margin-bottom: var(--space-16)">Live: the same row, three lengths</span>
+        <div class="res-grid">
+          <div><span class="who">short</span><span class="what truncate">Ada</span></div>
+          <div><span class="who">average</span><span class="what truncate">Ada Lovelace, analytical engine</span></div>
+          <div><span class="who">long</span><span class="what truncate">Ada Lovelace, notes on the analytical engine of Charles Babbage, with the first published algorithm</span></div>
+        </div>
+        <p class="note" style="margin-top: var(--space-16)">Three cells, one rule. The long one
+        truncates instead of pushing its neighbours out of the row, which only works because the
+        flex child carries min-width zero.</p>
+      </div>
+    </div>
+
+    <div class="grid step-3">
+      <span class="label axis-a rv">Empty, loading, error</span>
+      <div class="bleed step-1 rv">
+        <div class="state-grid">
+          <div>
+            <span class="k">Empty</span>
+            <div class="empty">
+              <span>No runs recorded on this branch</span>
+              <button class="pill pill-sm hit" type="button">Run the check</button>
+            </div>
+          </div>
+          <div>
+            <span class="k">Loading</span>
+            <div class="state-card">
+              <span class="skeleton sk-title"></span>
+              <span class="skeleton sk-line"></span>
+              <span class="skeleton sk-line"></span>
+              <span class="skeleton sk-short"></span>
+            </div>
+          </div>
+          <div>
+            <span class="k">Error</span>
+            <div class="state-card">
+              <span class="status status-critical">Palette check failed</span>
+              <span class="note">Slot 4 fell to delta-E 7.2 under deuteranopia, below the floor of 8.</span>
+              <div class="demo-row">
+                <button class="pill pill-sm hit" type="button">Retry</button>
+                <button class="pill pill-sm hit" type="button">Open the report</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid step-3">
+      <span class="label axis-a rv">Text and accessibility</span>
+      <div class="axis-a-chart step-1 rv">
+        <div class="table-scroll">
+          <table class="table table-rules">
+          <thead><tr><th>Rule</th><th>Level</th><th>Bound to</th></tr></thead>
+          <tbody>
+            <tr><td>The document title says where the reader is</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">title</td></tr>
+            <tr><td>Heading levels run in order, and the first stop of the keyboard skips to the content</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">.skip-link</td></tr>
+            <tr><td>Anything an anchor can land on clears the fixed bar</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">--scroll-offset</td></tr>
+            <tr><td>Numbers that will be compared use tabular figures</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">.num</td></tr>
+            <tr><td>Status carries a second cue beyond colour, and an icon carries a text label</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">.status</td></tr>
+            <tr><td>An icon only button carries a descriptive accessible name</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">.sr-only</td></tr>
+            <tr><td>A decorative element is hidden from the accessibility tree</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">aria-hidden</td></tr>
+            <tr><td>The native element comes before the ARIA role: button, a, label, table</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">semantics</td></tr>
+            <tr><td>The ellipsis is one character, and a non breaking space holds 10 MB and Cmd K together</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">copy</td></tr>
+            <tr><td>Dates, times and numbers are formatted for the reader&rsquo;s locale</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">Intl</td></tr>
+            <tr><td>Curly quotes, and a short heading balanced across its lines</td><td><span class="lvl lvl-should">Should</span></td><td class="mono">.balance</td></tr>
+            <tr><td>Brand names, tokens and identifiers are marked so machine translation leaves them alone</td><td><span class="lvl lvl-should">Should</span></td><td class="mono">translate="no"</td></tr>
+            <tr><td>Inline help comes first. The tooltip is the last resort</td><td><span class="lvl lvl-should">Should</span></td><td class="mono">.tip</td></tr>
+          </tbody>
+        </table>
+          </div>
+      </div>
+    </div>
+
+    <div class="grid step-3">
+      <span class="label axis-a rv">Delivery</span>
+      <div class="axis-a-chart step-1 rv">
+        <div class="table-scroll">
+          <table class="table table-rules">
+          <thead><tr><th>Rule</th><th>Level</th><th>Bound to</th></tr></thead>
+          <tbody>
+            <tr><td>The mode declares itself to the browser, so scrollbar, caret and native control follow the page</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">color-scheme</td></tr>
+            <tr><td>A native select carries an explicit background colour and text colour</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">.select</td></tr>
+            <tr><td>A mutation answers in under 500ms</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">app layer</td></tr>
+            <tr><td>A list past fifty items is virtualised</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">app layer</td></tr>
+            <tr><td>Images above the fold are preloaded, the rest are lazy, and all of them declare their size</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">img</td></tr>
+            <tr><td>Layout reads and writes are batched, so nothing reflows twice per frame</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">app layer</td></tr>
+            <tr><td>Profiling runs with CPU and network throttled, and with extensions off</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">devtools</td></tr>
+            <tr><td>Contrast is measured, not judged by eye</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">check.mjs</td></tr>
+            <tr><td>Chart colour survives protanopia and deuteranopia at full severity</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">check.mjs</td></tr>
+            <tr><td>The browser frame colour matches the page background</td><td><span class="lvl lvl-should">Should</span></td><td class="mono">theme-color</td></tr>
+            <tr><td>A CDN gets a preconnect, a critical font gets a preload with swap</td><td><span class="lvl lvl-should">Should</span></td><td class="mono">link rel</td></tr>
+            <tr><td>Tested in low power mode and in Safari, where the frame budget is smallest</td><td><span class="lvl lvl-should">Should</span></td><td class="mono">device</td></tr>
+            <tr><td>Shadows are layered, ambient under direct, and borders take the hue of the background</td><td><span class="lvl lvl-should">Should</span></td><td class="mono">--shadow-glass-rest</td></tr>
+          </tbody>
+        </table>
+          </div>
+      </div>
+      <aside class="aside-note axis-b rv" style="--d: 60ms">
+        <h4>Contrast method</h4>
+        <p>The verification script computes WCAG 2.1 ratios, and every number published in the
+        README comes from it. Perceptual contrast is read as advice on top of that floor, never
+        as a replacement for it: one measure in the build, not two.</p>
+      </aside>
+    </div>
+
+    <div class="grid step-3">
+      <span class="label axis-a rv">Consuming apps <b>· framework layer, outside this repository</b></span>
+      <div class="axis-a-chart step-1 rv">
+        <div class="table-scroll">
+          <table class="table table-rules">
+          <thead><tr><th>Rule</th><th>Level</th><th>Bound to</th></tr></thead>
+          <tbody>
+            <tr><td>A field keeps its focus and its value across hydration</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">app layer</td></tr>
+            <tr><td>A field with a value needs a change handler, otherwise it takes a default value</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">app layer</td></tr>
+            <tr><td>Re-renders are counted and cut down</td><td><span class="lvl lvl-must">Must</span></td><td class="mono">app layer</td></tr>
+            <tr><td>Date and time rendering is guarded against a mismatch between server and client</td><td><span class="lvl lvl-should">Should</span></td><td class="mono">app layer</td></tr>
+            <tr><td>Uncontrolled fields are the default; a controlled one has to be cheap per keystroke</td><td><span class="lvl lvl-should">Should</span></td><td class="mono">app layer</td></tr>
+          </tbody>
+        </table>
+          </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="grid"><div class="rule"></div></div>
+
   <!-- ============ componentes ============ -->
   <section id="components" class="band">
     <div class="grid">
-      <span class="label axis-a rv">06 <b>· Components</b></span>
+      <span class="label axis-a rv">08 <b>· Components</b></span>
       <h2 class="section-title axis-a-wide optical rv step-1" style="--d: 60ms">What is<br>already built</h2>
     </div>
 
@@ -756,7 +1278,7 @@ h3.block-title { font-size: var(--text-18); color: var(--text);
   <!-- ============ uso ============ -->
   <section id="use" class="band">
     <div class="grid">
-      <span class="label axis-a rv">07 <b>· Use</b></span>
+      <span class="label axis-a rv">09 <b>· Use</b></span>
       <h2 class="section-title axis-a-wide optical rv step-1" style="--d: 60ms">How to<br>pull it in</h2>
     </div>
 
@@ -783,16 +1305,14 @@ h3.block-title { font-size: var(--text-18); color: var(--text);
     </div>
   </section>
 
-  <footer class="band" style="padding-bottom: var(--space-48)">
-    <div class="grid">
-      <div class="colophon bleed">
-        <span>Set in Geist, Geist Mono and Cormorant Garamond</span>
-        <span>Prussian 1.1.0</span>
-      </div>
-    </div>
-  </footer>
-
 </div>
+
+<footer class="foot">
+  <div class="foot-in">
+    <span>Set in Geist, Geist Mono and Cormorant Garamond</span>
+    <span class="sig">Prussian <span>1.2.0</span></span>
+  </div>
+</footer>
 
 <script>
 "use strict";
@@ -988,7 +1508,7 @@ const EASES = [
 document.getElementById("eases").innerHTML = EASES.map(([tok, use]) => `
   <div class="motion-row">
     <span class="k">${tok}</span>
-    <div class="lane"><span class="dot" style="transition: left var(--duration-6) var(${tok})"></span></div>
+    <div class="lane"><span class="dot" style="transition: transform var(--duration-6) var(${tok})"></span></div>
     <span class="use">${use}</span>
   </div>`).join("");
 
@@ -1133,8 +1653,8 @@ function bindStage() {
   if (!stage || !out) return;
 
   const blank = `<span class="name">Hover a sample</span>
-    <div class="row"><span>blur</span><span>—</span></div>
-    <div class="row"><span>fill</span><span>—</span></div>`;
+    <div class="row"><span>blur</span><span>n/a</span></div>
+    <div class="row"><span>fill</span><span>n/a</span></div>`;
 
   stage.addEventListener("pointerover", (ev) => {
     const el = ev.target.closest(".glass");
@@ -1160,16 +1680,213 @@ function repaint() {
   });
 }
 
-document.querySelectorAll(".mode-btn").forEach((btn) => {
-  btn.addEventListener("click", () => {
-    document.documentElement.className = btn.dataset.mode;
-    document.querySelectorAll(".mode-btn").forEach((b) =>
-      b.setAttribute("aria-pressed", String(b === btn)));
-    repaint();
+/* ---------- rolagem até a seção ----------
+
+   O smooth nativo resolve qualquer distância no mesmo tempo, e esta
+   página tem dezenas de milhares de pixels: de uma ponta à outra o
+   resultado vira corte, não movimento. Aqui a duração cresce com a
+   distância e para num teto, a curva é a mesma --ease-out-soft do resto
+   da linguagem, e qualquer entrada do usuário interrompe. É a única
+   animação da página que passa de --duration-6, porque percorrer a
+   página inteira não é transição de interface. */
+
+const NAV_OFFSET = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--scroll-offset")) || 88;
+const SCROLL_MIN = 500;
+const SCROLL_MAX = 1100;
+let scrollFrame = null;
+
+/* a curva não é aproximada: é a própria cubic-bezier de --ease-out-soft,
+   resolvida por bisseção. A rolagem não inventa uma sexta curva. */
+function bezier(x1, y1, x2, y2) {
+  const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+  const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+  const atX = (t) => ((ax * t + bx) * t + cx) * t;
+  const atY = (t) => ((ay * t + by) * t + cy) * t;
+  return (x) => {
+    let lo = 0, hi = 1, t = x;
+    for (let i = 0; i < 24; i++) {
+      if (atX(t) < x) lo = t; else hi = t;
+      t = (lo + hi) / 2;
+    }
+    return atY(t);
+  };
+}
+const easeOutSoft = bezier(0.25, 0, 0, 1);
+
+function cancelScroll() {
+  if (scrollFrame === null) return;
+  cancelAnimationFrame(scrollFrame);
+  scrollFrame = null;
+}
+
+function glideTo(target) {
+  cancelScroll();
+  const start = scrollY;
+  const max = document.body.scrollHeight - innerHeight;
+  const end = Math.min(max, Math.max(0, target.getBoundingClientRect().top + start - NAV_OFFSET));
+  const dist = Math.abs(end - start);
+  if (REDUCED || dist < 4) return scrollTo({ top: end, behavior: "instant" });
+
+  const dur = Math.min(SCROLL_MAX, SCROLL_MIN + dist * 0.18);
+  const t0 = performance.now();
+  const step = (now) => {
+    const t = Math.min(1, (now - t0) / dur);
+    scrollTo({ top: start + (end - start) * easeOutSoft(t), behavior: "instant" });
+    scrollFrame = t < 1 ? requestAnimationFrame(step) : null;
+  };
+  scrollFrame = requestAnimationFrame(step);
+}
+
+/* o link continua sendo um link: clique com modificador, botão do meio e
+   "abrir em nova aba" seguem funcionando, e o endereço registra a seção */
+document.querySelectorAll('a[href^="#"]').forEach((link) => {
+  link.addEventListener("click", (ev) => {
+    if (ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey || ev.button !== 0) return;
+    const target = document.getElementById(link.getAttribute("href").slice(1));
+    if (!target) return;
+    ev.preventDefault();
+    glideTo(target);
+    /* pushState, não replaceState: clicar numa seção é navegação, e o
+       botão voltar tem que devolver para a seção anterior */
+    history.pushState(null, "", new URL(link.getAttribute("href"), location.href));
+    /* preventDefault suprime o ponto de partida do foco sequencial. Sem
+       devolver o foco ao alvo, o skip link rola e o Tab seguinte volta
+       para a navegação, que é exatamente o que ele existe para pular. */
+    if (!target.hasAttribute("tabindex")) target.setAttribute("tabindex", "-1");
+    target.focus({ preventScroll: true });
   });
 });
 
-repaint();
+addEventListener("wheel", cancelScroll, { passive: true });
+addEventListener("touchstart", cancelScroll, { passive: true });
+addEventListener("keydown", (ev) => {
+  if (["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End", " "].includes(ev.key)) cancelScroll();
+});
+
+/* ---------- ofício: alvo, dica e formulário ---------- */
+
+/* o alvo é invisível por definição; o interruptor desenha o contorno dele */
+const hitToggle = document.getElementById("hit-toggle");
+hitToggle?.addEventListener("click", () => {
+  const on = hitToggle.getAttribute("aria-pressed") !== "true";
+  hitToggle.setAttribute("aria-pressed", String(on));
+  document.body.classList.toggle("show-hit", on);
+});
+
+/* a primeira dica espera a duração-6 inteira. Só depois que ela abriu o
+   grupo esquenta, e aí as vizinhas entram sem espera. Marcar o grupo no
+   pointerover puro tiraria a espera da primeira também. */
+let warmIn = null, coolOut = null;
+document.querySelectorAll(".tip-group").forEach((group) => {
+  group.addEventListener("pointerover", (ev) => {
+    if (!ev.target.closest(".tip")) return;
+    clearTimeout(coolOut);
+    if (group.dataset.warm === "true") return;
+    clearTimeout(warmIn);
+    warmIn = setTimeout(() => { group.dataset.warm = "true"; }, 520);
+  });
+  group.addEventListener("pointerleave", () => {
+    clearTimeout(warmIn);
+    coolOut = setTimeout(() => { group.dataset.warm = "false"; }, 600);
+  });
+});
+
+const form = document.getElementById("demo-form");
+if (form) {
+  const status = document.getElementById("cf-status");
+  const send = document.getElementById("cf-send");
+  const note = form.querySelector(".textarea");
+
+  const clearErrors = () => {
+    form.querySelectorAll(".field-error").forEach((el) => el.remove());
+    form.querySelectorAll("[aria-invalid]").forEach((el) => {
+      el.removeAttribute("aria-invalid");
+      el.removeAttribute("aria-describedby");
+    });
+  };
+
+  /* o erro nasce ao lado do campo e é amarrado a ele por aria-describedby,
+     senão o leitor de tela anuncia o campo sem dizer o que houve */
+  const showError = (el, message) => {
+    const id = el.id + "-error";
+    el.setAttribute("aria-invalid", "true");
+    el.setAttribute("aria-describedby", id);
+    const line = document.createElement("span");
+    line.className = "field-error";
+    line.id = id;
+    line.textContent = message;
+    el.closest(".field").appendChild(line);
+  };
+
+  /* aparar antes de ler: um endereço colado com espaço no fim falharia a
+     validação por um motivo que ninguém consegue ver na tela */
+  const validate = () => {
+    clearErrors();
+    const bad = [];
+    const name = form.elements.name;
+    const mail = form.elements.email;
+    name.value = name.value.trim();
+    mail.value = mail.value.trim();
+    if (!name.value) { showError(name, "A name is needed to file the run"); bad.push(name); }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail.value)) {
+      showError(mail, "This address is missing its domain");
+      bad.push(mail);
+    }
+    return bad;
+  };
+
+  form.addEventListener("submit", (ev) => {
+    ev.preventDefault();
+    const bad = validate();
+    if (bad.length) {
+      status.textContent = bad.length === 1 ? "One field needs attention" : bad.length + " fields need attention";
+      bad[0].focus();
+      return;
+    }
+    /* o botão só desabilita depois que a requisição começou, e mantém o
+       rótulo: trocar por "carregando" apaga o que ele faz */
+    send.dataset.loading = "true";
+    status.textContent = "Sending…";
+    setTimeout(() => {
+      delete send.dataset.loading;
+      const clock = new Intl.DateTimeFormat(undefined, {
+        hour: "2-digit", minute: "2-digit", second: "2-digit",
+      });
+      status.textContent = "Recorded at " + clock.format(new Date());
+    }, 900);
+  });
+
+  note.addEventListener("keydown", (ev) => {
+    if ((ev.metaKey || ev.ctrlKey) && ev.key === "Enter") form.requestSubmit();
+  });
+}
+
+/* ---------- modo: o estado mora no endereço ---------- */
+
+const MODES = ["", "paper-like", "deep-blue", "dark"];
+const themeMeta = document.querySelector('meta[name="theme-color"]');
+
+function applyMode(mode, record) {
+  document.documentElement.className = mode;
+  document.querySelectorAll(".mode-btn").forEach((b) =>
+    b.setAttribute("aria-pressed", String(b.dataset.mode === mode)));
+  repaint();
+  /* a moldura do navegador acompanha o fundo do modo */
+  themeMeta.setAttribute("content", resolve("--bg"));
+  if (!record) return;
+  const url = new URL(location.href);
+  if (mode) url.searchParams.set("mode", mode);
+  else url.searchParams.delete("mode");
+  history.replaceState(null, "", url);
+}
+
+document.querySelectorAll(".mode-btn").forEach((btn) => {
+  btn.addEventListener("click", () => applyMode(btn.dataset.mode, true));
+});
+
+const asked = new URL(location.href).searchParams.get("mode") || "";
+applyMode(MODES.includes(asked) ? asked : "", false);
+
 bindLines();
 bindStage();
 armViz();
