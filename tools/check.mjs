@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// prussian / check.mjs
+// pure / check.mjs
 //
 // Torna as afirmações do README verificáveis. Roda sem dependência:
 //
@@ -12,7 +12,7 @@
 //   2. rampas ordinais: monotonia, passo mínimo de luminosidade, ponta
 //      clara acima de 2:1 contra a superfície do próprio modo
 //   3. contraste dos tokens semânticos, com a regra de uso declarada
-//   4. consistência: tokens.json, web/tokens.css, python/prussian/palette.py
+//   4. consistência: tokens.json, web/tokens.css, python/pure/palette.py
 //      e python/streamlit/app.css precisam concordar nas mesmas cores
 //
 // Sai com código 1 em qualquer falha.
@@ -179,7 +179,7 @@ function consistency() {
   // espaços de alinhamento no CSS não são divergência
   const squash = (s) => s.replace(/:[ \t]+/g, ": ");
   const css = squash(read("web/tokens.css"));
-  const py = read("python/prussian/palette.py");
+  const py = read("python/pure/palette.py");
   const st = squash(read("python/streamlit/app.css"));
 
   // a rampa slate precisa existir com o mesmo hex em CSS e Python
@@ -208,8 +208,8 @@ function consistency() {
   // as familias agora moram em cinco arquivos: json, css, streamlit,
   // palette.py e os dois mplstyle. Divergir aqui e o jeito silencioso de
   // uma pagina cair na fonte de reserva sem ninguem notar.
-  const mplLight = read("python/prussian-light.mplstyle");
-  const mplDark = read("python/prussian-dark.mplstyle");
+  const mplLight = read("python/pure-light.mplstyle");
+  const mplDark = read("python/pure-dark.mplstyle");
   const first = (stack) => stack.split(",")[0].replace(/"/g, "").trim();
   const fontBad = [];
   for (const [key, cssVar] of [["sans", "--font-sans"], ["mono", "--font-mono"], ["display", "--font-display"]]) {
@@ -231,12 +231,12 @@ function consistency() {
   // a versão precisa bater em todo lugar que a exibe
   const html = read("preview/index.html");
   const readme = read("README.md");
-  const initPy = read("python/prussian/__init__.py");
+  const initPy = read("python/pure/__init__.py");
   const v = T.$version;
   const stale = [];
   if (!initPy.includes(`__version__ = "${v}"`)) stale.push("python/__init__.py");
   if ((html.match(/1\.\d+\.\d+/g) || []).some((m) => m !== v)) stale.push("preview/index.html");
-  const inReadme = readme.match(/[Pp]russian (1\.\d+\.\d+)/g) || [];
+  const inReadme = readme.match(/[Pp]ure [Dd]esign (1\.\d+\.\d+)/g) || [];
   if (!inReadme.length || inReadme.some((m) => !m.endsWith(v))) stale.push("README.md");
   check(!stale.length, "versão",
     stale.length ? `divergem de ${v}: ${stale.join(", ")}` : `${v} em json, python, guia e README`);
@@ -340,7 +340,7 @@ function craft() {
 
 // execução
 
-console.log("prussian: verificação das afirmações do README");
+console.log("pure: verificação das afirmações do README");
 categorical("light", T.chart.surface.light);
 categorical("light", T.chart.surface["paper-like"]);
 categorical("dark", T.chart.surface["deep-blue"]);

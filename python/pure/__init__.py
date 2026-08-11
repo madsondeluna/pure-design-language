@@ -1,4 +1,4 @@
-"""prussian: a linguagem visual de madsondeluna, em Python.
+"""pure: a linguagem visual de madsondeluna, em Python.
 
 Submodulos:
 
@@ -7,7 +7,7 @@ Submodulos:
     plotly    template plotly (requer plotly)
 
 Os submodulos de plotagem sao importados sob demanda, entao
-`from prussian import palette` funciona num ambiente sem matplotlib.
+`from pure import palette` funciona num ambiente sem matplotlib.
 """
 
 from __future__ import annotations

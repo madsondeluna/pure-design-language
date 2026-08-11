@@ -1,4 +1,4 @@
-# prussian, tema Streamlit
+# pure, tema Streamlit
 # Copiar para .streamlit/config.toml na raiz do app.
 # O bloco [theme] cobre o modo claro. Streamlit nao aceita dois temas
 # no mesmo config, entao o modo escuro entra pelo CSS de app.css,

@@ -1,8 +1,8 @@
-"""Tema matplotlib da linguagem prussian.
+"""Tema matplotlib da linguagem pure.
 
 Uso:
 
-    from prussian import mpl
+    from pure import mpl
     mpl.use("light")          # ou "paper-like", "deep-blue", "dark"
 
     fig, ax = plt.subplots()
@@ -33,10 +33,10 @@ def _register_cmaps() -> None:
     if _CMAPS_REGISTERED:
         return
     pairs = [
-        ("prussian", p.SEQUENTIAL),
-        ("prussian_r", list(reversed(p.SEQUENTIAL))),
-        ("prussian_div", p.DIVERGING),
-        ("prussian_div_r", list(reversed(p.DIVERGING))),
+        ("pure", p.SEQUENTIAL),
+        ("pure_r", list(reversed(p.SEQUENTIAL))),
+        ("pure_div", p.DIVERGING),
+        ("pure_div_r", list(reversed(p.DIVERGING))),
     ]
     for name, colors in pairs:
         cmap = LinearSegmentedColormap.from_list(name, colors, N=256)
@@ -127,7 +127,7 @@ def rc(mode: str = "light") -> dict[str, object]:
 
         "text.color": ink,
 
-        "image.cmap": "prussian",
+        "image.cmap": "pure",
 
         "boxplot.boxprops.color": muted,
         "boxplot.whiskerprops.color": muted,

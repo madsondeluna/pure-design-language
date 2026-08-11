@@ -1,4 +1,4 @@
-/* prussian / agent.css
+/* pure / agent.css
    A camada de agente: os desenhos que so aparecem quando quem escreve na
    tela e um modelo, nao uma pessoa. Rastro de raciocinio, texto que chega
    pedaco a pedaco, chamada de ferramenta, pedido de aprovacao, tabela que
@@ -59,7 +59,7 @@
   border-radius: var(--radius-0);
   background: currentColor;
   opacity: 0.2;
-  animation: prussian-pixel var(--duration-6) var(--ease-standard) infinite;
+  animation: pure-pixel var(--duration-6) var(--ease-standard) infinite;
 }
 .loader-grid i:nth-child(1) { animation-delay: 0ms; }
 .loader-grid i:nth-child(2) { animation-delay: 60ms; }
@@ -84,7 +84,7 @@
   height: var(--nudge-3);
   border-radius: var(--radius-circle);
   background: currentColor;
-  animation: prussian-bounce var(--duration-6) var(--ease-standard) infinite;
+  animation: pure-bounce var(--duration-6) var(--ease-standard) infinite;
 }
 .loader-dots i:nth-child(2) { animation-delay: 100ms; }
 .loader-dots i:nth-child(3) { animation-delay: 200ms; }
@@ -98,7 +98,7 @@
   border: var(--stroke) solid var(--border);
   border-top-color: currentColor;
   border-radius: var(--radius-circle);
-  animation: prussian-spin var(--duration-6) linear infinite;
+  animation: pure-spin var(--duration-6) linear infinite;
 }
 
 /* o brilho que atravessa o rotulo enquanto ele espera. A varredura e um
@@ -120,7 +120,7 @@
     transparent 100%
   );
   opacity: 0.55;
-  animation: prussian-sweep var(--duration-6) var(--ease-standard) infinite;
+  animation: pure-sweep var(--duration-6) var(--ease-standard) infinite;
 }
 
 /* ---------- 2. rastro de raciocinio ----------
@@ -180,7 +180,7 @@
   padding: var(--space-6) 0;
   font-size: var(--text-15);
   color: var(--text);
-  animation: prussian-fade-up var(--duration-5) var(--ease-out-soft) both;
+  animation: pure-fade-up var(--duration-5) var(--ease-out-soft) both;
 }
 .trace-step::before {
   content: "";
@@ -225,7 +225,7 @@
 }
 .stream .tok {
   display: inline-block;
-  animation: prussian-token var(--duration-4) var(--ease-out-soft) both;
+  animation: pure-token var(--duration-4) var(--ease-out-soft) both;
   animation-delay: calc(var(--i, 0) * var(--stream-step));
 }
 
@@ -235,7 +235,7 @@
   height: 1em;
   vertical-align: text-bottom;
   background: var(--text);
-  animation: prussian-caret var(--caret-blink) step-end infinite;
+  animation: pure-caret var(--caret-blink) step-end infinite;
 }
 
 /* fontes citadas: chip com marca de origem e dominio em mono */
@@ -587,7 +587,7 @@
   border-radius: var(--radius-surface);
   background: var(--surface);
   box-shadow: var(--shadow-glass-rest);
-  animation: prussian-fade-scale var(--duration-4) var(--ease-out-expo) both;
+  animation: pure-fade-scale var(--duration-4) var(--ease-out-expo) both;
 }
 .menu-item {
   display: flex;
@@ -626,7 +626,7 @@
   transform-origin: bottom;
   border-radius: var(--radius-control);
   background: currentColor;
-  animation: prussian-eq var(--duration-6) var(--ease-standard) infinite;
+  animation: pure-eq var(--duration-6) var(--ease-standard) infinite;
 }
 .dictate i:nth-child(2) { animation-delay: 80ms; }
 .dictate i:nth-child(3) { animation-delay: 160ms; }
@@ -1137,7 +1137,7 @@
   gap: var(--space-16);
   padding: 0 var(--space-16);
   white-space: pre;
-  animation: prussian-token var(--duration-4) var(--ease-out-soft) both;
+  animation: pure-token var(--duration-4) var(--ease-out-soft) both;
   animation-delay: calc(var(--i, 0) * var(--stream-step));
 }
 .code-line .ln {
@@ -1278,7 +1278,7 @@
   border-radius: var(--radius-control);
   background: var(--surface);
   box-shadow: var(--shadow-glass-rest);
-  animation: prussian-fade-scale var(--duration-4) var(--ease-out-expo) both;
+  animation: pure-fade-scale var(--duration-4) var(--ease-out-expo) both;
 }
 .selection-bar button {
   min-height: var(--hit-min);
@@ -1306,32 +1306,32 @@
    Cinco quadros novos, todos em transform ou opacity. Nenhum toca
    layout, nenhum usa filter. */
 
-@keyframes prussian-token {
+@keyframes pure-token {
   from { opacity: 0; transform: translateY(var(--nudge-1)); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes prussian-caret {
+@keyframes pure-caret {
   0%, 100% { opacity: 1; }
   50%      { opacity: 0; }
 }
 
-@keyframes prussian-pixel {
+@keyframes pure-pixel {
   0%, 100% { opacity: 0.2; }
   40%      { opacity: 1; }
 }
 
-@keyframes prussian-bounce {
+@keyframes pure-bounce {
   0%, 100% { transform: scale(0.6); opacity: 0.5; }
   50%      { transform: scale(1);   opacity: 1; }
 }
 
-@keyframes prussian-eq {
+@keyframes pure-eq {
   0%, 100% { transform: scaleY(0.35); }
   50%      { transform: scaleY(1); }
 }
 
-@keyframes prussian-sweep {
+@keyframes pure-sweep {
   from { transform: translateX(-100%); }
   to   { transform: translateX(100%); }
 }
@@ -1344,7 +1344,7 @@
   .loader-dots i,
   .loader-orbit,
   .dictate i {
-    animation: prussian-pulse var(--duration-6) var(--ease-standard) infinite alternate !important;
+    animation: pure-pulse var(--duration-6) var(--ease-standard) infinite alternate !important;
     animation-duration: var(--duration-6) !important;
     animation-iteration-count: infinite !important;
     transform: none !important;

@@ -1,16 +1,16 @@
-"""Template plotly da linguagem prussian.
+"""Template plotly da linguagem pure.
 
 Uso:
 
-    from prussian import plotly as pxt
+    from pure import plotly as pxt
     pxt.use("light")                       # vira o template padrao
 
     import plotly.express as px
     fig = px.line(df, x="pos", y="score", color="chain")
     pxt.finish(fig, title="Escore por posicao")
 
-`use` registra um template por modo (prussian, prussian_paper_like,
-prussian_deep_blue, prussian_dark) e define o pedido como padrao de
+`use` registra um template por modo (pure, pure_paper_like,
+pure_deep_blue, pure_dark) e define o pedido como padrao de
 `plotly.io`.
 """
 
@@ -110,10 +110,10 @@ def template(mode: str = "light") -> go.layout.Template:
 
 # um template por modo; o nome segue o modo, com o claro sem sufixo
 _NAMES = {
-    "light": "prussian",
-    "paper-like": "prussian_paper_like",
-    "deep-blue": "prussian_deep_blue",
-    "dark": "prussian_dark",
+    "light": "pure",
+    "paper-like": "pure_paper_like",
+    "deep-blue": "pure_deep_blue",
+    "dark": "pure_dark",
 }
 
 

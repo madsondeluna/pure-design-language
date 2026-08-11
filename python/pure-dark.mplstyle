@@ -1,25 +1,22 @@
-# prussian, modo claro
-# Uso sem instalar o pacote:
-#   plt.style.use("caminho/para/prussian-light.mplstyle")
-# O pacote prussian.mpl faz o mesmo e ainda registra os colormaps
-# e o acabamento de eixo (prussian.mpl.finish).
+# pure, modo escuro
+# plt.style.use("caminho/para/pure-dark.mplstyle")
 
-figure.facecolor: f4f6f9
-figure.edgecolor: f4f6f9
+figure.facecolor: 0d1321
+figure.edgecolor: 0d1321
 figure.dpi: 120
 figure.constrained_layout.use: True
 
-savefig.facecolor: f4f6f9
-savefig.edgecolor: f4f6f9
+savefig.facecolor: 0d1321
+savefig.edgecolor: 0d1321
 savefig.dpi: 300
 savefig.bbox: tight
 savefig.transparent: False
 
-axes.facecolor: f4f6f9
-axes.edgecolor: ced3dc
+axes.facecolor: 0d1321
+axes.edgecolor: 2a3f5c
 axes.linewidth: 1.0
-axes.labelcolor: 3e5c76
-axes.titlecolor: 0d1321
+axes.labelcolor: 748cab
+axes.titlecolor: f4f6f9
 axes.grid: True
 axes.grid.axis: y
 axes.axisbelow: True
@@ -34,14 +31,14 @@ axes.labelsize: 10
 axes.labelpad: 8
 axes.prop_cycle: cycler('color', ['3973b1', '9f8322', '9e527f', '4c985f', '745ba5', 'ba6f3e', '1990ad', 'ac5551'])
 
-grid.color: ced3dc
+grid.color: 2a3f5c
 grid.linewidth: 0.8
 grid.alpha: 0.7
 
-xtick.color: 3e5c76
-ytick.color: 3e5c76
-xtick.labelcolor: 3e5c76
-ytick.labelcolor: 3e5c76
+xtick.color: 748cab
+ytick.color: 748cab
+xtick.labelcolor: 748cab
+ytick.labelcolor: 748cab
 xtick.labelsize: 9
 ytick.labelsize: 9
 xtick.direction: out
@@ -57,7 +54,7 @@ lines.markersize: 5.0
 lines.solid_capstyle: round
 
 patch.linewidth: 0.0
-patch.edgecolor: f4f6f9
+patch.edgecolor: 0d1321
 patch.force_edgecolor: False
 
 legend.frameon: False
@@ -72,4 +69,4 @@ font.family: sans-serif
 font.sans-serif: Public Sans, Helvetica Neue, Arial, DejaVu Sans
 font.size: 10
 
-text.color: 0d1321
+text.color: f4f6f9

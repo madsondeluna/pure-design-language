@@ -1,4 +1,4 @@
-/* prussian / patterns.css
+/* pure / patterns.css
    Os componentes da linguagem, reescritos em cima dos tokens.
    Nenhum valor literal aqui: todo numero vem de tokens.css.
    Importar depois de tokens.css. */
@@ -828,7 +828,7 @@ dl, dd { margin: 0; }
   border: var(--stroke) solid currentColor;
   border-top-color: transparent;
   border-radius: var(--radius-circle);
-  animation: prussian-spin var(--duration-6) linear infinite;
+  animation: pure-spin var(--duration-6) linear infinite;
 }
 
 /* ---------- conteudo ----------
@@ -886,7 +886,7 @@ dl, dd { margin: 0; }
    o salto de layout que existia para evitar */
 .skeleton {
   background: var(--dim);
-  animation: prussian-pulse var(--duration-6) var(--ease-standard) infinite alternate;
+  animation: pure-pulse var(--duration-6) var(--ease-standard) infinite alternate;
 }
 .skeleton-line {
   height: var(--space-12);
@@ -970,31 +970,31 @@ dl, dd { margin: 0; }
 
 /* movimento */
 
-@keyframes prussian-spin {
+@keyframes pure-spin {
   to { transform: rotate(360deg); }
 }
 
-@keyframes prussian-pulse {
+@keyframes pure-pulse {
   from { opacity: 1; }
   to   { opacity: 0.55; }
 }
 
-@keyframes prussian-fade-up {
+@keyframes pure-fade-up {
   from { opacity: 0; transform: translateY(var(--space-12)); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes prussian-fade-scale {
+@keyframes pure-fade-scale {
   from { opacity: 0; transform: scale(0.985); }
   to   { opacity: 1; transform: scale(1); }
 }
 
 .fade-up {
-  animation: prussian-fade-up var(--duration-6) var(--ease-out-soft) both;
+  animation: pure-fade-up var(--duration-6) var(--ease-out-soft) both;
 }
 
 .fade-scale {
-  animation: prussian-fade-scale var(--duration-4) var(--ease-out-expo) both;
+  animation: pure-fade-scale var(--duration-4) var(--ease-out-expo) both;
 }
 
 /* escada de entrada: 60ms por item, no maximo seis degraus */
@@ -1019,7 +1019,7 @@ dl, dd { margin: 0; }
      A rotacao vira pulso de opacidade, que nao desloca nada na tela. */
   [data-loading="true"]::before {
     border-top-color: currentColor;
-    animation: prussian-pulse var(--duration-6) var(--ease-standard) infinite alternate !important;
+    animation: pure-pulse var(--duration-6) var(--ease-standard) infinite alternate !important;
     animation-duration: var(--duration-6) !important;
     animation-iteration-count: infinite !important;
   }

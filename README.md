@@ -1,10 +1,10 @@
-# prussian
+# pure design
 
 Design system for web and Python. Four modes, script-verified tokens, plotting themes included.
 
 Derived from `madsondeluna.github.io`. Numeric token architecture in the format of `devouringdetails.com`. Easing curves from `motion.dev`.
 
-Prussian 1.4.1.
+Pure Design 1.4.1.
 
 ## Use
 
@@ -19,12 +19,12 @@ Prussian 1.4.1.
 Tailwind v4: import `web/theme.css`, which already pulls `tokens.css` and the `@theme inline` block.
 
 ```python
-from prussian import mpl, plotly
+from pure import mpl, plotly
 mpl.use("light")        # light | paper-like | deep-blue | dark
 plotly.use("light")
 ```
 
-Without the package: `plt.style.use("python/prussian-light.mplstyle")`.
+Without the package: `plt.style.use("python/pure-light.mplstyle")`.
 
 Streamlit: copy `python/streamlit/config.toml` to `.streamlit/config.toml` and inject `app.css`.
 
@@ -36,8 +36,8 @@ web/tokens.css                   variables, four modes
 web/theme.css                    Tailwind v4 bridge
 web/patterns.css                 components and the glass material
 web/agent.css                    agent layer, optional
-python/prussian/                 palette, mpl, plotly
-python/prussian-{light,dark}.mplstyle
+python/pure/                     palette, mpl, plotly
+python/pure-{light,dark}.mplstyle
 python/streamlit/                config.toml and app.css
 templates/page.html              starter page, four modes wired
 preview/index.html               visual guide, everything live
@@ -47,8 +47,8 @@ tools/check.mjs                  verification
 ## Starting a new project
 
 ```
-mkdir -p <project>/prussian
-cp web/tokens.css web/patterns.css web/agent.css <project>/prussian/
+mkdir -p <project>/pure
+cp web/tokens.css web/patterns.css web/agent.css <project>/pure/
 cp templates/page.html <project>/index.html
 ```
 
@@ -61,7 +61,7 @@ Drop `agent.css` if no model writes to the screen. The template already carries 
 | Default mode | `:root`, no class |
 | Mode state | `?mode=paper-like\|deep-blue\|dark` and the class on `<html>` |
 | `theme-color` | `#F4F6F9` at rest, rewritten by the switcher on every change |
-| Version pinned | record the Prussian version the copy came from |
+| Version pinned | record the Pure Design version the copy came from |
 
 Rules the app layer carries on its own, because no file here can enforce them:
 
@@ -438,12 +438,12 @@ Agent layer, new in 1.3, in `agent.css`: see the agent layer chapter below.
 
 | Name | Animates | Used by |
 |---|---|---|
-| `prussian-token` | `opacity`, `translateY` | `.stream .tok`, `.code-line` |
-| `prussian-caret` | `opacity` | `.caret` |
-| `prussian-pixel` | `opacity` | `.loader-grid i` |
-| `prussian-bounce` | `scale`, `opacity` | `.loader-dots i` |
-| `prussian-eq` | `scaleY` | `.dictate i` |
-| `prussian-sweep` | `translateX` | `.loader-label::after` |
+| `pure-token` | `opacity`, `translateY` | `.stream .tok`, `.code-line` |
+| `pure-caret` | `opacity` | `.caret` |
+| `pure-pixel` | `opacity` | `.loader-grid i` |
+| `pure-bounce` | `scale`, `opacity` | `.loader-dots i` |
+| `pure-eq` | `scaleY` | `.dictate i` |
+| `pure-sweep` | `translateX` | `.loader-label::after` |
 
 ### Colour assignment
 
@@ -469,9 +469,9 @@ A diff tint is `color-mix(in oklab, var(--status-*) 12%, transparent)`. A select
 
 Six behaviours could not survive the rule that only `transform` and `opacity` animate, or the rule that capitalisation has one form. Five were rebuilt, one dropped.
 
-| Source behaviour | Prussian version |
+| Source behaviour | Pure Design version |
 |---|---|
-| `grid-template-rows` accordion | `[hidden]` plus staggered `prussian-fade-up` on the steps |
+| `grid-template-rows` accordion | `[hidden]` plus staggered `pure-fade-up` on the steps |
 | `filter: blur(4px)` on an arriving chunk | `opacity` plus a `--nudge-1` rise |
 | Confidence and progress by `width` | `transform: scaleX()` with `transform-origin: left` |
 | Chip reveal by `max-width` and `margin` | `transform` and `opacity` |
@@ -497,7 +497,7 @@ Six behaviours could not survive the rule that only `transform` and `opacity` an
 ## Python API
 
 ```python
-from prussian import palette
+from pure import palette
 
 palette.series(n)          # first n colours, raises above 8
 palette.tokens(mode)       # semantic tokens for the mode
@@ -506,7 +506,7 @@ palette.ordinal(n, mode)   # n steps sampled from the ramp
 ```
 
 ```python
-from prussian import mpl
+from pure import mpl
 
 mpl.use(mode)              # applies globally, registers colormaps
 mpl.context(mode)          # context manager
@@ -515,11 +515,11 @@ mpl.finish(ax, title=, subtitle=, xlabel=, ylabel=, mode=, legend=)
 mpl.bar_gap(ax)            # surface gap between stacked segments
 ```
 
-Registered colormaps: `prussian`, `prussian_r`, `prussian_div`, `prussian_div_r`.
+Registered colormaps: `pure`, `pure_r`, `pure_div`, `pure_div_r`.
 
 `mpl.finish` turns the grid off on heatmaps, left-aligns the title, keeps labels in ink rather than series colour, and shows a legend only from two series up.
 
-Plotly templates: `prussian`, `prussian_paper_like`, `prussian_deep_blue`, `prussian_dark`.
+Plotly templates: `pure`, `pure_paper_like`, `pure_deep_blue`, `pure_dark`.
 
 ## Verification
 
@@ -532,8 +532,8 @@ No dependencies, exits 1 on any failure. It checks:
 - categorical palette against all four surfaces: lightness band, chroma floor, protanopia and deuteranopia separation (Machado, Oliveira and Fernandes 2009 at severity 1.0), normal-vision floor, mark contrast
 - ordinal ramps: monotonicity, minimum lightness step, end contrast
 - semantic tokens in all four modes against the declared floor
-- colour consistency across `tokens.json`, `web/tokens.css`, `python/prussian/palette.py` and `python/streamlit/app.css`
-- typographic families across `tokens.json`, `web/tokens.css`, `python/streamlit/app.css`, `python/prussian/palette.py` and both `.mplstyle` files
+- colour consistency across `tokens.json`, `web/tokens.css`, `python/pure/palette.py` and `python/streamlit/app.css`
+- typographic families across `tokens.json`, `web/tokens.css`, `python/streamlit/app.css`, `python/pure/palette.py` and both `.mplstyle` files
 - version across `tokens.json`, `__init__.py`, the guide and this README
 - absence of a ninth chart slot
 - `color-scheme` declared in all four mode blocks
@@ -566,4 +566,4 @@ Guide layout rules, applicable to any page built on the language: two vertical a
 
 ## Keeping in sync
 
-A change to the language updates three places in the same session: this repository, the "Design language: Prussian" section of `~/.claude/CLAUDE.md`, and the `prussian-design-system.md` memory file.
+A change to the language updates three places in the same session: this repository, the "Design language: Pure Design" section of `~/.claude/CLAUDE.md`, and the `pure-design-system.md` memory file.

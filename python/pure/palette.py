@@ -1,4 +1,4 @@
-"""Tokens de cor da linguagem prussian, em Python.
+"""Tokens de cor da linguagem pure, em Python.
 
 Espelha tokens/tokens.json. Nenhum valor e recalculado aqui: os hexes
 sao os mesmos usados no CSS, para que uma figura exportada e a pagina
