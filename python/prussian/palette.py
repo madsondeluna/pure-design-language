@@ -179,8 +179,8 @@ STATUS_DARK: dict[str, str] = {
     "critical": "#d18885",
 }
 
-FONT_SANS = ["Geist", "Helvetica Neue", "Arial", "DejaVu Sans"]
-FONT_MONO = ["Geist Mono", "JetBrains Mono", "Menlo", "DejaVu Sans Mono"]
+FONT_SANS = ["Public Sans", "Helvetica Neue", "Arial", "DejaVu Sans"]
+FONT_MONO = ["Chivo Mono", "Spline Sans Mono", "Menlo", "DejaVu Sans Mono"]
 
 
 def series(n: int) -> list[str]:

@@ -69,7 +69,7 @@ legend.columnspacing: 1.4
 legend.labelspacing: 0.5
 
 font.family: sans-serif
-font.sans-serif: Geist, Helvetica Neue, Arial, DejaVu Sans
+font.sans-serif: Public Sans, Helvetica Neue, Arial, DejaVu Sans
 font.size: 10
 
 text.color: 0d1321

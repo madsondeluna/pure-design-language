@@ -84,6 +84,7 @@ dl, dd { margin: 0; }
 
 .display {
   font-family: var(--font-display);
+  font-stretch: var(--font-display-stretch);
   font-weight: var(--weight-light);
   line-height: var(--leading-none);
   letter-spacing: var(--tracking-display);

@@ -168,9 +168,12 @@
   --chart-ink-muted: var(--slate-700);
 
   /* tipografia */
-  --font-sans:    "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-mono:    "Geist Mono", "JetBrains Mono", Menlo, monospace;
-  --font-display: "Cormorant Garamond", Georgia, serif;
+  --font-sans:    "Public Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono:    "Chivo Mono", "Spline Sans Mono", Menlo, monospace;
+  --font-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  /* o titulo se separa por largura, nao por familia serifada: Archivo no
+     eixo wdth 125. Quem usa --font-display declara os dois. */
+  --font-display-stretch: 125%;
 
   --text-11: 0.6875rem;
   --text-12: 0.75rem;

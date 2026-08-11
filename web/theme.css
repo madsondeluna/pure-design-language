@@ -51,6 +51,8 @@
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
   --font-display: var(--font-display);
+  /* largura do titulo: Tailwind nao tem utilitario de font-stretch por
+     token, entao quem usa font-display declara font-stretch a mao */
 
   --text-11: var(--text-11);
   --text-12: var(--text-12);

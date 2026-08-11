@@ -205,6 +205,29 @@ function consistency() {
   check(!stMismatch.length, "cópia do streamlit",
     stMismatch.length ? `divergem de tokens.json: ${stMismatch.join(", ")}` : "os semânticos claros batem");
 
+  // as familias agora moram em cinco arquivos: json, css, streamlit,
+  // palette.py e os dois mplstyle. Divergir aqui e o jeito silencioso de
+  // uma pagina cair na fonte de reserva sem ninguem notar.
+  const mplLight = read("python/prussian-light.mplstyle");
+  const mplDark = read("python/prussian-dark.mplstyle");
+  const first = (stack) => stack.split(",")[0].replace(/"/g, "").trim();
+  const fontBad = [];
+  for (const [key, cssVar] of [["sans", "--font-sans"], ["mono", "--font-mono"], ["display", "--font-display"]]) {
+    if (!css.includes(`${cssVar}: ${T.font[key]}`)) fontBad.push(`css ${cssVar}`);
+  }
+  for (const [key, cssVar] of [["sans", "--font-sans"], ["mono", "--font-mono"]]) {
+    if (!st.includes(`${cssVar}: ${T.font[key]}`)) fontBad.push(`streamlit ${cssVar}`);
+  }
+  if (!css.includes(`--font-display-stretch: ${T.font["display-stretch"]}`)) fontBad.push("css --font-display-stretch");
+  if (!py.includes(`FONT_SANS = ["${first(T.font.sans)}"`)) fontBad.push("palette.py FONT_SANS");
+  if (!py.includes(`FONT_MONO = ["${first(T.font.mono)}"`)) fontBad.push("palette.py FONT_MONO");
+  for (const [name, src] of [["mplstyle claro", mplLight], ["mplstyle escuro", mplDark]]) {
+    if (!src.includes(`font.sans-serif: ${first(T.font.sans)},`)) fontBad.push(name);
+  }
+  check(!fontBad.length, "famílias tipográficas",
+    fontBad.length ? `divergem de tokens.json: ${fontBad.join(", ")}`
+                   : `sans, mono e display batem em json, css, streamlit, palette.py e os dois mplstyle`);
+
   // a versão precisa bater em todo lugar que a exibe
   const html = read("preview/index.html");
   const readme = read("README.md");
