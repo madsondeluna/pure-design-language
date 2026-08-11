@@ -539,7 +539,8 @@ No dependencies, exits 1 on any failure. It checks:
 - `color-scheme` declared in all four mode blocks
 - no `transition: all` and no transition of a layout property in `patterns.css`, `agent.css`, the guide or the starter template; `grid-template-rows` and `flex-basis` count as layout properties
 - no hex colour written outside `tokens.css`, the one exception being the `theme-color` meta, which is checked against the token instead
-- interaction tokens and agent tokens agreeing between `tokens.json` and `web/tokens.css`
+- interaction tokens, agent tokens and blur tokens agreeing between `tokens.json` and `web/tokens.css`
+- each radius role resolving to the numeric step declared in `tokens.json`, `var()` alias followed
 - a focus ring that exists
 - `theme-color` in the guide and the template matching `--bg` of the light mode
 

@@ -228,6 +228,27 @@ function consistency() {
     fontBad.length ? `divergem de tokens.json: ${fontBad.join(", ")}`
                    : `sans, mono e display batem em json, css, streamlit, palette.py e os dois mplstyle`);
 
+  // desfoque: card e overlay são os dois raios que o material do vidro usa
+  // fora das quatro texturas, e não passavam por nenhuma verificação
+  const blur = Object.entries(T.blur).filter(([k]) => !k.startsWith("$"));
+  const blurDrift = blur.filter(([k, v]) => !css.includes(`--blur-${k}: ${v}`));
+  check(!blurDrift.length, "tokens de desfoque",
+    blurDrift.length ? `divergem de tokens.json: ${blurDrift.map(([k]) => k).join(", ")}`
+                     : `${blur.length} valores batem em json e css`);
+
+  // raio por papel: o token de papel é apelido de um passo numérico, e a
+  // escada concêntrica quebra em silêncio se o apelido apontar para o passo
+  // errado. Resolve o var() antes de comparar com tokens.json.
+  const ROLES = ["surface", "field", "media", "control", "mark"];
+  const step = (name) => T.radius[name.replace("radius-", "")];
+  const radiusDrift = ROLES.filter((role) => {
+    const alias = css.match(new RegExp(`--radius-${role}: var\\(--(radius-[a-z0-9]+)\\)`))?.[1];
+    return !alias || step(alias) !== T.radius[role];
+  });
+  check(!radiusDrift.length, "raio por papel",
+    radiusDrift.length ? `apelido aponta para o passo errado: ${radiusDrift.join(", ")}`
+                       : `${ROLES.length} papéis resolvem para o passo declarado em json`);
+
   // a versão precisa bater em todo lugar que a exibe
   const html = read("preview/index.html");
   const readme = read("README.md");
