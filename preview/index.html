@@ -11,6 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&family=Cormorant+Garamond:wght@300;400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../web/tokens.css">
 <link rel="stylesheet" href="../web/patterns.css">
+<link rel="stylesheet" href="../web/agent.css">
 <style>
 /* =========================================================
    Regras de diagramação desta página. São quatro, e nada as quebra.
@@ -243,8 +244,16 @@ h3.block-title { font-size: var(--text-18); color: var(--text);
    sao compostos fora da thread principal */
 .lane.run .dot { transform: translateX(calc(100cqw - 13px)); }
 
+/* palco da camada de agente: o componente tem superficie propria,
+   entao o palco fica um degrau abaixo dela para a caixa aparecer */
+.agent-stage { padding: var(--space-24); background: var(--dim);
+               border-radius: var(--radius-surface); }
+.agent-stage .step-1 { margin-top: var(--space-24); }
+
 /* componentes */
-.demo-block { display: flex; flex-direction: column; gap: var(--space-16);
+/* min-width zero: sem ele o minimo automatico do item de grade deixa o
+   conteudo esticar a trilha e a coluna vizinha encolhe */
+.demo-block { display: flex; flex-direction: column; gap: var(--space-16); min-width: 0;
               padding-top: var(--space-16); border-top: var(--hairline) solid var(--text); }
 .demo-block .k { font-family: var(--font-mono); font-size: var(--text-12);
                  letter-spacing: var(--tracking-eyebrow); color: var(--secondary); }
@@ -431,7 +440,7 @@ body { padding-bottom: var(--space-96); }
   <header class="band" style="padding-top: 152px">
     <div class="grid">
       <span class="label axis-a rv">Visual blueprint</span>
-      <span class="label axis-b rv" style="--d: 40ms">Version 1.2.0</span>
+      <span class="label axis-b rv" style="--d: 40ms">Version 1.3.0</span>
       <h1 class="hero-title axis-a-wide optical rv step-1" style="--d: 80ms">The whole<br>system, on<br>one page</h1>
       <p class="lede axis-a rv step-2" style="--d: 140ms">Every token, every component and every
       motion curve available in Prussian, rendered live in all four modes. Click any colour to
@@ -569,6 +578,47 @@ body { padding-bottom: var(--space-96); }
         </div>
       </div>
     </div>
+    <div class="grid step-3">
+      <span class="label axis-a rv">Agent layer <b>· web/agent.css</b></span>
+    </div>
+
+    <div class="grid step-2">
+      <div class="demo-block rv" style="grid-column: 1 / 7">
+        <span class="k">Agent · Insight card</span>
+        <div class="agent-stage">
+          <div class="insight">
+            <div class="insight-head">
+              Insights
+              <span class="num">3</span>
+              <span class="insight-pager">
+                <button class="pill pill-sm hit" type="button" aria-label="Previous insight">&lsaquo;</button>
+                <button class="pill pill-sm hit" type="button" aria-label="Next insight">&rsaquo;</button>
+              </span>
+            </div>
+            <p class="insight-lede">The worst performer in your creamery is Rocky Road, down
+            <span class="down num">&minus;6%</span> or <span class="down num">&minus;$2,453.44</span>.</p>
+            <div class="metrics">
+              <div class="metric">
+                <span class="name"><i style="background: var(--chart-1)"></i>Mint Chip</span>
+                <div class="v down">&minus;4.41%</div>
+                <span class="abs down">&minus;$2,377.66</span>
+              </div>
+              <div class="metric">
+                <span class="name"><i style="background: var(--chart-2)"></i>Pistachio</span>
+                <div class="v up">+1.15%</div>
+                <span class="abs up">+$617.22</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="note">This is where the two colour families meet and where it is easiest to get
+        wrong. The change is state: <span class="mono">--status-good</span> and
+        <span class="mono">--status-critical</span>. The dot beside each name is series:
+        <span class="mono">--chart-1</span> and <span class="mono">--chart-2</span>, assigned in
+        slot order. Neither ever borrows the other's job.</p>
+      </div>
+    </div>
+
   </section>
 
   <div class="grid"><div class="rule"></div></div>
@@ -813,6 +863,97 @@ body { padding-bottom: var(--space-96); }
           </tbody>
         </table>
       </div>
+    </div>
+    <div class="grid step-3">
+      <span class="label axis-a rv">Agent layer <b>· web/agent.css</b></span>
+    </div>
+
+    <div class="grid step-2">
+      <div class="demo-block rv" style="grid-column: 1 / 7">
+        <span class="k">Agent · Loading state</span>
+        <div class="agent-stage">
+          <div><span class="loader" role="status" aria-live="polite">
+            <span class="loader-shape" id="load-shape" aria-hidden="true"></span>
+            <span class="loader-label" id="load-label">Churning</span>
+            <span class="loader-time num" id="load-time">0.0s</span>
+          </span></div>
+          <div class="seg step-1" role="group" aria-label="Loader shape" id="load-seg">
+            <button type="button" aria-pressed="true" data-shape="grid">Grid</button>
+            <button type="button" aria-pressed="false" data-shape="dots">Dots</button>
+            <button type="button" aria-pressed="false" data-shape="orbit">Orbit</button>
+          </div>
+        </div>
+        <p class="note">Three shapes, one job. The elapsed reading is mono with tabular figures:
+        a proportional face would make the whole line twitch every tenth of a second. The sweep
+        across the label is a pseudo-element moved by <span class="mono">transform</span>, not by
+        <span class="mono">background-position</span>, so it composites off the main thread.</p>
+      </div>
+      <div class="demo-block rv" style="grid-column: 7 / 13; --d: 60ms">
+        <span class="k">Agent · Reasoning trace</span>
+        <div class="agent-stage">
+          <div class="trace">
+            <button class="trace-head" type="button" aria-expanded="true" aria-controls="trace-body" id="trace-head">
+              <span class="chev" aria-hidden="true"></span>
+              Thought for 4 seconds
+            </button>
+            <div class="trace-body stagger" id="trace-body">
+              <div class="trace-step">Reading flavour briefs</div>
+              <div class="trace-step">Scanning supplier lists</div>
+              <div class="trace-step">Comparing tasting notes<span class="meta">6 flavours</span></div>
+              <div class="trace-step" data-state="running">Writing the scoop report</div>
+            </div>
+          </div>
+        </div>
+        <p class="note">Opening does not animate height. The body leaves the flow with
+        <span class="mono">[hidden]</span> and each step settles with a staggered fade on the way
+        back. Animating <span class="mono">grid-template-rows</span> would buy a continuous
+        transition at the cost of layout on every frame, and the language does not pay it.</p>
+      </div>
+    </div>
+
+    <div class="grid step-2">
+      <div class="demo-block rv" style="grid-column: 1 / 7">
+        <span class="k">Agent · Streaming text</span>
+        <div class="agent-stage">
+          <p class="stream" id="stream" aria-live="polite"></p>
+          <div class="sources step-1">
+            <a class="source" href="#agent"><span>Scoop Data</span><span class="host">scoopdata.io</span></a>
+            <a class="source" href="#agent"><span>Trends Index</span><span class="host">trends.google.com</span></a>
+          </div>
+          <div class="followups step-1">
+            <button class="followup" type="button">Which flavours sell best in winter</button>
+            <button class="followup" type="button">Compare gelato and soft serve margins</button>
+          </div>
+          <button class="pill step-1" type="button" id="stream-replay">Stream again</button>
+        </div>
+        <p class="note">Each chunk enters on opacity plus a 2px nudge, staggered by
+        <span class="mono">--stream-step</span>. The original blurred every chunk on entry;
+        <span class="mono">filter: blur</span> repaints the box each frame and never composites,
+        so the entrance was rewritten. It reads the same, it does not cost the same.</p>
+      </div>
+    </div>
+
+    <div class="grid step-3">
+      <div class="axis-a rv">
+        <h3 class="block-title">What did not port verbatim</h3>
+        <dl class="facts step-1">
+          <div><dt>Trace opening</dt><dd>grid-template-rows became hidden plus staggered fade</dd></div>
+          <div><dt>Streamed chunk</dt><dd>filter: blur became opacity plus a 2px nudge</dd></div>
+          <div><dt>Confidence</dt><dd>width growth became scaleX from the left edge</dd></div>
+          <div><dt>Chip reveal</dt><dd>max-width and margin became transform and opacity</dd></div>
+          <div><dt>Prompt radius</dt><dd>the rounded-to-pill morph was dropped</dd></div>
+          <div><dt>Group headings</dt><dd>all caps became sentence case</dd></div>
+        </dl>
+      </div>
+      <aside class="aside-note axis-b rv" style="--d: 60ms">
+        <h4>Why the list exists</h4>
+        <p>Six behaviours from the source could not survive the rule that only transform and
+        opacity animate, or the rule that capitalisation has one form. Each was rebuilt as the
+        nearest legal version rather than dropped, except the radius morph, which has no legal
+        version and no substitute worth inventing.</p>
+        <p>The check script enforces the first rule on agent.css directly: a transition naming a
+        layout property fails the build, as does any hex colour written outside tokens.css.</p>
+      </aside>
     </div>
   </section>
 
@@ -1207,6 +1348,127 @@ body { padding-bottom: var(--space-96); }
           </div>
       </div>
     </div>
+    <div class="grid step-3">
+      <span class="label axis-a rv">Agent layer <b>· web/agent.css</b></span>
+    </div>
+
+    <div class="grid step-2">
+      <div class="demo-block rv" style="grid-column: 1 / 7">
+        <span class="k">Agent · Approval card</span>
+        <div class="agent-stage">
+          <div class="ask">
+            <p class="ask-title">How many flavours should we launch?</p>
+            <fieldset class="ask-options">
+              <legend class="sr-only">Launch size</legend>
+              <label class="ask-option"><input type="radio" name="launch" checked> Three, the core line</label>
+              <label class="ask-option"><input type="radio" name="launch"> Five, the full case</label>
+              <label class="ask-option"><input type="radio" name="launch"> Just one hero</label>
+            </fieldset>
+          </div>
+        </div>
+        <p class="note">The question the agent asks before it acts. Options are real radios inside
+        a fieldset: one choice, an accessible name each, arrow-key navigation, and a legend that a
+        screen reader can announce even though the design shows no label.</p>
+      </div>
+      <div class="demo-block rv" style="grid-column: 7 / 13; --d: 60ms">
+        <span class="k">Agent · Prompt bar</span>
+        <div class="agent-stage">
+          <div class="menu" style="margin-bottom: var(--space-12)">
+            <button class="menu-item" type="button" aria-selected="true"><span class="cmd">/compare</span><span class="d">Flavour vs. last summer</span></button>
+            <button class="menu-item" type="button"><span class="cmd">/churn-plan</span><span class="d">Draft a churn schedule</span></button>
+            <button class="menu-item" type="button"><span class="cmd">@scoop-data</span><span class="d">Sales and churn metrics</span><span class="end">Connected</span></button>
+          </div>
+          <div class="composer">
+            <textarea class="composer-field" rows="1" aria-label="Message" placeholder="Write a message"></textarea>
+            <div class="composer-actions">
+              <span class="dictate" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+              <button class="pill" type="button">Send</button>
+            </div>
+          </div>
+        </div>
+        <p class="note">The field is <span class="mono">--text-field</span>, 16px, not
+        <span class="mono">--text-12</span>: below that iOS zooms the page on focus. The bar never
+        blocks typing or paste. <span class="mono">@</span> opens sources, <span class="mono">/</span>
+        opens commands, and the key you type is mono while its description is language.</p>
+      </div>
+    </div>
+
+    <div class="grid step-2">
+      <div class="demo-block rv" style="grid-column: 1 / 7">
+        <span class="k">Agent · Command search</span>
+        <div class="agent-stage">
+          <div class="palette">
+            <div class="palette-field">
+              <input type="search" id="palette-input" aria-label="Search commands" placeholder="Search flavours" autocomplete="off">
+              <span class="key" aria-hidden="true">/</span>
+            </div>
+            <ul class="palette-list" id="palette-list">
+              <li class="palette-item">Forecast summer demand</li>
+              <li class="palette-item">Find waffle cone suppliers</li>
+              <li class="palette-item">Compare seasonal flavours</li>
+              <li class="palette-item">Draft flavour launch plan</li>
+              <li class="palette-item">Check cold-chain status</li>
+            </ul>
+            <div class="empty" id="palette-empty" hidden style="margin: var(--space-16); border-radius: var(--radius-field)">
+              <span>Nothing matches that yet.</span>
+              <button class="pill" type="button" id="palette-clear">Clear the search</button>
+            </div>
+          </div>
+        </div>
+        <p class="note">Type to filter. Empty, sparse, dense and error are four designs, not one,
+        and the empty state always offers the next step: a page with no way out is a defect. The
+        list keeps <span class="mono">overscroll-behavior: contain</span> so the finger stops at
+        its edge instead of scrolling the page behind.</p>
+      </div>
+      <div class="demo-block rv" style="grid-column: 7 / 13; --d: 60ms">
+        <span class="k">Agent · Inspector</span>
+        <div class="agent-stage">
+          <div class="inspector">
+            <div class="inspect-head">Flavour card<span class="end"><button class="pill pill-sm" type="button">Adjust</button></span></div>
+            <div class="inspect-group">Layout</div>
+            <div class="inspect-row">
+              <label class="numfield"><span class="lbl">W</span><input type="text" inputmode="numeric" value="324" aria-label="Width"></label>
+              <label class="numfield"><span class="lbl">H</span><input type="text" inputmode="numeric" value="96" aria-label="Height"></label>
+            </div>
+            <div class="inspect-row">
+              <label class="numfield"><span class="lbl">Radius</span><input type="text" inputmode="numeric" value="12" aria-label="Radius"></label>
+              <label class="numfield"><span class="lbl">Opacity</span><input type="text" inputmode="numeric" value="100" aria-label="Opacity"><span class="unit">%</span></label>
+            </div>
+            <div class="inspect-group">Shape</div>
+            <div class="seg step-1" role="group" aria-label="Shape">
+              <button type="button" aria-pressed="true">Row</button>
+              <button type="button" aria-pressed="false">Stack</button>
+              <button type="button" aria-pressed="false">Grid</button>
+            </div>
+          </div>
+        </div>
+        <p class="note">Every field here is a number, so every field is mono with tabular figures;
+        a proportional face moves the caret between columns as the digits change. The unit lives
+        inside the field, not beside it, so the target stays one thing.</p>
+      </div>
+    </div>
+
+    <div class="grid step-2">
+      <div class="demo-block rv" style="grid-column: 1 / 7">
+        <span class="k">Agent · Selection actions</span>
+        <div class="agent-stage">
+          <p class="selection">Pistachio holds the top slot all weekend.
+          <mark>Churn it first thing Saturday so the batch has time to firm up before the
+          afternoon rush.</mark></p>
+          <div class="selection-bar" role="group" aria-label="Actions on the selection">
+            <button type="button">Explain</button>
+            <button type="button">Improve</button>
+            <button type="button">Shorten</button>
+            <span class="sep" aria-hidden="true"></span>
+            <button type="button">Tone</button>
+          </div>
+        </div>
+        <p class="note">The mark is <span class="mono">--accent</span> mixed down to a tint, so it
+        stays legible in all four modes without a colour of its own. The bar arrives with
+        <span class="mono">fade-scale</span>: it settles into place and never jumps.</p>
+      </div>
+    </div>
+
   </section>
 
   <div class="grid"><div class="rule"></div></div>
@@ -1271,6 +1533,234 @@ body { padding-bottom: var(--space-96); }
         an opt-in class, the fade-up and fade-scale keyframes, and the stagger ladder.</p>
       </aside>
     </div>
+    <div class="grid step-3">
+      <span class="label axis-a rv">Agent layer <b>· web/agent.css</b></span>
+      <p class="lede axis-a rv step-1">Nineteen more components for interfaces where a model
+      writes to the screen. They import nothing of their own: every colour, radius, size and
+      curve comes from the same tokens as everything above.</p>
+    </div>
+
+    <div class="grid step-2">
+      <div class="demo-block rv" style="grid-column: 1 / 7">
+        <span class="k">Agent · Tool calls</span>
+        <div class="agent-stage">
+          <div class="calls">
+            <div class="call"><span class="verb">Thinking</span><span class="arg">Planning the churn schedule</span></div>
+            <div class="call"><span class="verb">Write 204 lines</span><span class="arg">ChurnSchedule.tsx</span></div>
+            <div class="call"><span class="verb">Rebuild and verify</span><span class="arg">npm run freeze</span></div>
+            <div class="call"><span class="verb">Read image</span><span class="arg">flavor-chart.png</span></div>
+          </div>
+          <div class="edits step-1">
+            <span class="edit">flavors.css <span class="add">+13</span><span class="del">&minus;0</span></span>
+            <span class="edit">ChurnSchedule.tsx <span class="add">+74</span><span class="del">&minus;41</span></span>
+            <span class="edit">menu.ts <span class="add">+8</span><span class="del">&minus;2</span></span>
+          </div>
+        </div>
+        <p class="note">The verb is language, the argument is data, so only the argument is mono.
+        The line balance is always a pair even when one side is zero, or the column dances from
+        row to row.</p>
+      </div>
+      <div class="demo-block rv" style="grid-column: 7 / 13; --d: 60ms">
+        <span class="k">Agent · Task rows</span>
+        <div class="agent-stage">
+          <div class="tasks">
+            <div class="task-row" data-state="done">
+              <span class="glyph" aria-hidden="true">&check;</span>
+              Verified vendor records
+              <span class="count">12 suppliers</span>
+              <span class="status status-good">Completed</span>
+            </div>
+            <div class="task-row" data-state="running">
+              <span class="glyph" aria-hidden="true">2</span>
+              Build reorder task list
+              <span class="count">7 SKUs</span>
+            </div>
+            <div class="task-row" data-state="failed">
+              <span class="glyph" aria-hidden="true">!</span>
+              Match tax and contact IDs
+              <span class="count">2 stale</span>
+              <span class="status status-critical">Failed</span>
+            </div>
+          </div>
+        </div>
+        <p class="note">State is <span class="mono">--status-*</span>, never a chart slot. The
+        glyph in the rail repeats the state in shape, because colour on its own is not an
+        accessible signal.</p>
+      </div>
+    </div>
+
+    <div class="grid step-2">
+      <div class="demo-block rv" style="grid-column: 1 / 7">
+        <span class="k">Agent · Chat panel</span>
+        <div class="agent-stage">
+          <div class="thread">
+            <div class="tabs" role="tablist" aria-label="Threads" id="chat-tabs">
+              <button class="tab" role="tab" aria-selected="true" type="button">Flavours</button>
+              <button class="tab" role="tab" aria-selected="false" type="button">Suppliers</button>
+            </div>
+            <div class="msgs">
+              <div class="msg-user">Compare mint chip to last summer</div>
+              <div class="msg-agent">
+                <div class="step"><b>Sales history</b><span>Flavour data</span><span>4s</span></div>
+                Pulled three summers of mint chip sales for comparison.
+              </div>
+              <div class="msg-agent">
+                <div class="step"><b>Comparison</b><span>Trend detection</span><span>2s</span></div>
+                Mint chip is up 12% with stronger weekend peaks.
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="note">Real tabs: <span class="mono">role="tablist"</span>, <span class="mono">aria-selected</span>,
+        left and right arrows moving focus. The user turn is a glass bubble on the right; the
+        reply is plain prose on the left, because it can run long and a long bubble reads badly.</p>
+      </div>
+      <div class="demo-block rv" style="grid-column: 7 / 13; --d: 60ms">
+        <span class="k">Agent · Recommendation</span>
+        <div class="agent-stage">
+          <div class="suggest">
+            <p class="suggest-title">Want me to place this restock order?</p>
+            <p class="suggest-body">Reorder waffle cones from <code>cone_king</code> with lead time
+            <code>7_days</code>.</p>
+            <div class="suggest-foot">
+              <span class="confidence" data-level="3">
+                <span class="bars" aria-hidden="true"><i></i><i></i><i></i></span>
+                High confidence
+              </span>
+              <span class="spacer"></span>
+              <button class="pill" type="button">Alternatives</button>
+              <button class="pill pill-solid" type="button">Accept</button>
+            </div>
+            <div class="alt step-1">Switch to vanilla_madagascar <span class="why">Needs review</span></div>
+            <div class="alt">Full restock across every SKU <span class="why">No signal</span></div>
+            <div class="suggest-foot">
+              <span class="confidence">Stock cover</span>
+              <span class="spacer"></span>
+              <span class="num" style="font-size: var(--text-12); color: var(--secondary)">82%</span>
+            </div>
+            <div class="meter" style="margin-top: var(--space-8)"><i style="--v: 0.82"></i></div>
+          </div>
+        </div>
+        <p class="note">Confidence is three discrete steps, not a continuous percentage: a model
+        does not know the difference between 71% and 74%. Where a quantity really is continuous,
+        <span class="mono">.meter</span> grows by <span class="mono">scaleX</span> from the left
+        edge, never by <span class="mono">width</span>.</p>
+      </div>
+    </div>
+
+    <div class="grid step-2">
+      <div class="demo-block rv" style="grid-column: 1 / 7">
+        <span class="k">Agent · Context chunks</span>
+        <div class="agent-stage">
+          <div class="chunks">
+            <div class="chunk">
+              <div class="chunk-head">Vendor onboarding rule<span class="size">290 characters</span></div>
+              <div class="chunk-body">
+                Cold-chain certification must be verified before a new dairy can be added to the
+                reorder workflow.
+                <a class="chunk-src" href="#agent"><span class="kind">pdf</span>Dairy onboarding SOP</a>
+              </div>
+            </div>
+            <div class="chunk">
+              <div class="chunk-head">Seasonal demand row<span class="size">1,250 characters</span></div>
+              <div class="chunk-body">
+                Q4 velocity table: pistachio +18%, vanilla +6%, rocky road &minus;11%; retire
+                flavours below 40 scoops weekly.
+                <a class="chunk-src" href="#agent"><span class="kind">csv</span>Sales velocity export</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="note">What the model read before it answered, with the source of each piece. The
+        chunk is nested inside a card, so it rounds at <span class="mono">--radius-field</span>,
+        never harder than its parent.</p>
+      </div>
+      <div class="demo-block rv" style="grid-column: 7 / 13; --d: 60ms">
+        <span class="k">Agent · Workspace nav</span>
+        <div class="agent-stage">
+          <nav class="side" aria-label="Workspace">
+            <div class="side-head">
+              <span class="mark" aria-hidden="true">C</span>
+              <span class="name">Creamery ops<span class="sub">Production workspace</span></span>
+            </div>
+            <div class="side-item"><span>Quick search</span><span class="badge"></span><span class="key">/</span></div>
+            <div class="side-group">Workspace</div>
+            <a class="side-item" href="#agent" aria-current="page">Home</a>
+            <a class="side-item" href="#agent">Agent tasks<span class="badge">4</span></a>
+            <a class="side-item" href="#agent">Inbox</a>
+            <div class="side-group">Objects</div>
+            <a class="side-item" href="#agent">Suppliers</a>
+            <a class="side-item" href="#agent">Inventory</a>
+          </nav>
+        </div>
+        <p class="note">The group heading reads Workspace, not WORKSPACE. All caps is banned
+        across the language and a group heading is not an exception; the mono face and the eyebrow
+        tracking carry the same separation without shouting.</p>
+      </div>
+    </div>
+
+    <div class="grid step-2">
+      <div class="demo-block rv" style="grid-column: 1 / 7">
+        <span class="k">Agent · Code block</span>
+        <div class="agent-stage">
+          <div class="code">
+            <div class="code-head">churn.ts<span class="lang">TypeScript</span><span class="end"><button class="pill pill-sm" type="button" id="code-copy">Copy</button></span></div>
+            <pre class="code-body" id="code-body"></pre>
+          </div>
+          <button class="pill step-1" type="button" id="code-replay">Write again</button>
+        </div>
+        <p class="note">Code is typography, not data, so the highlight uses ink levels rather than
+        hues. Identifiers and literals sit at <span class="mono">--text</span>, reserved words and
+        calls at <span class="mono">--muted</span> in medium weight, comments and line numbers at
+        <span class="mono">--secondary</span>. None of the eight chart slots appear here: those
+        carry series identity, and a keyword is not a series.</p>
+      </div>
+    </div>
+
+    <div class="grid step-2">
+      <div class="demo-block rv" style="grid-column: 1 / 13">
+        <span class="k">Agent · Tables: proposed edits, records, filtered list</span>
+        <div class="agent-stage">
+          <div class="filters" id="filters">
+            <button class="filter" type="button" aria-pressed="true" data-filter="all">All <span class="n">5</span></button>
+            <button class="filter" type="button" aria-pressed="false" data-filter="todo">To do <span class="n">2</span></button>
+            <button class="filter" type="button" aria-pressed="false" data-filter="doing">In progress <span class="n">2</span></button>
+            <button class="filter" type="button" aria-pressed="false" data-filter="done">Completed <span class="n">1</span></button>
+          </div>
+          <div class="step-1" style="overflow-x: auto">
+            <table class="grid-table" id="filter-table">
+              <caption class="sr-only">Reorder tasks by status</caption>
+              <thead><tr><th>Task</th><th>Date</th><th>Status</th><th>Advisor</th></tr></thead>
+              <tbody>
+                <tr data-status="todo"><td>Restock mango sorbet</td><td class="num">Dec 03</td><td><span class="status status-warning">To do</span></td><td>Mango Moon Gelato</td></tr>
+                <tr data-status="doing"><td>Churn black sesame</td><td class="num">Sep 22</td><td><span class="status status-serious">In progress</span></td><td>Kumo Creamery</td></tr>
+                <tr data-status="todo"><td>Print summer menu</td><td class="num">Jan 02</td><td><span class="status status-warning">To do</span></td><td>Coral Coast Sorbet</td></tr>
+                <tr data-status="doing"><td>Taste-test batch 42</td><td class="num">Nov 08</td><td><span class="status status-serious">In progress</span></td><td>Maple Orbit</td></tr>
+                <tr data-status="done"><td>Order waffle cones</td><td class="num">Apr 14</td><td><span class="status status-good">Completed</span></td><td>Aurora Scoops</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="step-2" style="overflow-x: auto">
+            <table class="grid-table">
+              <caption class="sr-only">Menu cleanup the agent proposes</caption>
+              <thead><tr><th>Flavour</th><th>Category</th><th>Supplier</th><th>Last interaction</th></tr></thead>
+              <tbody>
+                <tr data-diff="removed"><td class="strike">Rocky Road</td><td>Classic</td><td class="strike">aurora-scoops</td><td class="num">almost 2 years ago</td></tr>
+                <tr data-diff="removed"><td class="strike">Bubblegum</td><td>Retro</td><td class="strike">kumo-creamery</td><td class="num">over 1 year ago</td></tr>
+                <tr><td>Mint Chip</td><td>Classic</td><td>maple-orbit</td><td class="num">9 days ago</td></tr>
+                <tr data-diff="added"><td>Pistachio</td><td>Seasonal</td><td>maple-orbit</td><td class="num">15 days ago</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <p class="note">One table base carries all three: the filtered list, the record grid and
+        the proposed edit. The row that leaves and the row that enters take state ink, tinted by
+        <span class="mono">color-mix</span> against transparent, so no new colour enters the
+        language to describe a diff. Dates and counts use <span class="mono">.num</span> because
+        they get compared down the column.</p>
+      </div>
+    </div>
+
   </section>
 
   <div class="grid"><div class="rule"></div></div>
@@ -1310,7 +1800,7 @@ body { padding-bottom: var(--space-96); }
 <footer class="foot">
   <div class="foot-in">
     <span>Set in Geist, Geist Mono and Cormorant Garamond</span>
-    <span class="sig">Prussian <span>1.2.0</span></span>
+    <span class="sig">Prussian <span>1.3.0</span></span>
   </div>
 </footer>
 
@@ -1886,6 +2376,157 @@ document.querySelectorAll(".mode-btn").forEach((btn) => {
 
 const asked = new URL(location.href).searchParams.get("mode") || "";
 applyMode(MODES.includes(asked) ? asked : "", false);
+
+
+/* ---------- camada de agente ---------- */
+
+/* carga: a forma troca, o rotulo e o tempo ficam. O tempo e mono e
+   tabular porque muda dez vezes por segundo. */
+const LOADER_SHAPES = {
+  grid: '<span class="loader-grid">' + "<i></i>".repeat(9) + "</span>",
+  dots: '<span class="loader-dots"><i></i><i></i><i></i></span>',
+  orbit: '<span class="loader-orbit"></span>',
+};
+const loadShape = document.getElementById("load-shape");
+const loadSeg = document.getElementById("load-seg");
+
+function setLoaderShape(name) {
+  loadShape.innerHTML = LOADER_SHAPES[name];
+  loadSeg.querySelectorAll("button").forEach((b) =>
+    b.setAttribute("aria-pressed", String(b.dataset.shape === name)));
+}
+setLoaderShape("grid");
+loadSeg.addEventListener("click", (ev) => {
+  const b = ev.target.closest("button");
+  if (b) setLoaderShape(b.dataset.shape);
+});
+
+const loadTime = document.getElementById("load-time");
+const loadStart = performance.now();
+setInterval(() => {
+  loadTime.textContent = (((performance.now() - loadStart) / 1000) % 10).toFixed(1) + "s";
+}, 100);
+
+/* rastro: [hidden] tira o corpo do fluxo, e o retorno reinicia a escada
+   de entrada. Nenhuma altura e animada. */
+const traceHead = document.getElementById("trace-head");
+const traceBody = document.getElementById("trace-body");
+traceHead.addEventListener("click", () => {
+  const open = traceHead.getAttribute("aria-expanded") === "true";
+  traceHead.setAttribute("aria-expanded", String(!open));
+  traceBody.hidden = open;
+  if (open) return;
+  traceBody.querySelectorAll(".trace-step").forEach((s) => {
+    s.style.animation = "none";
+    void s.offsetWidth;
+    s.style.animation = "";
+  });
+});
+
+/* streaming: um pedaco por palavra, atraso por --i vezes --stream-step */
+const STREAM_TEXT =
+  "Pistachio is your fastest-growing flavour: sales are up 18% against last summer, " +
+  "and the weekend peak now runs at twice the weekday average.";
+const streamEl = document.getElementById("stream");
+function runStream() {
+  streamEl.innerHTML =
+    STREAM_TEXT.split(" ")
+      .map((w, i) => `<span class="tok" style="--i: ${i}">${w}&nbsp;</span>`)
+      .join("") + '<span class="caret"></span>';
+}
+runStream();
+document.getElementById("stream-replay").addEventListener("click", runStream);
+
+/* abas: clique e seta, com o foco acompanhando a selecao */
+const chatTabs = [...document.querySelectorAll("#chat-tabs .tab")];
+chatTabs.forEach((tab, i) => {
+  tab.addEventListener("click", () =>
+    chatTabs.forEach((t) => t.setAttribute("aria-selected", String(t === tab))));
+  tab.addEventListener("keydown", (ev) => {
+    const d = ev.key === "ArrowRight" ? 1 : ev.key === "ArrowLeft" ? -1 : 0;
+    if (!d) return;
+    ev.preventDefault();
+    const next = chatTabs[(i + d + chatTabs.length) % chatTabs.length];
+    next.focus();
+    next.click();
+  });
+});
+
+/* filtro: o chip reorganiza a tabela viva, e a contagem vive no chip */
+const filterBar = document.getElementById("filters");
+filterBar.addEventListener("click", (ev) => {
+  const b = ev.target.closest(".filter");
+  if (!b) return;
+  filterBar.querySelectorAll(".filter").forEach((f) =>
+    f.setAttribute("aria-pressed", String(f === b)));
+  const want = b.dataset.filter;
+  document.querySelectorAll("#filter-table tbody tr").forEach((tr) => {
+    tr.hidden = want !== "all" && tr.dataset.status !== want;
+  });
+});
+
+/* paleta: filtragem viva, e o vazio entra no lugar da lista com saida */
+const palInput = document.getElementById("palette-input");
+const palList = document.getElementById("palette-list");
+const palEmpty = document.getElementById("palette-empty");
+function filterPalette() {
+  const q = palInput.value.trim().toLowerCase();
+  let hits = 0;
+  palList.querySelectorAll(".palette-item").forEach((li) => {
+    const hit = li.textContent.toLowerCase().includes(q);
+    li.hidden = !hit;
+    if (hit) hits++;
+  });
+  palList.hidden = hits === 0;
+  palEmpty.hidden = hits !== 0;
+}
+palInput.addEventListener("input", filterPalette);
+document.getElementById("palette-clear").addEventListener("click", () => {
+  palInput.value = "";
+  filterPalette();
+  palInput.focus();
+});
+
+/* codigo: a linha chega escalonada pelo mesmo passo do texto. O realce
+   e nivel de tinta, nao matiz: nenhum slot de grafico entra aqui. */
+const CODE_LINES = [
+  '<span class="tok-key">export async function</span> <span class="tok-fn">churnBatch</span>() {',
+  '  <span class="tok-key">const</span> flavor = <span class="tok-key">await</span> <span class="tok-fn">getFlavor</span>(<span class="tok-str">"pistachio"</span>);',
+  '  <span class="tok-key">const</span> base = <span class="tok-key">await</span> dairy.<span class="tok-fn">fetch</span>({ flavor });',
+  '  <span class="tok-com">// the chamber only takes a batch below -12C</span>',
+  '  <span class="tok-key">await</span> freezer.<span class="tok-fn">store</span>(base, { temp: <span class="tok-str">"-14C"</span> });',
+  '  <span class="tok-key">return</span> base.gallons;',
+  "}",
+];
+const codeBody = document.getElementById("code-body");
+function runCode() {
+  codeBody.innerHTML = CODE_LINES.map(
+    (line, i) =>
+      `<div class="code-line" style="--i: ${i * 4}"><span class="ln">${i + 1}</span><span>${line}</span></div>`
+  ).join("");
+}
+runCode();
+document.getElementById("code-replay").addEventListener("click", runCode);
+document.getElementById("code-copy").addEventListener("click", () => {
+  const plain = CODE_LINES.map((l) => l.replace(/<[^>]+>/g, "")).join("\n");
+  navigator.clipboard?.writeText(plain).catch(() => {});
+  /* o toast e o mesmo do resto da pagina, mas o rotulo e o arquivo, nao
+     o corpo inteiro do codigo */
+  toast.textContent = "Copied  churn.ts";
+  toast.classList.add("on");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove("on"), 1400);
+});
+
+/* controle segmentado: uma escolha entre poucas, todas visiveis */
+document.querySelectorAll(".seg:not(#load-seg)").forEach((seg) => {
+  seg.addEventListener("click", (ev) => {
+    const b = ev.target.closest("button");
+    if (!b) return;
+    seg.querySelectorAll("button").forEach((x) =>
+      x.setAttribute("aria-pressed", String(x === b)));
+  });
+});
 
 bindLines();
 bindStage();

@@ -4,14 +4,17 @@ Design system for web and Python. Four modes, script-verified tokens, plotting t
 
 Derived from `madsondeluna.github.io`. Numeric token architecture in the format of `devouringdetails.com`. Easing curves from `motion.dev`.
 
-Prussian 1.2.0.
+Prussian 1.3.0.
 
 ## Use
 
 ```html
 <link rel="stylesheet" href="web/tokens.css">
 <link rel="stylesheet" href="web/patterns.css">
+<link rel="stylesheet" href="web/agent.css">
 ```
+
+`agent.css` is optional and depends on both files above.
 
 Tailwind v4: import `web/theme.css`, which already pulls `tokens.css` and the `@theme inline` block.
 
@@ -32,12 +35,50 @@ tokens/tokens.json               source of truth
 web/tokens.css                   variables, four modes
 web/theme.css                    Tailwind v4 bridge
 web/patterns.css                 components and the glass material
+web/agent.css                    agent layer, optional
 python/prussian/                 palette, mpl, plotly
 python/prussian-{light,dark}.mplstyle
 python/streamlit/                config.toml and app.css
+templates/page.html              starter page, four modes wired
 preview/index.html               visual guide, everything live
 tools/check.mjs                  verification
 ```
+
+## Starting a new project
+
+```
+mkdir -p <project>/prussian
+cp web/tokens.css web/patterns.css web/agent.css <project>/prussian/
+cp templates/page.html <project>/index.html
+```
+
+Drop `agent.css` if no model writes to the screen. The template already carries the head, the font link, the twelve-column grid on two axes, the three spacing steps, the skip link and a mode switcher that keeps the mode in the URL.
+
+| Step | Value |
+|---|---|
+| Link order | `tokens.css`, `patterns.css`, `agent.css` |
+| Fonts | Geist 300/400/500/600, Geist Mono 400/500, Cormorant Garamond 300/400 |
+| Default mode | `:root`, no class |
+| Mode state | `?mode=paper-like\|deep-blue\|dark` and the class on `<html>` |
+| `theme-color` | `#F4F6F9` at rest, rewritten by the switcher on every change |
+| Version pinned | record the Prussian version the copy came from |
+
+Rules the app layer carries on its own, because no file here can enforce them:
+
+| Rule | Level |
+|---|---|
+| No hex, rem or ms literal in app CSS; every value is `var(--token)` | Must |
+| A missing value becomes a token in `tokens.css`, never a literal in the app | Must |
+| Text starts on column 1 or column 9; specimen grids are the declared exception | Must |
+| Vertical rhythm uses 24, 48 and 96 only | Must |
+| Sentence case in every string, including group headings and buttons | Must |
+| Chart series come from `--chart-1` to `--chart-8` in order, never cycled | Must |
+| State uses `--status-*`; a chart slot never carries state | Must |
+| Every transition names its properties, and only `transform` and `opacity` animate | Must |
+| Reduced motion collapses duration and delay, including staggered entrances | Must |
+| Copy the language files rather than linking the repository path | Should |
+
+The four-mode claim is a claim about the app too. Click through all four before shipping: a value that only works in light is a defect, not a preference.
 
 ## Modes
 
@@ -349,9 +390,108 @@ Framework layer, outside this repository.
 
 `patterns.css`: `.eyebrow`, `.display`, `.prose`, `.section-header`, `.surface`, `.hover-surface`, `.card-glass`, `.hairline-grid`, `.glass` and variants, `.pill`, `.pill-sm`, `.pill-solid`, `.link-cta`, `.link-muted`, `.hover-fade`, `.tag`, `.status`, `.media`, `.avatar`, `.control-round`, `.fade-up`, `.fade-scale`, `.stagger`.
 
-Interaction layer, new in 1.2: `.hit`, `.field`, `.field-label`, `.input`, `.textarea`, `.select`, `.select-shell`, `.check`, `.field-error`, `.form-actions`, `[data-loading]`, `.truncate`, `.clamp-2`, `.clamp-3`, `.break-words`, `.min-w-0`, `.num`, `.balance`, `.pretty`, `.empty`, `.skeleton`, `.skeleton-line`, `.overlay`, `.modal`, `.drawer`, `[data-dragging]`, `.tip`, `.tip-group`, `.sr-only`, `.skip-link`.
+Interaction layer, new in 1.2: `[hidden]` (forced to `display: none`, so a component with a display of its own still leaves the flow), `.hit`, `.field`, `.field-label`, `.input`, `.textarea`, `.select`, `.select-shell`, `.check`, `.field-error`, `.form-actions`, `[data-loading]`, `.truncate`, `.clamp-2`, `.clamp-3`, `.break-words`, `.min-w-0`, `.num`, `.balance`, `.pretty`, `.empty`, `.skeleton`, `.skeleton-line`, `.overlay`, `.modal`, `.drawer`, `[data-dragging]`, `.tip`, `.tip-group`, `.sr-only`, `.skip-link`.
 
 Visualisation layer: `.viz`, `.viz-crosshair`, `.viz-dot`, `.viz-mark`, `.viz-tip`, `.viz-legend`, `.viz-draw`, `.viz-grow`, `.viz-appear`.
+
+Agent layer, new in 1.3, in `agent.css`: see the agent layer chapter below.
+
+## Agent layer
+
+`web/agent.css`. Nineteen components for interfaces where a model writes to the screen. Depends on `tokens.css` and `patterns.css`. Adds no colour.
+
+| # | Component | Classes |
+|---|---|---|
+| 01 | Loading state | `.loader`, `.loader-grid`, `.loader-dots`, `.loader-orbit`, `.loader-label`, `.loader-time` |
+| 02 | Reasoning trace | `.trace`, `.trace-head`, `.trace-body`, `.trace-step` |
+| 03 | Streaming text | `.stream`, `.stream .tok`, `.caret`, `.sources`, `.source`, `.followups`, `.followup` |
+| 04 | Approval card | `.ask`, `.ask-title`, `.ask-options`, `.ask-option` |
+| 05 | Tool calls | `.calls`, `.call`, `.edits`, `.edit` |
+| 06 | Task rows | `.tasks`, `.task-row`, `.task-sub` |
+| 07 | Chat panel | `.thread`, `.tabs`, `.tab`, `.msgs`, `.msg-user`, `.msg-agent` |
+| 08 | Prompt bar | `.composer`, `.composer-field`, `.composer-actions`, `.menu`, `.menu-item`, `.dictate` |
+| 09 | Recommendation | `.suggest`, `.confidence`, `.meter`, `.alt`, `.arg-inline` |
+| 10 | Context chunks | `.chunks`, `.chunk`, `.chunk-head`, `.chunk-body`, `.chunk-src` |
+| 11 | Proposed edits | `.grid-table`, `tr[data-diff]`, `.strike` |
+| 12 | Records grid | `.grid-table` with `.tag`, `.num`, `.truncate` |
+| 13 | Filtered list | `.filters`, `.filter` |
+| 14 | Workspace nav | `.side`, `.side-head`, `.side-group`, `.side-item`, `.key` |
+| 15 | Command search | `.palette`, `.palette-field`, `.palette-list`, `.palette-item` |
+| 16 | Insight card | `.insight`, `.insight-head`, `.insight-pager`, `.metrics`, `.metric`, `.up`, `.down` |
+| 17 | Code block | `.code`, `.code-head`, `.code-body`, `.code-line`, `.ln`, `.tok-key`, `.tok-fn`, `.tok-str`, `.tok-com` |
+| 18 | Inspector | `.inspector`, `.inspect-head`, `.inspect-group`, `.inspect-row`, `.numfield`, `.seg` |
+| 19 | Selection actions | `.selection`, `.selection mark`, `.selection-bar` |
+
+### Agent tokens
+
+| Token | Value | Role |
+|---|---|---|
+| `--stream-step` | `45ms` | delay between two arriving chunks, multiplied by `--i` |
+| `--caret-blink` | `1s` | caret cycle |
+| `--meter` | `4px` | thickness of a continuous meter |
+| `--rail` | `28px` | indent of the trace body under its head |
+| `--gutter-code` | `36px` | line-number column |
+| `--pixel` | `3px` | cell of the pixel-grid loader |
+
+### Agent keyframes
+
+| Name | Animates | Used by |
+|---|---|---|
+| `prussian-token` | `opacity`, `translateY` | `.stream .tok`, `.code-line` |
+| `prussian-caret` | `opacity` | `.caret` |
+| `prussian-pixel` | `opacity` | `.loader-grid i` |
+| `prussian-bounce` | `scale`, `opacity` | `.loader-dots i` |
+| `prussian-eq` | `scaleY` | `.dictate i` |
+| `prussian-sweep` | `translateX` | `.loader-label::after` |
+
+### Colour assignment
+
+| Meaning | Source | Example |
+|---|---|---|
+| Task or metric state | `--status-good`, `--status-warning`, `--status-serious`, `--status-critical` | `.task-row[data-state]`, `.up`, `.down`, `tr[data-diff]` |
+| Series identity | `--chart-1` to `--chart-8`, in slot order | dot beside a metric name, chart line |
+| Syntax highlight | `--text`, `--muted`, `--secondary` | `.tok-str`, `.tok-key`, `.tok-com` |
+
+A diff tint is `color-mix(in oklab, var(--status-*) 12%, transparent)`. A selection mark is `color-mix(in oklab, var(--accent) 22%, transparent)`. No new hex enters the language.
+
+### Radius by role in the agent layer
+
+| Element | Radius |
+|---|---|
+| `.ask`, `.suggest`, `.thread`, `.composer`, `.side`, `.palette`, `.insight`, `.inspector`, `.trace` | `--radius-surface` |
+| `.chunk`, `.call`, `.edit`, `.menu-item`, `.side-item`, `.palette-item`, `.numfield`, `.metrics` | `--radius-field` |
+| `.code` | `--radius-media` |
+| `.source`, `.followup`, `.filter`, `.task-row`, `.chunk-src`, `.tab`, `.seg`, `.selection-bar`, `.meter` | `--radius-control` |
+| `.arg-inline`, `.key`, `.confidence .bars i`, `.selection mark` | `--radius-mark` |
+
+### Translations from the source
+
+Six behaviours could not survive the rule that only `transform` and `opacity` animate, or the rule that capitalisation has one form. Five were rebuilt, one dropped.
+
+| Source behaviour | Prussian version |
+|---|---|
+| `grid-template-rows` accordion | `[hidden]` plus staggered `prussian-fade-up` on the steps |
+| `filter: blur(4px)` on an arriving chunk | `opacity` plus a `--nudge-1` rise |
+| Confidence and progress by `width` | `transform: scaleX()` with `transform-origin: left` |
+| Chip reveal by `max-width` and `margin` | `transform` and `opacity` |
+| Shimmer by `background-position` | pseudo-element swept by `translateX` |
+| `border-radius` morph on the prompt bar | dropped |
+| `WORKSPACE` group heading | sentence case with mono face and eyebrow tracking |
+
+### Craft applied
+
+| Component | Requirement |
+|---|---|
+| `.trace-head` | `aria-expanded` and `aria-controls` on a real button |
+| `.tabs` | `role="tablist"`, `aria-selected`, left and right arrow navigation |
+| `.stream` | `aria-live="polite"` on the region, not on each chunk |
+| `.loader` | `role="status"` with the elapsed reading inside it |
+| `.ask-options` | `fieldset` with a `legend`, radios rather than buttons |
+| `.composer-field` | `--text-field` at 16px, never `--text-12` |
+| `.palette-list` | `overscroll-behavior: contain`, `.empty` replacing the list with a way out |
+| `.task-row` | glyph in the rail repeating state in shape, not colour alone |
+| `.insight-pager` | `.hit` where the visual control is under 24px |
+| `.grid-table` | `.num` on every column that gets compared, `caption` in `.sr-only` |
 
 ## Python API
 
@@ -395,15 +535,19 @@ No dependencies, exits 1 on any failure. It checks:
 - version across `tokens.json`, `__init__.py`, the guide and this README
 - absence of a ninth chart slot
 - `color-scheme` declared in all four mode blocks
-- no `transition: all` and no transition of a layout property in `web/` or the guide
-- interaction tokens agreeing between `tokens.json` and `web/tokens.css`
+- no `transition: all` and no transition of a layout property in `patterns.css`, `agent.css`, the guide or the starter template; `grid-template-rows` and `flex-basis` count as layout properties
+- no hex colour written outside `tokens.css`, the one exception being the `theme-color` meta, which is checked against the token instead
+- interaction tokens and agent tokens agreeing between `tokens.json` and `web/tokens.css`
 - a focus ring that exists
+- `theme-color` in the guide and the template matching `--bg` of the light mode
+
+It does not read `@keyframes` or `animation-delay`. Reduced motion is collapsed by hand in `patterns.css` and `agent.css`, including the delay of every staggered entrance.
 
 ## Visual guide
 
 `preview/index.html` renders every token and component in all four modes, with the contrast table recomputed on mode change and a click on any colour copying its token. It loads `../web/*.css` on purpose, to test the files rather than a copy.
 
-Nine chapters: colour, data colour, typography, space and form, glass, motion, craft, components, use. The craft chapter carries the rule tables above with live demonstrations: focus ring and hit area, a form that surfaces its errors on an empty submit, the three content lengths side by side, and the empty, loading and error states.
+Nine chapters: colour, data colour, typography, space and form, glass, motion, craft, components, use. The agent layer is not a chapter of its own: each of its components sits in the chapter that governs it, marked `Agent layer`. The insight card is in data colour, the loader, the trace and streaming text are in motion, the approval card, prompt bar, command search, inspector and selection actions are in craft, and the rest are in components. The craft chapter carries the rule tables above with live demonstrations: focus ring and hit area, a form that surfaces its errors on an empty submit, the three content lengths side by side, and the empty, loading and error states.
 
 Serve from the repository root, not from `preview/`, or the `../web/*.css` imports return 404.
 

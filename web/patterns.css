@@ -22,6 +22,11 @@ body {
 
 * { box-sizing: border-box; }
 
+/* [hidden] e a forma declarada de tirar algo do fluxo, e qualquer
+   componente com display proprio o atropela sem este reforco. Sem ele
+   .empty[hidden] continua visivel e o corpo de um acordeao nunca fecha. */
+[hidden] { display: none !important; }
+
 a { color: inherit; text-decoration: none; }
 
 /* midia nunca estoura a coluna, e img mantem proporcao. Largura e altura

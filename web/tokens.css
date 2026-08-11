@@ -304,6 +304,16 @@
   /* o realce nativo de toque some: o :active da linguagem o substitui */
   --tap-highlight: transparent;
 
+  /* camada de agente: cadencia de streaming, medidor, calha de estado
+     e grade do carregador. stream-step e o intervalo entre dois pedacos
+     de texto que chegam; caret-blink e o ciclo do cursor. */
+  --stream-step: 45ms;
+  --caret-blink: 1s;
+  --meter: 4px;
+  --rail: 28px;
+  --gutter-code: 36px;
+  --pixel: 3px;
+
   /* o navegador precisa saber o modo para pintar scrollbar, caret,
      controle nativo e a moldura da janela */
   color-scheme: light;

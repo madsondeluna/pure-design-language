@@ -231,7 +231,9 @@ function craft() {
   console.log("\nregras de ofício");
   const css = read("web/tokens.css");
   const patterns = read("web/patterns.css");
+  const agent = read("web/agent.css");
   const html = read("preview/index.html");
+  const tpl = read("templates/page.html");
 
   // color-scheme: sem ele o navegador pinta barra de rolagem, cursor de
   // texto e controle nativo com o tema do sistema, não com o da página
@@ -249,19 +251,49 @@ function craft() {
     missing.length ? `faltando em: ${missing.map(([m]) => m).join(", ")}`
                    : "os quatro modos declaram claro ou escuro ao navegador");
 
+  // as três fontes de CSS escrito à mão passam pelas mesmas regras
+  const SOURCES = [
+    ["web/patterns.css", patterns],
+    ["web/agent.css", agent],
+    ["preview/index.html", html],
+    ["templates/page.html", tpl],
+  ];
+
   // transition: all pega propriedade de layout sem querer e é proibida
-  const wildcard = [["web/patterns.css", patterns], ["preview/index.html", html]]
-    .filter(([, src]) => /transition:\s*all\b/.test(src));
+  const wildcard = SOURCES.filter(([, src]) => /transition:\s*all\b/.test(src));
   check(!wildcard.length, "sem transition all",
     wildcard.length ? `curinga em: ${wildcard.map(([f]) => f).join(", ")}`
                     : "toda transição lista as propriedades que anima");
 
-  // só transform e opacity são compostas fora da thread principal
-  const LAYOUT_PROPS = /transition:[^;]*\b(top|left|right|bottom|width|height|margin|padding)\b/g;
-  const animated = (patterns.match(LAYOUT_PROPS) || []).concat(html.match(LAYOUT_PROPS) || []);
+  // só transform e opacity são compostas fora da thread principal.
+  // grid-template-rows entra na lista porque é o jeito comum de animar
+  // abertura de acordeão, e ele recalcula layout a cada quadro.
+  const LAYOUT_PROPS =
+    /transition:[^;]*\b(top|left|right|bottom|width|height|margin|padding|grid-template-rows|flex-basis)\b/g;
+  const animated = SOURCES.flatMap(([f, src]) => (src.match(LAYOUT_PROPS) || []).map(() => f));
   check(!animated.length, "sem transição de layout",
-    animated.length ? `${animated.length} transição(ões) de propriedade de layout`
-                    : "nada anima top, left, width ou height");
+    animated.length ? `${animated.length} transição(ões) de propriedade de layout em ${[...new Set(animated)].join(", ")}`
+                    : "nada anima top, left, width ou grid-template-rows");
+
+  // componente não inventa cor: todo hex mora em tokens.css
+  const litLimit = /#[0-9a-fA-F]{3,8}\b/;
+  const literal = [
+    ["web/patterns.css", patterns],
+    ["web/agent.css", agent],
+    ["templates/page.html", tpl.slice(tpl.indexOf("<style>"), tpl.indexOf("</style>"))],
+  ].filter(([, src]) => litLimit.test(src));
+  check(!literal.length, "sem cor literal",
+    literal.length ? `hex fora de tokens.css em: ${literal.map(([f]) => f).join(", ")}`
+                   : "patterns.css, agent.css e o template só usam var(--token)");
+
+  // theme-color é o único hex copiado à mão: sem ele o navegador pinta a
+  // moldura antes do script rodar. Ele precisa bater com --bg do modo claro.
+  const wantMeta = T.color.light.bg;
+  const metaOff = [["preview/index.html", html], ["templates/page.html", tpl]]
+    .filter(([, src]) => !new RegExp(`name="theme-color" content="${wantMeta}"`, "i").test(src));
+  check(!metaOff.length, "moldura do navegador",
+    metaOff.length ? `theme-color diverge de ${wantMeta} em: ${metaOff.map(([f]) => f).join(", ")}`
+                   : `theme-color inicial bate com --bg do modo claro (${wantMeta})`);
 
   // os tokens de interação precisam existir nos dois lados
   const iface = Object.entries(T.interaction).filter(([k]) => !k.startsWith("$"));
@@ -269,6 +301,13 @@ function craft() {
   check(!drift.length, "tokens de interação",
     drift.length ? `divergem de tokens.json: ${drift.map(([k]) => k).join(", ")}`
                  : `${iface.length} valores batem em json e css`);
+
+  // idem para a camada de agente
+  const ag = Object.entries(T.agent).filter(([k]) => !k.startsWith("$"));
+  const agDrift = ag.filter(([k, v]) => !css.includes(`--${k}: ${v}`));
+  check(!agDrift.length, "tokens de agente",
+    agDrift.length ? `divergem de tokens.json: ${agDrift.map(([k]) => k).join(", ")}`
+                   : `${ag.length} valores batem em json e css`);
 
   // foco visível: outline none só é aceitável com substituto declarado
   const bareNone = /outline:\s*none/.test(patterns) && !/:focus-visible/.test(patterns);
