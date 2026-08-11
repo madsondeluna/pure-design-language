@@ -559,7 +559,7 @@ python3 -m http.server 8731
 # http://localhost:8731/preview/index.html
 ```
 
-Guide layout rules, applicable to any page built on the language: two vertical axes (columns 1 and 9 of twelve), three spacing steps (24, 48, 96), sentence case, one size per control class.
+Guide layout rules, applicable to any page built on the language: two vertical axes (columns 1 and 9 of twelve), three spacing steps (24, 48, 96), sentence case, one size per control class, version number only in the footer signature.
 
 ## Migrating existing apps
 
