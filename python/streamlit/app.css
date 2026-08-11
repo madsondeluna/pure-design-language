@@ -24,7 +24,7 @@
   --muted: #3e5c76;
   --accent: #3e5c76;
   --font-sans: "Public Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-mono: "Chivo Mono", "Spline Sans Mono", Menlo, monospace;
+  --font-mono: "Spline Sans Mono", "Sometype Mono", Menlo, monospace;
   --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
   --ease-swift: cubic-bezier(0.23, 0.88, 0.26, 0.92);
 }

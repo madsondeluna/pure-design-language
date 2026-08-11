@@ -4,7 +4,7 @@ Design system for web and Python. Four modes, script-verified tokens, plotting t
 
 Derived from `madsondeluna.github.io`. Numeric token architecture in the format of `devouringdetails.com`. Easing curves from `motion.dev`.
 
-Prussian 1.4.0.
+Prussian 1.4.1.
 
 ## Use
 
@@ -57,7 +57,7 @@ Drop `agent.css` if no model writes to the screen. The template already carries 
 | Step | Value |
 |---|---|
 | Link order | `tokens.css`, `patterns.css`, `agent.css` |
-| Fonts | Archivo 300 at width 125, Public Sans 300/400/500/600, Chivo Mono 400/500 |
+| Fonts | Archivo 300 at width 125, Public Sans 300/400/500/600, Spline Sans Mono 400/500 |
 | Default mode | `:root`, no class |
 | Mode state | `?mode=paper-like\|deep-blue\|dark` and the class on `<html>` |
 | `theme-color` | `#F4F6F9` at rest, rewritten by the switcher on every change |
@@ -159,7 +159,7 @@ Never two y-axes on one chart.
 |---|---|---|
 | Archivo 300, `font-stretch: 125%` | section titles and names | tracking -0.02em, leading 1, never below 32px, never in running text. The title separates by width, not by a serifed family, so it always declares both weight and stretch |
 | Public Sans | prose, labels, buttons, table cells | |
-| Chivo Mono | numbering, field labels, tabular values, code, identifiers | tracking 0.12em when used as a label |
+| Spline Sans Mono | numbering, field labels, tabular values, code, identifiers | tracking 0.12em when used as a label |
 
 Scale `--text-11` through `--text-56`; the name is the size. Two clamps sit outside it: `--text-display-section` and `--text-display-name`.
 

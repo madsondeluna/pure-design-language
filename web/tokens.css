@@ -169,7 +169,7 @@
 
   /* tipografia */
   --font-sans:    "Public Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-mono:    "Chivo Mono", "Spline Sans Mono", Menlo, monospace;
+  --font-mono:    "Spline Sans Mono", "Sometype Mono", Menlo, monospace;
   --font-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
   /* o titulo se separa por largura, nao por familia serifada: Archivo no
      eixo wdth 125. Quem usa --font-display declara os dois. */
