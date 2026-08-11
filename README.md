@@ -68,6 +68,7 @@ Rules the app layer carries on its own, because no file here can enforce them:
 | Rule | Level |
 |---|---|
 | No hex, rem or ms literal in app CSS; every value is `var(--token)` | Must |
+| `--font-display` is always set with `--font-display-stretch`; the title separates by width, not by a serifed family | Must |
 | A missing value becomes a token in `tokens.css`, never a literal in the app | Must |
 | Text starts on column 1 or column 9; specimen grids are the declared exception | Must |
 | Vertical rhythm uses 24, 48 and 96 only | Must |

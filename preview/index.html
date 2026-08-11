@@ -636,8 +636,9 @@ body { padding-bottom: var(--space-96); }
       <div class="specimen rv" style="grid-column: 1 / 5">
         <span class="glyphs display">Aa</span>
         <span class="role">Archivo 300, width 125</span>
-        <span class="rule-line">Section titles and names only. Always with display tracking and
-        leading of one. Never in running text, never below 32px.</span>
+        <span class="rule-line">Section titles and names only. Always with display tracking,
+        leading of one, and the width token beside the family. Never in running text, never
+        below 32px.</span>
       </div>
       <div class="specimen rv" style="grid-column: 5 / 9; --d: 60ms">
         <span class="glyphs">Aa</span>
@@ -659,7 +660,14 @@ body { padding-bottom: var(--space-96); }
         <div id="typescale"></div>
       </div>
       <aside class="aside-note axis-b rv" style="--d: 60ms">
-        <h4>Names are sizes</h4>
+        <h4>The title separates by width</h4>
+        <p>There is no serif in the system. The section title is the same kind of grotesque as
+        the prose, pulled apart on the width axis: <span class="mono">--font-display</span> is
+        Archivo and <span class="mono">--font-display-stretch</span> is 125%. The two travel
+        together. Set the family without the width and the title collapses into an ordinary
+        light sans, which is the one way this rule gets broken.</p>
+
+        <h4 style="margin-top: var(--space-24)">Names are sizes</h4>
         <p>The scale is numeric, so the token says what it does: text-13 is thirteen pixels.
         No small, medium, large, and no argument about what large means.</p>
         <p>Two responsive sizes sit outside it, for the section title and the name, because
@@ -1533,6 +1541,14 @@ body { padding-bottom: var(--space-96); }
         <h4>Also in patterns.css</h4>
         <p>Glass card, hairline grid, avatar, round control, prose measure, justified prose as
         an opt-in class, the fade-up and fade-scale keyframes, and the stagger ladder.</p>
+        <p><span class="mono">[hidden]</span> is forced to <span class="mono">display: none</span>
+        there, so a component that carries a display of its own still leaves the flow when the
+        attribute is set.</p>
+
+        <h4 style="margin-top: var(--space-24)">And in agent.css</h4>
+        <p>Nineteen components, filed through this guide under the chapter that governs each one
+        rather than gathered into a section of their own. Six tokens, six keyframes, no colour of
+        their own.</p>
       </aside>
     </div>
     <div class="grid step-3">
