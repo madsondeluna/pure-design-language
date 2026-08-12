@@ -257,6 +257,26 @@ dl, dd { margin: 0; }
   filter: brightness(1.06);
 }
 
+/* o modificador so modifica se ganhar do componente que ele tinge, e
+   sozinho ele nao ganha: .pill, .card-glass e .glass declaram fundo depois
+   deste bloco, e no hover declaram com uma classe a mais. Sem o par
+   explicito, class="pill glass-accent" saia identico a class="pill", e a
+   acao primaria da tela perdia a prioridade sem nenhum aviso. Nomear os
+   tres aqui e o preco de manter o material no capitulo do material. */
+.pill.glass-accent,
+.card-glass.glass-accent,
+.glass.glass-accent {
+  background-image: var(--glass-tint-accent);
+  border-color: var(--glass-edge-accent);
+}
+.pill.glass-accent:hover,
+.card-glass.glass-accent:hover,
+.glass.glass-accent:hover {
+  background-image: var(--glass-tint-accent);
+  border-color: var(--glass-edge-accent);
+  filter: brightness(1.06);
+}
+
 /* formas: o material e o mesmo, so o raio muda. .glass-sq guarda o nome
    antigo por compatibilidade, mas hoje carrega o raio de superficie:
    nada na linguagem tem canto vivo. */
@@ -705,11 +725,15 @@ dl, dd { margin: 0; }
   min-width: 0;
 }
 
+/* --secondary e cor de borda no claro, no paper-like e no deep-blue, pela
+   propria tabela de contraste do README: como texto a 12px ele fica entre
+   2.63:1 e 4.25:1, abaixo do piso de 4.5 nos quatro modos. Rotulo de campo
+   e placeholder sao texto pequeno e ficam em --muted, que passa em todos. */
 .field-label {
   font-family: var(--font-mono);
   font-size: var(--text-12);
   letter-spacing: var(--tracking-wide);
-  color: var(--secondary);
+  color: var(--muted);
   transition: color var(--duration-3) var(--ease-standard);
 }
 
@@ -732,7 +756,7 @@ dl, dd { margin: 0; }
 }
 
 .input::placeholder,
-.textarea::placeholder { color: var(--secondary); }
+.textarea::placeholder { color: var(--muted); }
 
 .input:hover,
 .textarea:hover,

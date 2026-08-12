@@ -4,7 +4,7 @@ Design system for web and Python. Four modes, script-verified tokens, plotting t
 
 Derived from `madsondeluna.github.io`. Numeric token architecture in the format of `devouringdetails.com`. Easing curves from `motion.dev`.
 
-Pure Design 1.4.1.
+Pure Design 1.4.2.
 
 ## Use
 
@@ -112,6 +112,8 @@ WCAG 2.1 ratios, recomputed by `check.mjs` on every run.
 | `--border` / `--bg` | 1.39 | 1.47 | 1.73 | 1.79 |
 
 Usage rule: above 4.5 any text; 3 to 4.5 large text and UI components; below 3 decoration. `--secondary` is a border colour in light, paper-like and deep-blue.
+
+Read the second half of that rule against `--surface` as well, which is where small text usually sits: `--secondary` lands between 2.61 and 4.25 there, so it is under the floor in all four modes, not only in the light ones. Small text takes `--muted`. `patterns.css` follows this from 1.4.2 on, in `.field-label` and in the placeholder; `agent.css` still spends `--secondary` on text in 27 places, including `.tok-com`, which the syntax-highlight table below documents on purpose. That contradiction is open.
 
 Tags (`congress`, `conference`, `symposium`) sit between 7.7 and 11.6 in both dark modes.
 
@@ -543,6 +545,7 @@ No dependencies, exits 1 on any failure. It checks:
 - each radius role resolving to the numeric step declared in `tokens.json`, `var()` alias followed
 - a focus ring that exists
 - `theme-color` in the guide and the template matching `--bg` of the light mode
+- `.glass-accent` winning the cascade over `.pill`, `.card-glass` and `.glass`, at rest and on hover: the cascade is resolved rule by rule against the real specificity, not read by eye
 
 It does not read `@keyframes` or `animation-delay`. Reduced motion is collapsed by hand in `patterns.css` and `agent.css`, including the delay of every staggered entrance.
 

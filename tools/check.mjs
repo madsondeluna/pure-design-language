@@ -357,6 +357,55 @@ function craft() {
   const bareNone = /outline:\s*none/.test(patterns) && !/:focus-visible/.test(patterns);
   check(!bareNone, "foco visível",
     bareNone ? "outline removido sem :focus-visible no lugar" : "o anel de foco existe e usa --accent");
+
+  // um modificador só modifica se ganhar na cascata. .glass-accent mora no
+  // capítulo do material e os componentes que ele tinge declaram fundo
+  // depois dele, no hover com uma classe a mais: por ordem e por
+  // especificidade, o componente ganhava e o botão primário saía idêntico
+  // ao secundário, sem nenhum sinal de erro. Aqui a cascata é resolvida de
+  // verdade, elemento por elemento, em vez de conferida no olho.
+  const naked = patterns.replace(/\/\*[\s\S]*?\*\//g, "");
+  const rules = [...naked.matchAll(/([^{}]+)\{([^{}]*)\}/g)].flatMap((m) =>
+    m[1].split(",").map((s) => ({ sel: s.trim(), body: m[2], at: m.index })))
+    .filter((r) => /^\.[a-z0-9-]+(\.[a-z0-9-]+|:[a-z-]+(\([^)]*\))?)*$/.test(r.sel));
+
+  // classes e pseudoclasses pesam na mesma coluna, e :not() soma o que carrega
+  const spec = (s) =>
+    ((s.replace(/:not\([^)]*\)/g, "").match(/[.:]/g) || []).length) +
+    (([...s.matchAll(/:not\(([^)]*)\)/g)].map((m) => m[1]).join("").match(/\./g) || []).length);
+
+  const hits = (sel, classes, state) => {
+    const nots = [...sel.matchAll(/:not\(([^)]*)\)/g)].map((m) => m[1]);
+    const bare = sel.replace(/:not\([^)]*\)/g, "");
+    const need = [...bare.matchAll(/\.([a-z0-9-]+)/g)].map((m) => m[1]);
+    const states = [...bare.matchAll(/:([a-z-]+)/g)].map((m) => m[1]);
+    if (!need.every((c) => classes.includes(c))) return false;
+    if (nots.some((n) => n.split(".").filter(Boolean).every((c) => classes.includes(c)))) return false;
+    return states.every((p) => p === state);
+  };
+
+  const winner = (classes, state, prop) => {
+    let best = null;
+    for (const r of rules) {
+      if (!hits(r.sel, classes, state)) continue;
+      const decl = [...r.body.matchAll(new RegExp(`(?:^|;)\\s*${prop}:\\s*([^;]+)`, "g"))].pop();
+      if (!decl) continue;
+      const s = spec(r.sel);
+      if (!best || s > best.s || (s === best.s && r.at >= best.at)) best = { s, at: r.at, value: decl[1].trim() };
+    }
+    return best;
+  };
+
+  const TINTED = ["pill", "card-glass", "glass"];
+  const shadowed = TINTED.flatMap((c) => ["", "hover"].map((st) => ({ c, st })))
+    .filter(({ c, st }) => {
+      const w = winner([c, "glass-accent"], st, "background-image");
+      return !w || !w.value.includes("--glass-tint-accent");
+    });
+  check(!shadowed.length, "modificador de material",
+    shadowed.length
+      ? `o componente cobre o tingimento em: ${shadowed.map(({ c, st }) => `.${c}${st ? ":" + st : ""}`).join(", ")}`
+      : `.glass-accent vence .${TINTED.join(", .")} em repouso e no hover`);
 }
 
 // execução
