@@ -406,6 +406,36 @@ function craft() {
     shadowed.length
       ? `o componente cobre o tingimento em: ${shadowed.map(({ c, st }) => `.${c}${st ? ":" + st : ""}`).join(", ")}`
       : `.glass-accent vence .${TINTED.join(", .")} em repouso e no hover`);
+
+  // as quatro texturas têm o mesmo problema do tingimento, pela mesma
+  // razão: .glass:not(.card-glass) vale duas classes e a textura sozinha
+  // vale uma, então class="glass glass-frost" saía com o preenchimento do
+  // .glass padrão e as quatro texturas viravam uma só.
+  const TEXTURES = [
+    ["glass-thin", "--glass-fill-thin"],
+    ["glass-frost", "--glass-fill-frost"],
+    ["glass-deep", "--glass-fill-deep"],
+  ];
+  const flattened = TEXTURES.flatMap(([c, fill]) => ["", "hover"].map((st) => ({ c, fill, st })))
+    .filter(({ c, fill, st }) => {
+      const w = winner(["glass", c], st, "background-image");
+      return !w || !w.value.includes(fill);
+    });
+  check(!flattened.length, "textura de material",
+    flattened.length
+      ? `.glass cobre a textura em: ${flattened.map(({ c, st }) => `.${c}${st ? ":" + st : ""}`).join(", ")}`
+      : `.glass-thin, .glass-frost e .glass-deep vencem .glass em repouso e no hover`);
+
+  // o Lightning CSS, que é o minificador do tailwind v4 e do next, guarda
+  // só a última declaração do par prefixado e não recoloca a padrão: na
+  // ordem inversa o vidro sai sem desfoque nenhum no navegador, sem erro
+  // em lugar algum. A padrão vem sempre depois da -webkit-.
+  const wrongOrder = [...patterns.matchAll(/\n( *)backdrop-filter: [^;]+;\n *-webkit-backdrop-filter:/g)].length;
+  const pairs = [...patterns.matchAll(/\n( *)-webkit-backdrop-filter: [^;]+;\n *backdrop-filter:/g)].length;
+  check(!wrongOrder, "ordem do backdrop-filter",
+    wrongOrder
+      ? `${wrongOrder} regra(s) declaram backdrop-filter antes da -webkit-: o minificador descarta a padrão`
+      : `${pairs} pares com a declaração padrão depois da -webkit-`);
 }
 
 // execução

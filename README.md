@@ -4,7 +4,7 @@ Design system for web and Python. Four modes, script-verified tokens, plotting t
 
 Derived from `madsondeluna.github.io`. Numeric token architecture in the format of `devouringdetails.com`. Easing curves from `motion.dev`.
 
-Pure Design 1.4.2.
+Pure Design 1.4.3.
 
 ## Use
 
@@ -210,6 +210,8 @@ Blur radius follows surface size. A large radius on a short element makes Chrome
 Text on glass uses `--text`, never `--muted`: the backdrop is unpredictable. `.card-glass` is exempt, since it sits on a known surface.
 
 Glass does not go over a flat background (no effect, one compositing layer), over another translucent surface, or behind running text.
+
+Two defects closed in 1.4.3, both invisible in review and both fatal to the material. The standard `backdrop-filter` declaration now comes after the `-webkit-` one in every rule. Lightning CSS, the minifier behind Tailwind v4 and Next, keeps only the last declaration of the pair and does not restore the standard prefix, so in the original order a build shipped `-webkit-backdrop-filter` alone and every glass surface rendered with no blur: Chrome returns `false` for `CSS.supports('-webkit-backdrop-filter', 'blur(3px)')`, and nothing raises an error anywhere. `.glass.glass-thin`, `.glass.glass-frost` and `.glass.glass-deep` are now explicit pairs, because `.glass:not(.card-glass)` counts two classes against a texture's one and `class="glass glass-frost"` came out with the default fill and blur, collapsing the four textures into one. That is `.glass-accent` losing to `.pill`, seen from the other side. `check.mjs` covers both, as `ordem do backdrop-filter` and `textura de material`.
 
 ## Motion
 

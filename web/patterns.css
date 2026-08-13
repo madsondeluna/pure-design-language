@@ -140,8 +140,8 @@ dl, dd { margin: 0; }
   background-image: var(--glass-fill);
   background-color: var(--surface-glass);
   border: var(--hairline) solid var(--glass-edge);
-  backdrop-filter: blur(var(--blur-card)) saturate(var(--glass-saturate));
   -webkit-backdrop-filter: blur(var(--blur-card)) saturate(var(--glass-saturate));
+  backdrop-filter: blur(var(--blur-card)) saturate(var(--glass-saturate));
   box-shadow: var(--shadow-glass-rest);
   isolation: isolate;
   cursor: pointer;
@@ -186,8 +186,8 @@ dl, dd { margin: 0; }
   background-image: var(--glass-fill);
   background-color: transparent;
   border: var(--hairline) solid var(--glass-edge);
-  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
   -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
   box-shadow: var(--shadow-glass-rest);
   /* isola o backdrop desta superficie do das vizinhas */
   isolation: isolate;
@@ -216,8 +216,8 @@ dl, dd { margin: 0; }
 /* fino: o fundo passa quase inteiro, so a aresta denuncia o material */
 .glass-thin {
   background-image: var(--glass-fill-thin);
-  backdrop-filter: blur(var(--glass-blur-thin)) saturate(140%);
   -webkit-backdrop-filter: blur(var(--glass-blur-thin)) saturate(140%);
+  backdrop-filter: blur(var(--glass-blur-thin)) saturate(140%);
 }
 
 /* fosco: e o unico que leva granulado. Sem o feTurbulence por cima o
@@ -225,8 +225,8 @@ dl, dd { margin: 0; }
 .glass-frost {
   position: relative;
   background-image: var(--glass-fill-frost);
-  backdrop-filter: blur(var(--glass-blur-frost)) saturate(130%) brightness(1.02);
   -webkit-backdrop-filter: blur(var(--glass-blur-frost)) saturate(130%) brightness(1.02);
+  backdrop-filter: blur(var(--glass-blur-frost)) saturate(130%) brightness(1.02);
 }
 .glass-frost::after {
   content: "";
@@ -242,9 +242,35 @@ dl, dd { margin: 0; }
 /* fundo: quase nada do que esta atras sobrevive, so a cor media */
 .glass-deep {
   background-image: var(--glass-fill-deep);
-  backdrop-filter: blur(var(--glass-blur-deep)) saturate(200%);
   -webkit-backdrop-filter: blur(var(--glass-blur-deep)) saturate(200%);
+  backdrop-filter: blur(var(--glass-blur-deep)) saturate(200%);
 }
+
+/* As tres texturas acima perdem de .glass:not(.card-glass) pela mesma
+   razao que .glass-accent perdia de .pill: o :not() conta como classe,
+   entao o componente vale duas e a textura vale uma. Sem estes pares
+   class="glass glass-frost" saia com o preenchimento e o raio de desfoque
+   do .glass padrao, o que apaga a diferenca entre as quatro texturas sem
+   nenhum aviso. .pill e .card-glass ficam de fora: .pill ja e o desfoque
+   de 16px e .card-glass declara o dele antes deste bloco. */
+.glass.glass-thin {
+  background-image: var(--glass-fill-thin);
+  -webkit-backdrop-filter: blur(var(--glass-blur-thin)) saturate(140%);
+  backdrop-filter: blur(var(--glass-blur-thin)) saturate(140%);
+}
+.glass.glass-frost {
+  background-image: var(--glass-fill-frost);
+  -webkit-backdrop-filter: blur(var(--glass-blur-frost)) saturate(130%) brightness(1.02);
+  backdrop-filter: blur(var(--glass-blur-frost)) saturate(130%) brightness(1.02);
+}
+.glass.glass-deep {
+  background-image: var(--glass-fill-deep);
+  -webkit-backdrop-filter: blur(var(--glass-blur-deep)) saturate(200%);
+  backdrop-filter: blur(var(--glass-blur-deep)) saturate(200%);
+}
+.glass.glass-thin:hover  { background-image: var(--glass-fill-thin); }
+.glass.glass-frost:hover { background-image: var(--glass-fill-frost); }
+.glass.glass-deep:hover  { background-image: var(--glass-fill-deep); }
 
 /* tingido: o material assume a cor de acento sem virar preenchimento solido */
 .glass-accent {
@@ -359,8 +385,8 @@ dl, dd { margin: 0; }
   padding: var(--space-12) var(--space-16);
   border-radius: var(--radius-surface);
   background-image: var(--glass-fill-frost);
-  backdrop-filter: blur(var(--glass-blur-frost)) saturate(130%);
   -webkit-backdrop-filter: blur(var(--glass-blur-frost)) saturate(130%);
+  backdrop-filter: blur(var(--glass-blur-frost)) saturate(130%);
   border: var(--hairline) solid var(--glass-edge);
   box-shadow: var(--shadow-glass-rest);
   isolation: isolate;
@@ -405,8 +431,8 @@ dl, dd { margin: 0; }
   background-image: var(--glass-fill);
   background-color: transparent;
   border: var(--hairline) solid var(--glass-edge);
-  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
   -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
   box-shadow: var(--shadow-glass-rest);
   isolation: isolate;
 
@@ -435,8 +461,8 @@ dl, dd { margin: 0; }
   background-image: none;
   background-color: var(--surface);
   border-color: var(--border);
-  backdrop-filter: none;
   -webkit-backdrop-filter: none;
+  backdrop-filter: none;
   box-shadow: none;
 }
 .pill-solid:hover {
@@ -590,8 +616,8 @@ dl, dd { margin: 0; }
   border-radius: var(--radius-surface);
   background-image: var(--glass-fill);
   background-color: var(--surface-glass);
-  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
   -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
   border: var(--hairline) solid var(--glass-edge);
   box-shadow: var(--shadow-glass-rest);
   isolation: isolate;
@@ -931,8 +957,8 @@ dl, dd { margin: 0; }
   place-items: center;
   padding: var(--space-24);
   background-image: var(--glass-fill-deep);
-  backdrop-filter: blur(var(--blur-pill)) saturate(var(--glass-saturate));
   -webkit-backdrop-filter: blur(var(--blur-pill)) saturate(var(--glass-saturate));
+  backdrop-filter: blur(var(--blur-pill)) saturate(var(--glass-saturate));
 }
 
 .modal, .drawer {
