@@ -276,6 +276,7 @@ function craft() {
   const css = read("web/tokens.css");
   const patterns = read("web/patterns.css");
   const agent = read("web/agent.css");
+  const motion = read("web/motion.css");
   const html = read("preview/index.html");
   const tpl = read("templates/page.html");
 
@@ -298,6 +299,7 @@ function craft() {
   // as três fontes de CSS escrito à mão passam pelas mesmas regras
   const SOURCES = [
     ["web/patterns.css", patterns],
+    ["web/motion.css", motion],
     ["web/agent.css", agent],
     ["preview/index.html", html],
     ["templates/page.html", tpl],
@@ -323,6 +325,7 @@ function craft() {
   const litLimit = /#[0-9a-fA-F]{3,8}\b/;
   const literal = [
     ["web/patterns.css", patterns],
+    ["web/motion.css", motion],
     ["web/agent.css", agent],
     ["templates/page.html", tpl.slice(tpl.indexOf("<style>"), tpl.indexOf("</style>"))],
   ].filter(([, src]) => litLimit.test(src));
@@ -346,12 +349,76 @@ function craft() {
     drift.length ? `divergem de tokens.json: ${drift.map(([k]) => k).join(", ")}`
                  : `${iface.length} valores batem em json e css`);
 
+  // as duas familias que nasceram em 1.5.0 cruzam json e css como as
+  // outras: um token que so existe de um lado e um token que mente
+  for (const fam of ["motion", "liquid"]) {
+    const entries = Object.entries(T[fam]).filter(([k]) => !k.startsWith("$"));
+    const off = entries.filter(([k, v]) =>
+      !new RegExp(`--${fam}-${k}:\\s+${v.replace(".", "\\.")};`).test(css));
+    check(!off.length, `tokens de ${fam === "motion" ? "movimento" : "líquido"}`,
+      off.length ? `divergem de tokens.json: ${off.map(([k]) => k).join(", ")}`
+                 : `${entries.length} valores batem em json e css`);
+  }
+
   // idem para a camada de agente
   const ag = Object.entries(T.agent).filter(([k]) => !k.startsWith("$"));
   const agDrift = ag.filter(([k, v]) => !css.includes(`--${k}: ${v}`));
   check(!agDrift.length, "tokens de agente",
     agDrift.length ? `divergem de tokens.json: ${agDrift.map(([k]) => k).join(", ")}`
                    : `${ag.length} valores batem em json e css`);
+
+  // ---------- camada de movimento ----------
+  // a escala nao cresce: motion.css so pode usar as seis duracoes e as
+  // cinco curvas que ja existem. Um cubic-bezier ou um valor em ms
+  // escrito a mao aqui e uma sexta curva ou um setimo degrau entrando
+  // pela porta dos fundos, que e como toda escala se desfaz.
+  // comentario fora antes de medir: o cabecalho de motion.css carrega a
+  // tabela de remapeamento, e ela CITA os numeros do catalogo de origem.
+  // Contar a citacao como declaracao reprovaria justamente o arquivo que
+  // documenta a conversao.
+  const motionCode = motion.replace(/\/\*[\s\S]*?\*\//g, "");
+  const rawEase = [...motionCode.matchAll(/cubic-bezier\([^)]*\)/g)].length;
+  const rawMs = [...motionCode.matchAll(/:\s*[^;{]*?\b\d+m?s\b/g)]
+    .filter((m) => !/var\(/.test(m[0]) && !/\b0m?s\b/.test(m[0])).length;
+  check(!rawEase && !rawMs, "escala de movimento",
+    rawEase || rawMs
+      ? `motion.css escreve ${rawEase} curva(s) e ${rawMs} duração(ões) fora da escala`
+      : "motion.css só usa os seis --duration-* e as cinco --ease-*");
+
+  // ---------- contexto de superficie ----------
+  // a varredura de contraste resolve o fundo por --surface-context, e
+  // nao pela ancestralidade, porque em .liquid quem pinta e um IRMAO do
+  // texto. Uma classe que pinta fundo sem declarar o token faz a
+  // varredura medir contra --bg e aprovar uma página errada.
+  const PAINTERS = [".surface", ".card-glass", ".glass:not(.card-glass)",
+    ".glass-thin", ".glass-frost", ".glass-deep", ".pill", ".overlay", ".liquid"];
+  const noCtx = PAINTERS.filter((sel) => {
+    const i = patterns.indexOf(`\n${sel} {`);
+    if (i < 0) return true;
+    return !patterns.slice(i, patterns.indexOf("}", i)).includes("--surface-context:");
+  });
+  check(!noCtx.length, "contexto de superfície",
+    noCtx.length ? `pintam fundo sem declarar --surface-context: ${noCtx.join(", ")}`
+                 : `${PAINTERS.length} classes que pintam fundo declaram o fundo que pintam`);
+
+  // ---------- material liquido ----------
+  // trocar a variante do filtro sem trocar a folga e o jeito silencioso
+  // de o aglomerado sair como pilulas soltas: a ponte fecha enquanto o
+  // vao fica abaixo do desvio do desfoque, medido na tela.
+  const variants = [["liquid-tight", "liquid-bridge-tight"], ["liquid-wide", "liquid-bridge-wide"]];
+  const loose = variants.filter(([cls, tok]) =>
+    !new RegExp(`\\.${cls}\\s*\\{[^}]*--liquid-bridge:\\s*var\\(--${tok}\\)`).test(patterns));
+  check(!loose.length, "folga do líquido",
+    loose.length ? `variante sem folga própria: ${loose.map(([c]) => c).join(", ")}`
+                 : "cada variante do filtro goo troca de folga junto com o filtro");
+
+  // os tres filtros goo precisam existir no template, senao .liquid
+  // referencia url() morta e a folha some sem erro nenhum
+  const gooMissing = ["pure-goo-tight", "pure-goo", "pure-goo-wide"]
+    .filter((id) => !tpl.includes(`id="${id}"`));
+  check(!gooMissing.length, "filtro do líquido",
+    gooMissing.length ? `sem definição no template: ${gooMissing.join(", ")}`
+                      : "os três filtros goo estão definidos no template");
 
   // foco visível: outline none só é aceitável com substituto declarado
   const bareNone = /outline:\s*none/.test(patterns) && !/:focus-visible/.test(patterns);
@@ -430,8 +497,12 @@ function craft() {
   // só a última declaração do par prefixado e não recoloca a padrão: na
   // ordem inversa o vidro sai sem desfoque nenhum no navegador, sem erro
   // em lugar algum. A padrão vem sempre depois da -webkit-.
-  const wrongOrder = [...patterns.matchAll(/\n( *)backdrop-filter: [^;]+;\n *-webkit-backdrop-filter:/g)].length;
-  const pairs = [...patterns.matchAll(/\n( *)-webkit-backdrop-filter: [^;]+;\n *backdrop-filter:/g)].length;
+  // os tres arquivos de CSS escritos a mao, nao so patterns.css: uma
+  // regra nova em motion.css ou em agent.css reintroduz o defeito pelo
+  // mesmo caminho, e ele nao aparece em revisao nenhuma.
+  const bdSrc = patterns + agent + motion;
+  const wrongOrder = [...bdSrc.matchAll(/\n( *)backdrop-filter: [^;]+;\n *-webkit-backdrop-filter:/g)].length;
+  const pairs = [...bdSrc.matchAll(/\n( *)-webkit-backdrop-filter: [^;]+;\n *backdrop-filter:/g)].length;
   check(!wrongOrder, "ordem do backdrop-filter",
     wrongOrder
       ? `${wrongOrder} regra(s) declaram backdrop-filter antes da -webkit-: o minificador descarta a padrão`

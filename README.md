@@ -4,7 +4,7 @@ Design system for web and Python. Four modes, script-verified tokens, plotting t
 
 Derived from `madsondeluna.github.io`. Numeric token architecture in the format of `devouringdetails.com`. Easing curves from `motion.dev`.
 
-Pure Design 1.4.3.
+Pure Design 1.5.0.
 
 ## Use
 
@@ -34,7 +34,8 @@ Streamlit: copy `python/streamlit/config.toml` to `.streamlit/config.toml` and i
 tokens/tokens.json               source of truth
 web/tokens.css                   variables, four modes
 web/theme.css                    Tailwind v4 bridge
-web/patterns.css                 components and the glass material
+web/patterns.css                 components, the glass material, the liquid material
+web/motion.css                   motion layer, optional
 web/agent.css                    agent layer, optional
 python/pure/                     palette, mpl, plotly
 python/pure-{light,dark}.mplstyle
@@ -42,21 +43,22 @@ python/streamlit/                config.toml and app.css
 templates/page.html              starter page, four modes wired
 preview/index.html               visual guide, everything live
 tools/check.mjs                  verification
+.claude/skills/                  twelve review and handoff routines
 ```
 
 ## Starting a new project
 
 ```
 mkdir -p <project>/pure
-cp web/tokens.css web/patterns.css web/agent.css <project>/pure/
+cp web/tokens.css web/patterns.css web/motion.css web/agent.css <project>/pure/
 cp templates/page.html <project>/index.html
 ```
 
-Drop `agent.css` if no model writes to the screen. The template already carries the head, the font link, the twelve-column grid on two axes, the three spacing steps, the skip link and a mode switcher that keeps the mode in the URL.
+Drop `motion.css` if no named transition is used and `agent.css` if no model writes to the screen. Keep the `#pure-goo` filter definitions at the top of the body only if the page uses `.liquid`. The template already carries the head, the font link, the twelve-column grid on two axes, the three spacing steps, the skip link and a mode switcher that keeps the mode in the URL.
 
 | Step | Value |
 |---|---|
-| Link order | `tokens.css`, `patterns.css`, `agent.css` |
+| Link order | `tokens.css`, `patterns.css`, `motion.css`, `agent.css` |
 | Fonts | Archivo 300 at width 125, Public Sans 300/400/500/600, Spline Sans Mono 400/500 |
 | Default mode | `:root`, no class |
 | Mode state | `?mode=paper-like\|deep-blue\|dark` and the class on `<html>` |
@@ -213,6 +215,43 @@ Glass does not go over a flat background (no effect, one compositing layer), ove
 
 Two defects closed in 1.4.3, both invisible in review and both fatal to the material. The standard `backdrop-filter` declaration now comes after the `-webkit-` one in every rule. Lightning CSS, the minifier behind Tailwind v4 and Next, keeps only the last declaration of the pair and does not restore the standard prefix, so in the original order a build shipped `-webkit-backdrop-filter` alone and every glass surface rendered with no blur: Chrome returns `false` for `CSS.supports('-webkit-backdrop-filter', 'blur(3px)')`, and nothing raises an error anywhere. `.glass.glass-thin`, `.glass.glass-frost` and `.glass.glass-deep` are now explicit pairs, because `.glass:not(.card-glass)` counts two classes against a texture's one and `class="glass glass-frost"` came out with the default fill and blur, collapsing the four textures into one. That is `.glass-accent` losing to `.pill`, seen from the other side. `check.mjs` covers both, as `ordem do backdrop-filter` and `textura de material`.
 
+### Liquid
+
+The fifth material is not a fifth texture. Glass filters itself, so the text it carries goes through the blur with it; that is why glass never merges. Liquid splits the material from the content into two layers stacked in one grid cell.
+
+| Layer | Class | What it is |
+|---|---|---|
+| Silhouette | `.liquid-sheet` | The only filtered element on the page. `aria-hidden`, no pointer events, no text. Holds one `.liquid-blob` per unit. |
+| Content | `.liquid-content` | The real DOM, unfiltered. Focus ring, hit area, ARIA and handlers intact. Holds one `.liquid-item` per unit. |
+
+The two layers are mirrors: same display, same gap, same box per unit. That is how the drop sits exactly under the control with no JavaScript measuring anything, and it is also the price. A cluster unit has a fixed size (`--liquid-size`, default `--control-lg`), because a width that depends on the text can only be mirrored by measuring the text. Liquid is for fixed-unit clusters: icon buttons, avatars, dots, an action fan, a segmented indicator. A row of variable-width labels stays `.pill`.
+
+The shadow comes out of the filter itself. `drop-shadow` after `url(#pure-goo)` acts on the already merged mass, so one shadow hugs the whole cluster through every bridge. A `box-shadow` on the blob would enter the blur and the alpha step would eat it, which is exactly why the classic goo effect has no shadow.
+
+| Filter | Deviation | Slope | Intercept | Bridges up to |
+|---|---|---|---|---|
+| `#pure-goo-tight` | 4 | 20 | -7.83 | 4px |
+| `#pure-goo` | 6 | 18 | -7 | 6px |
+| `#pure-goo-wide` | 12 | 16 | -6.17 | 10px |
+
+The bridge column was measured on screen, not estimated: the bridge holds while the gap stays below the blur deviation and vanishes a pixel above it. Each variant therefore carries its own gap (`--liquid-bridge-tight`, `--liquid-bridge`, `--liquid-bridge-wide`), and `.liquid-tight` and `.liquid-wide` swap both together. Swapping the filter without swapping the gap is the silent way a cluster comes out as loose pills; `check.mjs` covers it as `folga do líquido`.
+
+The filter numbers are not tokens. `feColorMatrix` does not read `var()`, and a token nothing resolves is a token that lies. They live in the three `#pure-goo` definitions in `templates/page.html`. Only what CSS actually consumes is a token: `--liquid-fill`, `--liquid-edge`, `--liquid-drop`, `--liquid-bridge*`, `--liquid-pad`.
+
+What does not cross into pure CSS: the spring, the droplet that trails a moving element, and the inner bezel rebuilt on the merged silhouette. All three have to measure a rectangle every frame.
+
+Variants: `.liquid-tight`, `.liquid-wide`, `.liquid-sq` (surface radius instead of circle), `.liquid-stack` (vertical), `.liquid-fold` (units collapse into one drop; removing the class fans them out).
+
+### Surface context
+
+Every class that paints a background redeclares `--surface-context` with what it paints. It serves one purpose, and it is the one the contrast sweep gets wrong on its own: the first opaque ancestor is not always the element painting. Inside `.liquid` the background comes from a **sibling** of the text, so walking the ancestry resolves against `--bg` and passes a page that is wrong on screen. The sweep reads `--surface-context`, which inherits, instead of guessing. `check.mjs` covers it as `contexto de superfície`.
+
+### Bezel and pool
+
+Two inset layers give the material thickness: `--glass-bezel` is a diffuse inner glow along the edge, `--glass-pool` is the shadow light deposits at the base after crossing the body. Neither carries spread — a spread ring pushes a second line just inside the contour and the glass starts reading as two hairlines. Both are in `--shadow-glass-rest` and `--shadow-glass-hover`, in all four modes.
+
+`paper-like` gained its own glass block in 1.5.0. Without it, it inherited the light mode's glass and the frost came out cold white over a cream page: the most visible surface on the page would have been the only one that did not belong to the mode.
+
 ## Motion
 
 | Token | Curve | Use |
@@ -230,6 +269,36 @@ Displacement: `--nudge-1` 2px, `--nudge-2` 3px, `--nudge-3` 4px.
 Entrance stagger: 60ms per item, capped at six steps. Class `.stagger`.
 
 Everything collapses under `prefers-reduced-motion: reduce`.
+
+### The motion layer
+
+`web/motion.css` is the fourth file, optional, imported after `patterns.css` and before `agent.css`. Fifteen named recipes for state changes.
+
+The recipes come from the transitions.dev catalogue by Jakub Antalik and were remapped, not copied. That catalogue carries its own scale, seven durations and six curves; this language has six durations and five curves and forbids a new one. The remap follows the rule the catalogue itself states, match by **use** and not by number:
+
+| Use | Catalogue | Here |
+|---|---|---|
+| Anchored surface opens | 250ms | `--duration-3` (200) |
+| Centred surface opens | 250ms | `--duration-4` (300) |
+| Either closes | 150ms | `--duration-2` (150) |
+| Icon and text swap | 250ms | `--duration-3` (200) |
+| Toast rises | 400ms | `--duration-5` (350) |
+| Emphasis, confirmation | 500ms | `--duration-6` (500) |
+| Stagger between lines | 40ms | `--duration-1` (100) |
+
+`cubic-bezier(0.22, 1, 0.36, 1)`, the catalogue's dominant curve, is `--ease-out-expo` here. `ease-in-out` is `--ease-standard`, `ease-out` is `--ease-out`. `linear` stays `linear` and does not become a token, because it is not a curve: it is the absence of one, and it only appears in loops that never settle.
+
+Three px values were born with the layer, and they are blur radii, not a scale: `--motion-blur-1` (2px), `-2` (3px), `-3` (8px). They blur the element itself while it moves and clear on settle, which is the opposite of glass, where the blur is on the backdrop and stands still. Mixing the two families is how a card ends up blurred at rest.
+
+Classes: `.motion-dropdown`, `.motion-modal`, `.motion-scrim`, `.motion-toast`, `.motion-tip`, `.motion-icon-swap`, `.motion-text-swap`, `.motion-lines`, `.motion-badge`, `.motion-digits`, `.motion-shake`, `.motion-reveal`, `.motion-shimmer`, `.motion-tabs`, `.motion-check`, `.motion-switch-thumb`, `.motion-pages`.
+
+Four need JavaScript, and each says so in its own comment: `.motion-tabs` for the pill geometry (`--tab-x` and `--tab-s`, never a width), `.motion-digits` for the per-digit state, `.motion-shake` and `.motion-dropdown` for adding and clearing the state class.
+
+Beyond `transform`, `opacity` and `filter` the layer animates two paint properties, both declared and neither layout: `stroke-dashoffset` in `.motion-check` and `background-position` in `.motion-shimmer`.
+
+What did not come across, and the exclusion is the rule working rather than a gap. Card resize, accordion, panel reveal and input clear animate `width`, `height` or `grid-template-rows`. Avatar group hover, the double-bounce toggle and the like button need an overshoot curve, and a control settles rather than jumps; the toggle came across without the overshoot, the other two did not come across at all.
+
+`check.mjs` covers the layer as `escala de movimento`: a `cubic-bezier` or a hand-written duration in `motion.css` fails the build, because that is a sixth curve or a seventh step entering through the back door.
 
 ## Craft rules
 
@@ -541,9 +610,12 @@ No dependencies, exits 1 on any failure. It checks:
 - version across `tokens.json`, `__init__.py`, the guide and this README
 - absence of a ninth chart slot
 - `color-scheme` declared in all four mode blocks
-- no `transition: all` and no transition of a layout property in `patterns.css`, `agent.css`, the guide or the starter template; `grid-template-rows` and `flex-basis` count as layout properties
+- no `transition: all` and no transition of a layout property in `patterns.css`, `motion.css`, `agent.css`, the guide or the starter template; `grid-template-rows` and `flex-basis` count as layout properties
 - no hex colour written outside `tokens.css`, the one exception being the `theme-color` meta, which is checked against the token instead
-- interaction tokens, agent tokens and blur tokens agreeing between `tokens.json` and `web/tokens.css`
+- interaction, agent, blur, motion and liquid tokens agreeing between `tokens.json` and `web/tokens.css`
+- `motion.css` using only the six `--duration-*` and the five `--ease-*`: a hand-written `cubic-bezier` or duration fails the build
+- every class that paints a background declaring `--surface-context`
+- each goo filter variant swapping its bridge gap along with the filter, and all three `#pure-goo` definitions existing in the template
 - each radius role resolving to the numeric step declared in `tokens.json`, `var()` alias followed
 - a focus ring that exists
 - `theme-color` in the guide and the template matching `--bg` of the light mode
@@ -555,7 +627,7 @@ It does not read `@keyframes` or `animation-delay`. Reduced motion is collapsed 
 
 `preview/index.html` renders every token and component in all four modes, with the contrast table recomputed on mode change and a click on any colour copying its token. It loads `../web/*.css` on purpose, to test the files rather than a copy.
 
-Nine chapters: colour, data colour, typography, space and form, glass, motion, craft, components, use. The agent layer is not a chapter of its own: each of its components sits in the chapter that governs it, marked `Agent layer`. The insight card is in data colour, the loader, the trace and streaming text are in motion, the approval card, prompt bar, command search, inspector and selection actions are in craft, and the rest are in components. The craft chapter carries the rule tables above with live demonstrations: focus ring and hit area, a form that surfaces its errors on an empty submit, the three content lengths side by side, and the empty, loading and error states.
+Nine chapters: colour, data colour, typography, space and form, glass, motion, craft, components, use. Neither the agent layer nor the liquid and motion layers are chapters of their own: each component sits in the chapter that governs it, marked `Agent layer`, `Liquid layer` or `Motion layer`. Liquid is in glass, because it is a material; the fifteen motion recipes are in motion. The insight card is in data colour, the loader, the trace and streaming text are in motion, the approval card, prompt bar, command search, inspector and selection actions are in craft, and the rest are in components. The craft chapter carries the rule tables above with live demonstrations: focus ring and hit area, a form that surfaces its errors on an empty submit, the three content lengths side by side, and the empty, loading and error states.
 
 Serve from the repository root, not from `preview/`, or the `../web/*.css` imports return 404.
 
@@ -565,6 +637,27 @@ python3 -m http.server 8731
 ```
 
 Guide layout rules, applicable to any page built on the language: two vertical axes (columns 1 and 9 of twelve), three spacing steps (24, 48, 96), sentence case, one size per control class, version number only in the footer signature.
+
+## Review routines
+
+`.claude/skills/` holds twelve routines that run in Claude Code against the rules above. `pure-polish` is the routine; the others are its steps or its products.
+
+| Skill | What it does |
+|---|---|
+| `pure-polish` | Runs the whole sequence over a screen, a page or a Figma file and reports findings by severity |
+| `pure-contrast-sweep` | Measures every text against the background actually behind it, in four modes, forcing hidden states first |
+| `pure-craft-review` | Keyboard, focus ring, hit area, form, state, URL, reduced motion |
+| `pure-spacing-audit` | The three steps (24/48/96) and the two vertical axes, not a 4/8pt grid |
+| `pure-analyze-components` | Radius by role, blur by size, one size per control class, colour by function, cascade |
+| `pure-motion-opportunities` | Where motion helps, which recipe, and which loose duration maps to which token by use |
+| `pure-design-review` | Senior judgement on the pixel: hierarchy, density, rhythm, the decision nobody took |
+| `pure-ux-writing` | Sentence case, no caption under a heading, error in three parts, no product voice |
+| `pure-responsive` | Wide screen to narrow, and auditing the narrow one |
+| `pure-anatomy` | Numbered markers over the image and a table of attribute per part |
+| `pure-handoff` | Markup, tokens, states, keyboard behaviour, four modes, and the cases that break |
+| `pure-tokens-from-selection` | Maps the values a selection uses onto tokens and lists what has nowhere to go |
+
+Where the input is a Figma file, the routines call the MCP tools that exist: `get_metadata` for the tree and geometry, `get_screenshot` for the pixel, `get_design_context` for code and bound tokens, `get_variable_defs`, `get_motion_context`, `search_design_system`. Writing to a file loads `figma-use` first, which is a mandatory prerequisite.
 
 ## Migrating existing apps
 

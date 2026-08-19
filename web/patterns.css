@@ -120,6 +120,7 @@ dl, dd { margin: 0; }
 /* superficies */
 
 .surface {
+  --surface-context: var(--surface);
   background: var(--surface);
   border: var(--hairline) solid var(--border);
   border-radius: var(--radius-surface);
@@ -136,6 +137,7 @@ dl, dd { margin: 0; }
 
 /* cartao de vidro: superficie translucida sobre conteudo */
 .card-glass {
+  --surface-context: var(--surface-glass);
   border-radius: var(--radius-surface);
   background-image: var(--glass-fill);
   background-color: var(--surface-glass);
@@ -183,6 +185,7 @@ dl, dd { margin: 0; }
    uma fileira de vizinhos de vidro. */
 
 .glass:not(.card-glass) {
+  --surface-context: var(--surface-glass);
   background-image: var(--glass-fill);
   background-color: transparent;
   border: var(--hairline) solid var(--glass-edge);
@@ -215,6 +218,7 @@ dl, dd { margin: 0; }
 
 /* fino: o fundo passa quase inteiro, so a aresta denuncia o material */
 .glass-thin {
+  --surface-context: var(--surface-glass);
   background-image: var(--glass-fill-thin);
   -webkit-backdrop-filter: blur(var(--glass-blur-thin)) saturate(140%);
   backdrop-filter: blur(var(--glass-blur-thin)) saturate(140%);
@@ -223,6 +227,7 @@ dl, dd { margin: 0; }
 /* fosco: e o unico que leva granulado. Sem o feTurbulence por cima o
    resultado e translucido, nao fosco. */
 .glass-frost {
+  --surface-context: var(--surface-glass);
   position: relative;
   background-image: var(--glass-fill-frost);
   -webkit-backdrop-filter: blur(var(--glass-blur-frost)) saturate(130%) brightness(1.02);
@@ -241,6 +246,7 @@ dl, dd { margin: 0; }
 
 /* fundo: quase nada do que esta atras sobrevive, so a cor media */
 .glass-deep {
+  --surface-context: var(--surface-glass);
   background-image: var(--glass-fill-deep);
   -webkit-backdrop-filter: blur(var(--glass-blur-deep)) saturate(200%);
   backdrop-filter: blur(var(--glass-blur-deep)) saturate(200%);
@@ -408,6 +414,179 @@ dl, dd { margin: 0; }
 .stage-readout .row { display: flex; gap: var(--space-12); }
 .stage-readout .row span:last-child { margin-left: auto; color: var(--text); }
 
+/* ---------- liquido ----------
+
+   O vidro filtra a si mesmo, e o texto que ele carrega atravessa o
+   desfoque junto. Por isso o vidro nunca funde: fundir dois controles
+   vizinhos derreteria as duas legendas.
+
+   O liquido resolve isso separando o material do conteudo em duas
+   camadas empilhadas na mesma celula de grade:
+
+     .liquid-sheet   a silhueta, atras. E a UNICA coisa filtrada na
+                     pagina inteira. aria-hidden, sem eventos de
+                     ponteiro, sem texto nenhum.
+     .liquid-content o DOM real, na frente, sem filtro. Anel de foco,
+                     area de toque, ARIA e handlers intactos.
+
+   As duas camadas sao espelhos: mesmo display, mesma folga, mesma
+   caixa por unidade. E por isso que a gota fica exatamente sob o
+   controle sem uma linha de javascript medindo nada.
+
+   O PRECO desse espelho, e ele e declarado, nao contornado: a unidade
+   do aglomerado tem tamanho fixo (--liquid-size), porque uma largura
+   que depende do texto so pode ser espelhada medindo o texto, e medir
+   e javascript. O liquido e para aglomerado de unidade fixa: botao de
+   icone, avatar, ponto, leque de acao, indicador de segmentado. Um
+   grupo de rotulos de largura variavel continua sendo .pill.
+
+   A sombra sai do proprio filtro. drop-shadow depois de url(#pure-goo)
+   age sobre a massa JA fundida, entao uma sombra so abraca o
+   aglomerado inteiro atraves de cada ponte. Um box-shadow no blob
+   entraria no desfoque e o degrau de alfa o comeria, que e exatamente
+   o motivo de o goo classico nao ter sombra.
+
+   O que NAO atravessa para o CSS puro, e nao ha meio-termo aqui: a
+   mola, a gota que arrasta atras de um elemento em movimento, o bisel
+   interno reconstruido na silhueta fundida. Os tres precisam medir
+   retangulo a cada quadro. */
+
+.liquid {
+  position: relative;
+  display: inline-grid;
+  padding: var(--liquid-pad);
+  isolation: isolate;
+  --liquid-size: var(--control-lg);
+  /* o texto de dentro nao tem ancestral opaco: quem pinta e um irmao.
+     Sem este token a varredura de contraste resolve contra --bg e
+     aprova uma pagina que na tela esta errada. */
+  --surface-context: var(--liquid-fill);
+}
+
+.liquid-sheet,
+.liquid-content {
+  grid-area: 1 / 1;
+  display: flex;
+  align-items: center;
+  gap: var(--liquid-bridge);
+}
+
+.liquid-sheet {
+  pointer-events: none;
+  filter: url(#pure-goo) var(--liquid-drop);
+}
+
+/* O conteudo precisa de posicao e de indice, e nao e preciosismo: um
+   filtro promove o elemento estatico para a camada de indice zero, que
+   pinta DEPOIS do fluxo normal. Sem esta regra a folha cobre o proprio
+   conteudo, e como ela nao recebe ponteiro o teste de acerto continua
+   apontando o botao certo: o clique funciona e o rotulo some. */
+.liquid-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* a variante troca filtro E folga junto. Separar os dois e o que faz um
+   aglomerado sair como pilulas soltas sem erro em lugar nenhum. */
+.liquid-tight { --liquid-bridge: var(--liquid-bridge-tight); }
+.liquid-wide  { --liquid-bridge: var(--liquid-bridge-wide); }
+.liquid-tight .liquid-sheet { filter: url(#pure-goo-tight) var(--liquid-drop); }
+.liquid-wide  .liquid-sheet { filter: url(#pure-goo-wide) var(--liquid-drop); }
+
+.liquid-blob,
+.liquid-item {
+  flex: none;
+  box-sizing: border-box;
+  width: var(--liquid-size);
+  height: var(--liquid-size);
+  border-radius: var(--radius-circle);
+}
+
+.liquid-blob {
+  background: var(--liquid-fill);
+  transition:
+    transform var(--duration-5) var(--ease-out-soft),
+    opacity   var(--duration-5) var(--ease-out-soft);
+}
+
+.liquid-item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 0;
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: var(--text-12);
+  cursor: pointer;
+  -webkit-tap-highlight-color: var(--tap-highlight);
+  transition: transform var(--duration-5) var(--ease-out-soft);
+}
+
+.liquid-item:focus-visible {
+  outline: var(--focus-ring) solid var(--text);
+  outline-offset: var(--focus-offset);
+}
+
+/* aglomerado quadrado: a unidade vira quadrado de canto de superficie,
+   e a ponte entre duas fica reta em vez de estrangulada */
+.liquid-sq .liquid-blob,
+.liquid-sq .liquid-item { border-radius: var(--radius-surface); }
+
+/* pilha vertical: leque que abre para cima, nao para o lado */
+.liquid-stack .liquid-sheet,
+.liquid-stack .liquid-content { flex-direction: column; }
+
+/* a gota sob o ponteiro incha e encosta na vizinha. As duas camadas sao
+   irmas, entao o estado do item nao alcanca o blob por combinador: quem
+   cruza e :has() no grupo, por indice. Oito unidades cobrem um
+   aglomerado; alem disso a lista deixou de ser um aglomerado. */
+.liquid:has(.liquid-item:nth-child(1):hover) .liquid-blob:nth-child(1),
+.liquid:has(.liquid-item:nth-child(2):hover) .liquid-blob:nth-child(2),
+.liquid:has(.liquid-item:nth-child(3):hover) .liquid-blob:nth-child(3),
+.liquid:has(.liquid-item:nth-child(4):hover) .liquid-blob:nth-child(4),
+.liquid:has(.liquid-item:nth-child(5):hover) .liquid-blob:nth-child(5),
+.liquid:has(.liquid-item:nth-child(6):hover) .liquid-blob:nth-child(6),
+.liquid:has(.liquid-item:nth-child(7):hover) .liquid-blob:nth-child(7),
+.liquid:has(.liquid-item:nth-child(8):hover) .liquid-blob:nth-child(8),
+.liquid:has(.liquid-item:nth-child(1):focus-visible) .liquid-blob:nth-child(1),
+.liquid:has(.liquid-item:nth-child(2):focus-visible) .liquid-blob:nth-child(2),
+.liquid:has(.liquid-item:nth-child(3):focus-visible) .liquid-blob:nth-child(3),
+.liquid:has(.liquid-item:nth-child(4):focus-visible) .liquid-blob:nth-child(4),
+.liquid:has(.liquid-item:nth-child(5):focus-visible) .liquid-blob:nth-child(5),
+.liquid:has(.liquid-item:nth-child(6):focus-visible) .liquid-blob:nth-child(6),
+.liquid:has(.liquid-item:nth-child(7):focus-visible) .liquid-blob:nth-child(7),
+.liquid:has(.liquid-item:nth-child(8):focus-visible) .liquid-blob:nth-child(8) {
+  transform: scale(1.14);
+}
+
+/* leque fechado: as unidades se sobrepoem numa gota so. Abrir e tirar a
+   classe. Espelhado, entao a mesma regra move blob e item juntos: e o
+   que a lib chama de commit unico, aqui obtido pela geometria. */
+.liquid-fold .liquid-blob:nth-child(1),
+.liquid-fold .liquid-item:nth-child(1) { transform: translateX(0); }
+.liquid-fold .liquid-blob:nth-child(2),
+.liquid-fold .liquid-item:nth-child(2) { transform: translateX(calc(-1 * (var(--liquid-size) + var(--liquid-bridge)))); }
+.liquid-fold .liquid-blob:nth-child(3),
+.liquid-fold .liquid-item:nth-child(3) { transform: translateX(calc(-2 * (var(--liquid-size) + var(--liquid-bridge)))); }
+.liquid-fold .liquid-blob:nth-child(4),
+.liquid-fold .liquid-item:nth-child(4) { transform: translateX(calc(-3 * (var(--liquid-size) + var(--liquid-bridge)))); }
+.liquid-fold .liquid-blob:nth-child(5),
+.liquid-fold .liquid-item:nth-child(5) { transform: translateX(calc(-4 * (var(--liquid-size) + var(--liquid-bridge)))); }
+.liquid-fold .liquid-blob:nth-child(6),
+.liquid-fold .liquid-item:nth-child(6) { transform: translateX(calc(-5 * (var(--liquid-size) + var(--liquid-bridge)))); }
+.liquid-fold .liquid-blob:nth-child(7),
+.liquid-fold .liquid-item:nth-child(7) { transform: translateX(calc(-6 * (var(--liquid-size) + var(--liquid-bridge)))); }
+.liquid-fold .liquid-blob:nth-child(8),
+.liquid-fold .liquid-item:nth-child(8) { transform: translateX(calc(-7 * (var(--liquid-size) + var(--liquid-bridge)))); }
+
+/* dobrado, so a primeira unidade recebe ponteiro e foco */
+.liquid-fold .liquid-item:not(:nth-child(1)) {
+  opacity: 0;
+  pointer-events: none;
+}
+.liquid-fold .liquid-item { transition: transform var(--duration-5) var(--ease-out-soft), opacity var(--duration-4) var(--ease-out-soft); }
+
 /* ---------- pilulas ----------
 
    .pill e de vidro por padrao: e a forma que a identidade usa.
@@ -415,6 +594,7 @@ dl, dd { margin: 0; }
    tabela densa ou sobre uma superficie ja translucida. */
 
 .pill {
+  --surface-context: var(--surface-glass);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -950,6 +1130,7 @@ dl, dd { margin: 0; }
    continua rolando a pagina atras quando o painel chega ao fim. */
 
 .overlay {
+  --surface-context: var(--surface-glass);
   position: fixed;
   inset: 0;
   z-index: 80;

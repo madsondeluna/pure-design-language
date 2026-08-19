@@ -98,13 +98,26 @@
   --glass-specular:    rgba(255, 255, 255, 0.75);
   --glass-refract:     rgba(255, 255, 255, 0.2);
 
+  /* bisel e poco: as duas camadas que dao espessura ao material.
+     O bisel e um brilho interno difuso rente a borda, o poco e a
+     sombra que a luz deposita na base ao atravessar o corpo. Nenhum
+     dos dois tem spread: um anel de spread empurra uma segunda linha
+     rente ao contorno e o vidro passa a ler como dois fios. */
+  --glass-bezel:       rgba(255, 255, 255, 0.62);
+  --glass-pool:        rgba(13, 19, 33, 0.08);
+  --liquid-drop:       drop-shadow(0 1px 2px rgba(13, 19, 33, 0.08)) drop-shadow(0 6px 18px rgba(13, 19, 33, 0.1));
+
   --shadow-glass-rest:
     inset 0 1px 0 var(--glass-specular),
+    inset 0 0 8px -3px var(--glass-bezel),
+    inset 0 -10px 16px -12px var(--glass-pool),
     inset 0 -1px 0 var(--glass-refract),
     0 1px 2px rgba(13, 19, 33, 0.06),
     0 6px 18px rgba(13, 19, 33, 0.07);
   --shadow-glass-hover:
     inset 0 1px 0 var(--glass-specular),
+    inset 0 0 10px -3px var(--glass-bezel),
+    inset 0 -12px 18px -12px var(--glass-pool),
     inset 0 -1px 0 var(--glass-refract),
     0 2px 4px rgba(13, 19, 33, 0.08),
     0 10px 28px rgba(13, 19, 33, 0.1);
@@ -132,6 +145,50 @@
   --glass-tint:        rgba(255, 255, 255, 0.16);
   --glass-tint-hover:  rgba(255, 255, 255, 0.3);
   --glass-border:      var(--glass-edge);
+
+  /* ---------- liquido ----------
+     O material liquido nao e uma quinta textura de vidro: e outra
+     arquitetura. O vidro filtra o proprio elemento, entao o texto que
+     ele carrega atravessa o desfoque junto. O liquido separa em duas
+     camadas: uma folha de silhueta, atras, leva o filtro goo e a
+     sombra; o conteudo real anda por cima, sem filtro nenhum, nitido.
+     E o que permite dois controles vizinhos se fundirem numa gota so
+     sem que a legenda deles derreta.
+
+     Os numeros do filtro (desvio do desfoque, inclinacao do contraste
+     alfa) NAO sao tokens: feColorMatrix nao le var(), e um token que
+     nada resolve e um token que mente. Eles vivem nas tres definicoes
+     de #pure-goo em templates/page.html, e a tabela do README diz
+     quais sao. Token aqui e so o que o CSS consome de verdade. */
+  --liquid-fill:        var(--surface-glass);
+  --liquid-fill-hover:  var(--surface-hover-glass);
+  --liquid-edge:        var(--glass-edge);
+
+  /* a folga entre dois blobs sob a qual eles fundem. Fundir e razao
+     entre o desvio do desfoque e o vao, e a travessia foi medida na
+     tela, nao estimada: a ponte fecha enquanto o vao fica ABAIXO do
+     desvio, e some um pixel acima dele. Cada variante do filtro tem
+     portanto a sua folga, e trocar de variante sem trocar a folga e o
+     jeito silencioso de o aglomerado sair como pilulas soltas.
+
+       #pure-goo-tight  desvio  4   funde ate  4px
+       #pure-goo        desvio  6   funde ate  6px
+       #pure-goo-wide   desvio 12   funde ate 10px */
+  --liquid-bridge-tight: 4px;
+  --liquid-bridge:       6px;
+  --liquid-bridge-wide:  10px;
+  /* folga da regiao do filtro: a gota transborda a caixa do grupo e
+     sem isto o navegador corta a ponte no contorno */
+  --liquid-pad:         24px;
+
+  /* ---------- contexto de superficie ----------
+     Todo componente que pinta fundo redeclara este token com o que ele
+     pinta. Serve a uma coisa so, e ela e a que a varredura de contraste
+     erra sozinha: o ancestral opaco nem sempre e quem pinta. No liquido
+     o fundo vem de um IRMAO do texto, entao andar pela ancestralidade
+     resolve o texto contra --bg e da aprovado com a pagina errada. A
+     varredura le --surface-context, que herda, em vez de adivinhar. */
+  --surface-context:    var(--bg);
 
   /* dados: 8 slots, ordem fixa, nunca ciclada */
   --chart-1: #3973b1;
@@ -276,6 +333,20 @@
   --nudge-2: 3px;
   --nudge-3: 4px;
 
+  /* ---------- desfoque de movimento ----------
+     Tres raios, e eles nao sao vidro. O vidro desfoca o FUNDO com
+     backdrop-filter e fica parado; estes desfocam o PROPRIO elemento
+     com filter e so existem enquanto ele se move, zerando ao assentar.
+     Misturar as duas familias e o jeito de um cartao de vidro sair
+     borrado em repouso.
+
+     Nao ha token novo de duracao nem de curva nesta camada: as receitas
+     de motion.css usam os seis --duration-* e as cinco --ease-* que ja
+     existiam. O escalonamento de linha usa --duration-1 como passo. */
+  --motion-blur-1: 2px;   /* troca de icone, troca de texto, esqueleto */
+  --motion-blur-2: 3px;   /* deslize de pagina, subida de linha */
+  --motion-blur-3: 8px;   /* momento de enfase: confirmacao concluida */
+
   /* layout */
   --measure-prose: 480px;
   --measure-wide: 640px;
@@ -340,6 +411,43 @@
   --muted:               var(--slate-700);
   --accent:              var(--slate-700);
   --secondary:           var(--slate-500);
+
+  /* o vidro do modo papel e quente. Sem este bloco ele herdaria o vidro
+     do modo claro e o fosco sairia branco frio sobre uma pagina creme:
+     a superficie mais visivel da pagina seria a unica que nao pertence
+     ao modo. Preenchimento e bisel sobem do papel, nao do branco. */
+  --glass-fill:        linear-gradient(180deg, rgba(255, 253, 246, 0.5), rgba(250, 248, 241, 0.2));
+  --glass-fill-hover:  linear-gradient(180deg, rgba(255, 253, 246, 0.7), rgba(250, 248, 241, 0.36));
+  --glass-edge:        rgba(255, 253, 246, 0.62);
+  --glass-edge-hover:  rgba(255, 253, 246, 0.82);
+  --glass-specular:    rgba(255, 253, 246, 0.8);
+  --glass-refract:     rgba(214, 207, 182, 0.34);
+  --glass-bezel:       rgba(255, 253, 246, 0.7);
+  --glass-pool:        rgba(90, 78, 46, 0.1);
+  --liquid-drop:       drop-shadow(0 1px 2px rgba(90, 78, 46, 0.1)) drop-shadow(0 6px 18px rgba(90, 78, 46, 0.12));
+
+  --shadow-glass-rest:
+    inset 0 1px 0 var(--glass-specular),
+    inset 0 0 8px -3px var(--glass-bezel),
+    inset 0 -10px 16px -12px var(--glass-pool),
+    inset 0 -1px 0 var(--glass-refract),
+    0 1px 2px rgba(90, 78, 46, 0.08),
+    0 6px 18px rgba(90, 78, 46, 0.09);
+  --shadow-glass-hover:
+    inset 0 1px 0 var(--glass-specular),
+    inset 0 0 10px -3px var(--glass-bezel),
+    inset 0 -12px 18px -12px var(--glass-pool),
+    inset 0 -1px 0 var(--glass-refract),
+    0 2px 4px rgba(90, 78, 46, 0.1),
+    0 10px 28px rgba(90, 78, 46, 0.12);
+
+  --glass-fill-thin:   linear-gradient(180deg, rgba(255, 253, 246, 0.14), rgba(255, 253, 246, 0.03));
+  --glass-fill-frost:  linear-gradient(180deg, rgba(250, 248, 241, 0.86), rgba(240, 235, 216, 0.68));
+  --glass-fill-deep:   linear-gradient(180deg, rgba(250, 248, 241, 0.62), rgba(240, 235, 216, 0.4));
+  --glass-grain-opacity: 0.7;
+
+  --glass-tint-accent: linear-gradient(180deg, rgba(62, 92, 118, 0.24), rgba(62, 92, 118, 0.1));
+  --glass-edge-accent: rgba(62, 92, 118, 0.4);
 }
 
 /* ---------- deep-blue ----------
@@ -389,13 +497,21 @@
   --glass-specular:    rgba(255, 255, 255, 0.16);
   --glass-refract:     rgba(255, 255, 255, 0.04);
 
+  --glass-bezel:       rgba(255, 255, 255, 0.18);
+  --glass-pool:        rgba(0, 0, 0, 0.45);
+  --liquid-drop:       drop-shadow(0 1px 2px rgba(0, 0, 0, 0.45)) drop-shadow(0 8px 24px rgba(0, 0, 0, 0.36));
+
   --shadow-glass-rest:
     inset 0 1px 0 var(--glass-specular),
+    inset 0 0 8px -3px var(--glass-bezel),
+    inset 0 -10px 16px -12px var(--glass-pool),
     inset 0 -1px 0 var(--glass-refract),
     0 1px 2px rgba(0, 0, 0, 0.4),
     0 8px 24px rgba(0, 0, 0, 0.32);
   --shadow-glass-hover:
     inset 0 1px 0 var(--glass-specular),
+    inset 0 0 10px -3px var(--glass-bezel),
+    inset 0 -12px 18px -12px var(--glass-pool),
     inset 0 -1px 0 var(--glass-refract),
     0 2px 4px rgba(0, 0, 0, 0.46),
     0 12px 32px rgba(0, 0, 0, 0.4);
@@ -471,13 +587,21 @@
   --glass-specular:    rgba(255, 255, 255, 0.16);
   --glass-refract:     rgba(255, 255, 255, 0.04);
 
+  --glass-bezel:       rgba(255, 255, 255, 0.18);
+  --glass-pool:        rgba(0, 0, 0, 0.5);
+  --liquid-drop:       drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5)) drop-shadow(0 8px 24px rgba(0, 0, 0, 0.42));
+
   --shadow-glass-rest:
     inset 0 1px 0 var(--glass-specular),
+    inset 0 0 8px -3px var(--glass-bezel),
+    inset 0 -10px 16px -12px var(--glass-pool),
     inset 0 -1px 0 var(--glass-refract),
     0 1px 2px rgba(0, 0, 0, 0.46),
     0 8px 24px rgba(0, 0, 0, 0.38);
   --shadow-glass-hover:
     inset 0 1px 0 var(--glass-specular),
+    inset 0 0 10px -3px var(--glass-bezel),
+    inset 0 -12px 18px -12px var(--glass-pool),
     inset 0 -1px 0 var(--glass-refract),
     0 2px 4px rgba(0, 0, 0, 0.52),
     0 12px 32px rgba(0, 0, 0, 0.46);

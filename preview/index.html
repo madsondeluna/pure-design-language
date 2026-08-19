@@ -11,6 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,300..400&family=Public+Sans:wght@300;400;500;600&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../web/tokens.css">
 <link rel="stylesheet" href="../web/patterns.css">
+<link rel="stylesheet" href="../web/motion.css">
 <link rel="stylesheet" href="../web/agent.css">
 <style>
 /* =========================================================
@@ -409,6 +410,31 @@ body { padding-bottom: var(--space-96); }
 </style>
 </head>
 <body>
+
+<svg class="pure-defs" aria-hidden="true" focusable="false" width="0" height="0"><defs>
+
+  <filter id="pure-goo-tight" x="-40%" y="-40%" width="180%" height="180%" color-interpolation-filters="sRGB">
+    <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur"/>
+    <feColorMatrix in="blur" type="matrix"
+      values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -7.83" result="goo"/>
+    <feComposite in="SourceGraphic" in2="goo" operator="atop"/>
+  </filter>
+
+  <filter id="pure-goo" x="-40%" y="-40%" width="180%" height="180%" color-interpolation-filters="sRGB">
+    <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur"/>
+    <feColorMatrix in="blur" type="matrix"
+      values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="goo"/>
+    <feComposite in="SourceGraphic" in2="goo" operator="atop"/>
+  </filter>
+
+  <filter id="pure-goo-wide" x="-40%" y="-40%" width="180%" height="180%" color-interpolation-filters="sRGB">
+    <feGaussianBlur in="SourceGraphic" stdDeviation="12" result="blur"/>
+    <feColorMatrix in="blur" type="matrix"
+      values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 16 -6.17" result="goo"/>
+    <feComposite in="SourceGraphic" in2="goo" operator="atop"/>
+  </filter>
+
+</defs></svg>
 
 <a class="skip-link pill" href="#main">Skip to content</a>
 <div class="progress" id="progress"></div>
@@ -831,6 +857,68 @@ body { padding-bottom: var(--space-96); }
         or a plain surface.</p>
       </aside>
     </div>
+
+    <div class="grid step-3">
+      <span class="label axis-a rv">Liquid layer</span>
+      <h3 class="axis-a-wide rv step-1">The fifth material is not a fifth texture</h3>
+    </div>
+
+    <div class="grid step-2">
+      <div class="axis-a rv">
+        <p>Glass filters itself, so the text it carries goes through the blur with it. That is
+        why glass never merges: fusing two neighbouring controls would melt both labels.</p>
+        <p>Liquid splits the material from the content into two layers stacked in one grid
+        cell. The silhouette sheet, behind, is the only filtered thing on the page and carries
+        the goo filter and the shadow. The real DOM rides on top, unfiltered, crisp, with its
+        focus ring, hit area and ARIA intact.</p>
+        <p>The two layers are mirrors: same display, same gap, same box per unit. That is how
+        the drop sits exactly under the control without a line of JavaScript measuring
+        anything, and it is also the price. A cluster unit has a fixed size, because a width
+        that depends on the text can only be mirrored by measuring the text.</p>
+      </div>
+      <div class="axis-b rv">
+        <div class="liquid">
+          <span class="liquid-sheet" aria-hidden="true"><i class="liquid-blob"></i><i class="liquid-blob"></i><i class="liquid-blob"></i><i class="liquid-blob"></i></span>
+          <div class="liquid-content">
+            <button class="liquid-item" type="button">A</button>
+            <button class="liquid-item" type="button">B</button>
+            <button class="liquid-item" type="button">C</button>
+            <button class="liquid-item" type="button">D</button>
+          </div>
+        </div>
+        <div class="liquid liquid-wide liquid-sq step-1">
+          <span class="liquid-sheet" aria-hidden="true"><i class="liquid-blob"></i><i class="liquid-blob"></i><i class="liquid-blob"></i></span>
+          <div class="liquid-content">
+            <button class="liquid-item" type="button">1</button>
+            <button class="liquid-item" type="button">2</button>
+            <button class="liquid-item" type="button">3</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid step-2">
+      <div class="axis-a-wide rv">
+        <table class="spec">
+          <thead><tr><th>Filter</th><th class="num">Deviation</th><th class="num">Slope</th><th class="num">Intercept</th><th class="num">Bridges up to</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">#pure-goo-tight</td><td class="num">4</td><td class="num">20</td><td class="num">-7.83</td><td class="num">4px</td></tr>
+            <tr><td class="mono">#pure-goo</td><td class="num">6</td><td class="num">18</td><td class="num">-7</td><td class="num">6px</td></tr>
+            <tr><td class="mono">#pure-goo-wide</td><td class="num">12</td><td class="num">16</td><td class="num">-6.17</td><td class="num">10px</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <aside class="axis-b rv">
+        <h4>What the bridge column means</h4>
+        <p>It was measured on screen, not estimated. The bridge holds while the gap stays below
+        the blur deviation and vanishes a pixel above it. Each filter variant therefore carries
+        its own gap, and swapping the variant without swapping the gap is the silent way a
+        cluster comes out as loose pills.</p>
+        <h4>What does not cross into pure CSS</h4>
+        <p>The spring, the droplet that trails a moving element, and the inner bezel rebuilt on
+        the merged silhouette. All three have to measure a rectangle every frame.</p>
+      </aside>
+    </div>
   </section>
 
   <div class="grid"><div class="rule"></div></div>
@@ -962,6 +1050,79 @@ body { padding-bottom: var(--space-96); }
         version and no substitute worth inventing.</p>
         <p>The check script enforces the first rule on agent.css directly: a transition naming a
         layout property fails the build, as does any hex colour written outside tokens.css.</p>
+      </aside>
+    </div>
+
+    <div class="grid step-3">
+      <span class="label axis-a rv">Motion layer</span>
+      <h3 class="axis-a-wide rv step-1">Fifteen recipes, remapped onto the scale that already existed</h3>
+    </div>
+
+    <div class="grid step-2">
+      <div class="axis-a rv">
+        <p>The recipes come from the transitions.dev catalogue by Jakub Antalik, and they were
+        not copied: they were remapped. The catalogue carries its own scale, seven durations and
+        six curves, and this language has six durations and five curves and forbids a new one.</p>
+        <p>The remap follows the rule the catalogue itself states, match by <em>use</em> and not
+        by number. A 300ms modal close becomes <span class="mono">--duration-2</span> at 150ms
+        because both are "modal close", even though the numbers are far apart. The dominant
+        catalogue curve, <span class="mono">cubic-bezier(0.22, 1, 0.36, 1)</span>, is
+        <span class="mono">--ease-out-expo</span> here to three decimal places of intent.</p>
+        <p>Three px values were born with the layer, and they are blur radii, not a scale:
+        <span class="mono">--motion-blur-1</span>, <span class="mono">-2</span> and
+        <span class="mono">-3</span>. They blur the element itself while it moves and clear on
+        settle, which is the opposite of glass, where the blur is on the backdrop and stands
+        still. Mixing the two families is how a card ends up blurred at rest.</p>
+      </div>
+      <aside class="aside-note axis-b rv">
+        <h4>What did not come across</h4>
+        <p>Card resize, accordion, panel reveal and input clear animate width, height or
+        grid-template-rows. Layout property, recalculated every frame, forbidden here. An
+        accordion body leaves the flow with <span class="mono">[hidden]</span> instead.</p>
+        <p>Avatar group hover, the double-bounce toggle and the like button need an overshoot
+        curve. A control settles, it does not jump. The toggle came across without the
+        overshoot; the other two did not come across at all.</p>
+        <h4>What needs JavaScript</h4>
+        <p><span class="mono">.motion-tabs</span> for the pill geometry,
+        <span class="mono">.motion-digits</span> for the per-digit state,
+        <span class="mono">.motion-shake</span> and
+        <span class="mono">.motion-dropdown</span> for adding and clearing the state class.
+        Each says so in its own comment.</p>
+      </aside>
+    </div>
+
+    <div class="grid step-2">
+      <div class="axis-a-wide rv">
+        <table class="spec">
+          <thead><tr><th>Use</th><th>Class</th><th class="num">Duration</th><th>Curve</th></tr></thead>
+          <tbody>
+            <tr><td>Anchored surface opens</td><td class="mono">.motion-dropdown</td><td class="num">200 / 150</td><td class="mono">--ease-out-expo</td></tr>
+            <tr><td>Centred surface opens</td><td class="mono">.motion-modal</td><td class="num">300 / 150</td><td class="mono">--ease-out-expo</td></tr>
+            <tr><td>Notice rises from below</td><td class="mono">.motion-toast</td><td class="num">350 / 150</td><td class="mono">--ease-out-expo</td></tr>
+            <tr><td>Hint over an icon</td><td class="mono">.motion-tip</td><td class="num">150</td><td class="mono">--ease-out</td></tr>
+            <tr><td>Two icons, one slot</td><td class="mono">.motion-icon-swap</td><td class="num">200</td><td class="mono">--ease-standard</td></tr>
+            <tr><td>Label changes in place</td><td class="mono">.motion-text-swap</td><td class="num">150</td><td class="mono">--ease-standard</td></tr>
+            <tr><td>Stacked lines enter</td><td class="mono">.motion-lines</td><td class="num">500</td><td class="mono">--ease-standard</td></tr>
+            <tr><td>Badge appears</td><td class="mono">.motion-badge</td><td class="num">350</td><td class="mono">--ease-out-expo</td></tr>
+            <tr><td>A number updates</td><td class="mono">.motion-digits</td><td class="num">500</td><td class="mono">--ease-out-expo</td></tr>
+            <tr><td>Validation failed</td><td class="mono">.motion-shake</td><td class="num">350</td><td class="mono">--ease-standard</td></tr>
+            <tr><td>Placeholder becomes content</td><td class="mono">.motion-reveal</td><td class="num">350</td><td class="mono">--ease-standard</td></tr>
+            <tr><td>Progress text stays alive</td><td class="mono">.motion-shimmer</td><td class="num">2000</td><td class="mono">linear</td></tr>
+            <tr><td>Highlight follows the tab</td><td class="mono">.motion-tabs</td><td class="num">200</td><td class="mono">--ease-out-expo</td></tr>
+            <tr><td>Action confirmed</td><td class="mono">.motion-check</td><td class="num">500</td><td class="mono">--ease-out-expo</td></tr>
+            <tr><td>List becomes detail</td><td class="mono">.motion-pages</td><td class="num">200</td><td class="mono">--ease-out-expo</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <aside class="axis-b rv">
+        <h4>Two painted exceptions</h4>
+        <p>Beyond transform, opacity and filter the layer animates
+        <span class="mono">stroke-dashoffset</span> in the confirmation check and
+        <span class="mono">background-position</span> in the shimmer. Both are paint, neither is
+        layout, and neither reflows anything.</p>
+        <h4>One emphasis per flow</h4>
+        <p>The confirmation check costs <span class="mono">--duration-6</span> on purpose. A
+        celebration that happens on every save stops being one.</p>
       </aside>
     </div>
   </section>
@@ -1817,7 +1978,7 @@ body { padding-bottom: var(--space-96); }
 <footer class="foot">
   <div class="foot-in">
     <span>Set in Archivo, Public Sans and Spline Sans Mono</span>
-    <span class="sig">Pure Design <span>1.4.3</span></span>
+    <span class="sig">Pure Design <span>1.5.0</span></span>
   </div>
 </footer>
 

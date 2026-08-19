@@ -11,9 +11,11 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,300..400&family=Public+Sans:wght@300;400;500;600&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-<!-- ordem obrigatoria. agent.css so entra se a interface tiver um agente. -->
+<!-- ordem obrigatoria. motion.css so entra se a pagina tiver transicao
+     nomeada; agent.css so entra se a interface tiver um agente. -->
 <link rel="stylesheet" href="pure/tokens.css">
 <link rel="stylesheet" href="pure/patterns.css">
+<link rel="stylesheet" href="pure/motion.css">
 <link rel="stylesheet" href="pure/agent.css">
 
 <style>
@@ -107,6 +109,56 @@ h2 { font-size: var(--text-display-section); }
 </style>
 </head>
 <body>
+
+<!-- =========================================================
+     Definicoes do filtro liquido.
+
+     Vao no topo do body, uma vez por documento, e so entram se a
+     pagina usar .liquid. O svg nao ocupa espaco e nao le a nenhum
+     leitor de tela.
+
+     A cadeia e a mesma dos tres passos que fazem qualquer goo:
+     desfocar a silhueta, empurrar o alfa contra um degrau duro, e
+     recompor o grafico original por cima do resultado. O que muda
+     entre as tres variantes e ate onde uma gota alcanca a vizinha.
+
+     Os numeros ficam aqui, nao em tokens: feColorMatrix nao aceita
+     var(). O intercepto do alfa acompanha a inclinacao pela mesma
+     regra em todas: 0,5 menos cinco doze avos da inclinacao, que e o
+     que mantem o degrau na mesma travessia do par classico 18/-7.
+
+     A coluna da ponte foi medida na tela, nao estimada: a ponte fecha
+     enquanto o vao fica abaixo do desvio, e some um pixel acima dele.
+
+     | filtro           | desvio | inclinacao | intercepto | ponte ate |
+     | pure-goo-tight   |   4    |     20     |   -7,83    |    4px    |
+     | pure-goo         |   6    |     18     |   -7       |    6px    |
+     | pure-goo-wide    |  12    |     16     |   -6,17    |   10px    |
+     ========================================================= -->
+<svg class="pure-defs" aria-hidden="true" focusable="false" width="0" height="0"><defs>
+
+  <filter id="pure-goo-tight" x="-40%" y="-40%" width="180%" height="180%" color-interpolation-filters="sRGB">
+    <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur"/>
+    <feColorMatrix in="blur" type="matrix"
+      values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -7.83" result="goo"/>
+    <feComposite in="SourceGraphic" in2="goo" operator="atop"/>
+  </filter>
+
+  <filter id="pure-goo" x="-40%" y="-40%" width="180%" height="180%" color-interpolation-filters="sRGB">
+    <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur"/>
+    <feColorMatrix in="blur" type="matrix"
+      values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="goo"/>
+    <feComposite in="SourceGraphic" in2="goo" operator="atop"/>
+  </filter>
+
+  <filter id="pure-goo-wide" x="-40%" y="-40%" width="180%" height="180%" color-interpolation-filters="sRGB">
+    <feGaussianBlur in="SourceGraphic" stdDeviation="12" result="blur"/>
+    <feColorMatrix in="blur" type="matrix"
+      values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 16 -6.17" result="goo"/>
+    <feComposite in="SourceGraphic" in2="goo" operator="atop"/>
+  </filter>
+
+</defs></svg>
 
 <!-- primeira parada do teclado: pula a navegacao e vai para o conteudo -->
 <a class="skip-link pill" href="#main">Skip to content</a>
