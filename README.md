@@ -244,6 +244,28 @@ Variants: `.liquid-tight`, `.liquid-wide`, `.liquid-sq` (surface radius instead 
 
 One `transform` declaration per element, composed from `--liquid-shift-x`, `--liquid-shift-y` and `--liquid-swell`. Each state writes its own token and none writes `transform`. Two rules writing `transform` on the same blob is the 1.4.2 and 1.4.3 defect by another route: the fan wrote a translate and the swell wrote a scale, and `:has()` takes the specificity of its most specific argument, so the swell won at 0,6,0 against 0,3,0 whatever the file order. Focusing the second unit of a folded cluster returned its blob to the open position while the item stayed folded, and the mirror broke exactly where it is the material's premise. `check.mjs` covers it as `transform do líquido`.
 
+### Liquid motion
+
+Five reads, and none of them writes a `transform`: every one writes the registered tokens, so the composition stays the chapter's single transform declaration.
+
+The tokens are registered with `@property` — `--liquid-shift-x`, `--liquid-shift-y`, `--liquid-swell`, `--liquid-stretch-x`, `--liquid-stretch-y`. An unregistered custom property is text: it jumps between frames and does not interpolate, so a keyframe writing `--liquid-swell` would step instead of flow. `--liquid-swell` is the uniform swell and `--liquid-stretch-*` multiplies over it per axis; multiplying rather than overriding is deliberate, because a registered property always has a value, so `var()`'s fallback never fires and a registered `--liquid-swell-x` would silently erase the uniform swell.
+
+| Class | Read | Mechanism | Needs a state |
+|---|---|---|---|
+| `.liquid-trail` | The mass stretches behind a moving unit | Phase difference from `transition-delay` | `.is-flux` |
+| `.liquid-drip` | A drop stretches, necks and lets go | Keyframes on shift and stretch | no |
+| `.liquid-morph` | A round trigger becomes the surface it opens | Per-axis stretch of the silhouette | `.is-open` |
+| `.liquid-pulse` | The cluster breathes while something is pending | Out-of-phase swell loop | no |
+| `.is-flux` | Content cross-blurs while the mass flows | `--motion-blur-1` on the content layer | yes |
+
+What the library does with a spring, this does with a curve, and the difference is declared rather than hidden. A spring overshoots on its own and keeps going past the target; reproducing it means integrating every frame, which is JavaScript. What crosses over is the shape of the motion, and the shape is what you recognise: the bridge stretching, the neck thinning, the drop letting go.
+
+Three of the five exist only *while* the mass flows, and CSS cannot say "during". They read `.is-flux`, set on the way in and cleared on the way out — the same contract `.motion-dropdown` has with `.is-open`. Binding them to the resting state was tried and discarded on screen: it left the label blurred forever and the trail reading as loose dots standing still. A travel effect pinned to the resting state is a defect, not a simplification, and `check.mjs` covers it as `desfoque de percurso`.
+
+`.liquid-morph` is the catalogue's plus-to-menu done legally. The source recipe animates `width`, `height` and `border-radius`; here the same read comes out without touching layout, because only the silhouette has to grow — the content is already at its final size and was merely clipped.
+
+`.liquid-pulse` slows down under `prefers-reduced-motion` rather than stopping, the same exception the skeleton already carries. A pending indicator that holds still lies about the state.
+
 Folded units leave the tab order. `opacity: 0` with `pointer-events: none` takes the pointer and not the keyboard: Tab still reached an invisible unit stacked under the first one and the focus ring appeared over nothing. `visibility: hidden` takes both.
 
 ### Surface context

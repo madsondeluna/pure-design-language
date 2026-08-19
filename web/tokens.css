@@ -393,6 +393,34 @@
   color-scheme: light;
 }
 
+/* ---------- tipos do transform liquido ----------
+
+   Uma custom property nao registrada e texto: ela troca de valor de um
+   quadro para o outro e nao interpola. O transform composto do liquido
+   ate aqui so mudava porque a transicao caia sobre `transform`, e por
+   isso nenhuma animacao podia escrever os tokens: um @keyframes que
+   escrevesse --liquid-swell saltava em vez de fluir.
+
+   Registrar da tipo aos quatro, e com tipo eles interpolam sozinhos.
+   E o que permite toda animacao de liquido escrever TOKEN e nunca
+   `transform`, mantendo a regra de uma declaracao de transform por
+   elemento enquanto o material ganha movimento.
+
+   inherits: false porque cada unidade tem o seu deslocamento: um blob
+   herdar o inchaco do vizinho e o oposto do que o aglomerado precisa.
+
+   --liquid-swell e o inchaco uniforme e --liquid-stretch-* MULTIPLICA
+   sobre ele por eixo. Multiplicar em vez de sobrescrever tem uma razao
+   pratica: uma propriedade registrada sempre tem valor, entao o
+   fallback de var() nunca dispara e um --liquid-swell-x registrado
+   apagaria o inchaco uniforme em silencio. */
+
+@property --liquid-shift-x  { syntax: "<length>"; inherits: false; initial-value: 0px; }
+@property --liquid-shift-y  { syntax: "<length>"; inherits: false; initial-value: 0px; }
+@property --liquid-swell    { syntax: "<number>"; inherits: false; initial-value: 1; }
+@property --liquid-stretch-x { syntax: "<number>"; inherits: false; initial-value: 1; }
+@property --liquid-stretch-y { syntax: "<number>"; inherits: false; initial-value: 1; }
+
 /* ---------- paper-like ----------
    Superficie quente, mesma tinta e mesma estrutura do modo claro.
    Para leitura longa, material impresso e pagina de texto. */

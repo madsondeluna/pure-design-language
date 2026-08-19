@@ -928,6 +928,64 @@ body { padding-bottom: var(--space-96); }
         the merged silhouette. All three have to measure a rectangle every frame.</p>
       </aside>
     </div>
+
+    <div class="grid step-3">
+      <span class="label axis-a rv">Liquid layer</span>
+      <h3 class="axis-a-wide rv step-1">Five reads, and none of them writes a transform</h3>
+    </div>
+
+    <div class="grid step-2">
+      <div class="axis-a rv">
+        <p>Every liquid animation writes the registered tokens and the composition stays the one
+        transform declaration in the chapter. That is what lets the material move without
+        reopening the defect of two rules fighting over the same element.</p>
+        <p>The tokens are registered with <span class="mono">@property</span>, which is what
+        makes them interpolate. An unregistered custom property is text: it jumps from one frame
+        to the next, so a keyframe writing <span class="mono">--liquid-swell</span> would step
+        instead of flow.</p>
+        <p>What the library does with a spring, this does with a curve, and the difference is
+        declared rather than hidden. A spring overshoots on its own and keeps going past the
+        target; reproducing it means integrating every frame, which is JavaScript. What crosses
+        over is the <em>shape</em> of the motion, and the shape is what you recognise: the bridge
+        stretching, the neck thinning, the drop letting go.</p>
+      </div>
+      <aside class="aside-note axis-b rv">
+        <h4>Three of the five need a flux state</h4>
+        <p>They exist only <em>while</em> the mass is flowing, and CSS cannot say "during". They
+        read <span class="mono">.is-flux</span>, set on the way in and cleared on the way out,
+        the same contract <span class="mono">.motion-dropdown</span> has with
+        <span class="mono">.is-open</span>.</p>
+        <p>Binding them to the resting state was tried and discarded on screen: it left the label
+        blurred forever and the trail reading as loose dots standing still. A travel effect
+        pinned to the resting state is a defect, not a simplification. The check script covers it
+        as <span class="mono">desfoque de percurso</span>.</p>
+      </aside>
+    </div>
+
+    <div class="grid step-2">
+      <div class="axis-a-wide rv">
+        <div class="table-scroll"><table class="table">
+          <thead><tr><th>Class</th><th>Read</th><th>Mechanism</th><th>Needs state</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">.liquid-trail</td><td>The mass stretches behind a moving unit</td><td>Phase difference from <span class="mono">transition-delay</span></td><td>Yes</td></tr>
+            <tr><td class="mono">.liquid-drip</td><td>A drop stretches, necks and lets go</td><td>Keyframes on shift and stretch</td><td>No</td></tr>
+            <tr><td class="mono">.liquid-morph</td><td>A round trigger becomes the surface it opens</td><td>Per-axis stretch of the silhouette</td><td>Yes</td></tr>
+            <tr><td class="mono">.liquid-pulse</td><td>The cluster breathes while something is pending</td><td>Out-of-phase swell loop</td><td>No</td></tr>
+            <tr><td class="mono">.is-flux</td><td>Content cross-blurs while the mass flows</td><td><span class="mono">--motion-blur-1</span> on the content layer</td><td>Yes</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+      <aside class="axis-b rv">
+        <h4>The morph is the plus-to-menu, done legally</h4>
+        <p>The source recipe animates width, height and border-radius. Here the same read comes
+        out without touching layout, because only the silhouette has to grow: the content is
+        already at its final size and was merely clipped. The material working for the rule
+        instead of against it.</p>
+        <h4>Pulse under reduced motion</h4>
+        <p>It slows down rather than stopping, the same exception the skeleton already carries. A
+        pending indicator that holds still lies about the state.</p>
+      </aside>
+    </div>
   </section>
 
   <div class="grid"><div class="rule"></div></div>

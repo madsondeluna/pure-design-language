@@ -426,6 +426,17 @@ function craft() {
       ? "um transform composto de --liquid-shift-* e --liquid-swell, e nenhum estado o reescreve"
       : `${stateTransforms} declarações de transform no capítulo: um estado sobrescreve o outro`);
 
+  // efeito de percurso nao mora no estado de repouso. O desfoque de
+  // conteudo do liquido existe ENQUANTO a massa escorre, e prende-lo ao
+  // estado permanente deixa o rotulo desfocado para sempre: foi o que
+  // aconteceu com .liquid-fold e .liquid-drip antes de virarem .is-flux.
+  const fluxLeak = [...liquidChapter.matchAll(/^([^\n{]*\.liquid-content[^\n{]*)\{([^}]*)\}/gm)]
+    .filter(([, sel, body]) => /filter:\s*blur\(\s*var/.test(body) && !/\.is-flux/.test(sel))
+    .map(([, sel]) => sel.trim());
+  check(!fluxLeak.length, "desfoque de percurso",
+    fluxLeak.length ? `desfoca o conteúdo fora de .is-flux: ${fluxLeak.join(", ")}`
+                    : "o desfoque de conteúdo do líquido só existe enquanto a massa escorre");
+
   // os tres filtros goo precisam existir no template, senao .liquid
   // referencia url() morta e a folha some sem erro nenhum
   const gooMissing = ["pure-goo-tight", "pure-goo", "pure-goo-wide"]
