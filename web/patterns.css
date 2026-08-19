@@ -957,12 +957,50 @@ dl, dd { margin: 0; }
   min-height: var(--hit-min);
 }
 
+/* No toque a area cresce, e ela cresce em TUDO que se aperta, nao so no
+   campo. Ate 1.5.0 este bloco cobria .hit, .input, .textarea e .select,
+   e mais nada: a pilula ficava em 35px, o link de acao em 25 e a marca
+   de escolha em 16, todos abaixo do piso de 44 que a propria linguagem
+   declara como obrigatorio. O dedo nao sabe que a regra existia.
+
+   O sinal e `pointer: coarse`, nunca a largura da tela. Um tablet de
+   1280px e toque e um celular ligado a um mouse nao e, e decidir area
+   de toque por largura erra os dois. */
 @media (pointer: coarse) {
   .hit::after {
     min-width: var(--hit-min-touch);
     min-height: var(--hit-min-touch);
   }
+
   .input, .textarea, .select { min-height: var(--field-height-touch); }
+
+  /* controles: a altura sobe pelo piso, a largura acompanha quando o
+     controle e quadrado. padding-block em vez de height para o rotulo
+     nao encostar na borda quando ele quebra em duas linhas. */
+  .pill,
+  .link-cta,
+  .control-round,
+  .liquid-item {
+    min-height: var(--hit-min-touch);
+  }
+
+  .pill { padding-block: var(--space-10); }
+  .pill-sm { padding-block: var(--space-8); }
+
+  .control-round,
+  .liquid-item,
+  .liquid-blob {
+    min-width: var(--hit-min-touch);
+  }
+
+  /* a marca da escolha continua do tamanho que se le; quem cresce e o
+     rotulo inteiro, que e o alvo de verdade */
+  .check { min-height: var(--hit-min-touch); }
+
+  /* link dentro de texto corrido nao vira bloco de 44px: isso quebraria
+     a entrelinha da prosa. Ele ganha area por .hit, que estende sem
+     estender o desenho. */
+  .link-muted { -webkit-tap-highlight-color: var(--tap-highlight); }
 }
 
 /* ---------- formulario ----------
@@ -1222,6 +1260,106 @@ dl, dd { margin: 0; }
 /* o grupo fica quente enquanto uma dica dele acabou de abrir; ate esfriar,
    as vizinhas entram sem espera. Quem marca data-warm e o script. */
 .tip-group[data-warm="true"] .tip [role="tooltip"] { transition-delay: 0ms; }
+
+/* ---------- tabela ----------
+
+   A linguagem nao tinha tabela ate 1.5.0, e a consequencia era previsivel:
+   cada projeto escrevia a sua e todas transbordavam no estreito. No guia,
+   medido em 553px, a tabela de regras terminava em 576: o conteudo nao
+   rolava, ficava FORA da tela e inalcancavel, que e pior que uma barra de
+   rolagem.
+
+   A regra de oficio diz que o corpo da pagina nunca rola na horizontal.
+   Ela so e cumprivel se alguem rolar no lugar dele, e esse alguem e
+   .table-scroll. O contentor rola, a pagina nao, e overscroll-behavior-x
+   impede o gesto de vazar para a navegacao do navegador.
+
+   Toda tabela mora dentro de um .table-scroll. Nao e opcional e nao
+   depende de a tabela ser larga hoje: uma coluna a mais amanha e o
+   defeito volta em silencio. */
+
+.table-scroll {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-13);
+  text-align: left;
+}
+
+.table th {
+  font-family: var(--font-mono);
+  font-size: var(--text-12);
+  font-weight: var(--weight-regular);
+  color: var(--muted);
+  padding: var(--space-8) var(--space-12) var(--space-8) 0;
+  border-bottom: var(--hairline) solid var(--border);
+  white-space: nowrap;
+}
+
+.table td {
+  padding: var(--space-10) var(--space-12) var(--space-10) 0;
+  border-bottom: var(--hairline) solid var(--border);
+  vertical-align: top;
+}
+
+.table tr:last-child td { border-bottom: 0; }
+
+/* numero que se compara e tabular e alinha a direita: e a unica coluna
+   em que a virgula precisa cair sempre na mesma posicao */
+.table .num,
+.table th.num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  padding-right: 0;
+}
+
+/* ---------- estreito ----------
+
+   O estreito nao e o largo encolhido, e ate 1.5.0 a linguagem nao tinha
+   uma unica consulta de largura: --breakpoint-stack existia em
+   tokens.css e em tokens.json e nao era lido por nada. Um token que
+   nada resolve e um token que mente, e este mentia sobre a coisa mais
+   visivel da tela.
+
+   O NUMERO ABAIXO E LITERAL PORQUE PRECISA SER: uma consulta de midia
+   nao le var(), e nao ha polyfill que valha um passo de build. Ele
+   precisa bater com --breakpoint-stack, e check.mjs reprova quando os
+   dois divergem, como faz com theme-color e com os filtros goo.
+
+   O que decide por LARGURA mora aqui. O que decide por TOQUE mora no
+   bloco pointer: coarse acima, e os dois nao se misturam. */
+
+@media (max-width: 768px) {
+  /* Vidro fundo custa caro em tela pequena. .glass-deep e --blur-pill
+     numa barra de largura total derrubam a taxa de quadros num aparelho
+     de entrada, e o ganho visual num retangulo de 375px de largura e
+     praticamente nulo. A textura desce um degrau; a classe continua a
+     mesma, entao nenhuma marcacao muda. */
+  .glass.glass-deep,
+  .glass-deep {
+    -webkit-backdrop-filter: blur(var(--glass-blur-frost)) saturate(var(--glass-saturate));
+    backdrop-filter: blur(var(--glass-blur-frost)) saturate(var(--glass-saturate));
+  }
+
+  .overlay {
+    -webkit-backdrop-filter: blur(var(--blur-card)) saturate(var(--blur-saturate));
+    backdrop-filter: blur(var(--blur-card)) saturate(var(--blur-saturate));
+  }
+
+  /* o aglomerado liquido encosta na borda antes de qualquer outra coisa,
+     porque a folga do filtro e desenho e nao margem */
+  .liquid { padding: var(--liquid-bridge); }
+
+  /* uma sobreposicao no estreito e uma folha, nao um cartao centralizado:
+     ela ocupa a largura e ancora embaixo, onde o polegar alcanca */
+  .overlay { max-width: 100%; }
+}
 
 /* ---------- acesso ----------
 

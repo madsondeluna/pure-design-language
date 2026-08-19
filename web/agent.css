@@ -1339,6 +1339,39 @@
 /* movimento reduzido: patterns.css ja derruba tudo. As excecoes sao as
    mesmas de la, pela mesma razao: carga e progresso nao decoram, eles
    informam. O que sobra e pulso de opacidade, que nao desloca nada. */
+/* ---------- alvo de toque ----------
+
+   A camada de agente nao tinha bloco de toque nenhum ate 1.5.0, e ela e
+   a camada com MAIS coisa apertavel por tela: aba, filtro, item de
+   menu, opcao de aprovacao, cabeca de rastro. Medidas no toque davam
+   24 a 28px, contra o piso de 44 que a linguagem declara obrigatorio.
+
+   O sinal e pointer: coarse, nunca a largura. Mesma regra do bloco
+   equivalente em patterns.css. */
+
+@media (pointer: coarse) {
+  .tab,
+  .filter,
+  .trace-head,
+  .menu-item,
+  .palette-item,
+  .side-item,
+  .ask-option,
+  .followup,
+  .seg button {
+    min-height: var(--hit-min-touch);
+  }
+
+  /* a lista longa de comando e de menu ganha altura por preenchimento,
+     nao por altura fixa: um rotulo que quebra em duas linhas nao pode
+     encostar na borda de cima */
+  .menu-item,
+  .palette-item,
+  .side-item {
+    padding-block: var(--space-10);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .loader-grid i,
   .loader-dots i,

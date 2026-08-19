@@ -391,7 +391,8 @@ h3.block-title { font-size: var(--text-18); color: var(--text);
    por baixo dela, e o toast sobe acima do rodapé */
 body { padding-bottom: var(--space-96); }
 
-@media (max-width: 1080px) {
+/* mesmo ponto do template e de patterns.css: --breakpoint-stack */
+@media (max-width: 768px) {
   .shell { padding: 0 var(--space-24); }
   .grid { gap: var(--space-16); }
   .axis-a, .axis-a-wide, .axis-a-chart, .axis-b { grid-column: 1 / 13; }
@@ -401,6 +402,14 @@ body { padding-bottom: var(--space-96); }
   .motion-row { grid-template-columns: 140px 1fr; }
   .motion-row .use { display: none; }
 }
+/* o guia obedece as proprias regras: o que se aperta chega a 44px no
+   toque. .mode-btn e .dot-btn sao locais do guia, entao o piso mora
+   aqui; o resto vem de patterns.css e de agent.css. */
+@media (pointer: coarse) {
+  .mode-btn { min-height: var(--hit-min-touch); padding-block: var(--space-10); }
+  .dot-btn { min-width: var(--hit-min); min-height: var(--hit-min); }
+}
+
 @media (max-width: 640px) {
   .swatches { grid-template-columns: repeat(2, 1fr); }
   .ramp { grid-template-columns: repeat(5, 1fr); }
@@ -524,10 +533,10 @@ body { padding-bottom: var(--space-96); }
     <div class="grid step-3">
       <div class="axis-a-chart rv">
         <span class="label" style="margin-bottom: var(--space-16)">Where each colour may legally be used</span>
-        <table class="table">
+        <div class="table-scroll"><table class="table">
           <thead><tr><th>Pair</th><th>Ratio</th><th>WCAG verdict</th><th>Role</th></tr></thead>
           <tbody id="contrast"></tbody>
-        </table>
+        </table></div>
       </div>
       <aside class="aside-note axis-b rv" style="--d: 60ms">
         <h4>Read this before using a colour</h4>
@@ -837,7 +846,7 @@ body { padding-bottom: var(--space-96); }
     <div class="grid step-3">
       <div class="axis-a-chart rv">
         <span class="label" style="margin-bottom: var(--space-16)">When to use which</span>
-        <table class="table">
+        <div class="table-scroll"><table class="table">
           <thead><tr><th>Texture</th><th>Blur</th><th>Use it for</th></tr></thead>
           <tbody>
             <tr><td class="mono">.glass-thin</td><td class="mono">4px</td><td>Overlay where the content behind must stay readable: a legend over a chart, a caption over an image</td></tr>
@@ -846,7 +855,7 @@ body { padding-bottom: var(--space-96); }
             <tr><td class="mono">.glass-deep</td><td class="mono">56px</td><td>Full-width chrome that must separate itself from the page: navigation bar, docked footer</td></tr>
             <tr><td class="mono">.glass-accent</td><td class="mono">inherits</td><td>The one selected or primary control in a group, never more than one at a time</td></tr>
           </tbody>
-        </table>
+        </table></div>
       </div>
       <aside class="aside-note axis-b rv" style="--d: 60ms">
         <h4>Where glass may not go</h4>
@@ -899,14 +908,14 @@ body { padding-bottom: var(--space-96); }
 
     <div class="grid step-2">
       <div class="axis-a-wide rv">
-        <table class="spec">
+        <div class="table-scroll"><table class="table">
           <thead><tr><th>Filter</th><th class="num">Deviation</th><th class="num">Slope</th><th class="num">Intercept</th><th class="num">Bridges up to</th></tr></thead>
           <tbody>
             <tr><td class="mono">#pure-goo-tight</td><td class="num">4</td><td class="num">20</td><td class="num">-7.83</td><td class="num">4px</td></tr>
             <tr><td class="mono">#pure-goo</td><td class="num">6</td><td class="num">18</td><td class="num">-7</td><td class="num">6px</td></tr>
             <tr><td class="mono">#pure-goo-wide</td><td class="num">12</td><td class="num">16</td><td class="num">-6.17</td><td class="num">10px</td></tr>
           </tbody>
-        </table>
+        </table></div>
       </div>
       <aside class="axis-b rv">
         <h4>What the bridge column means</h4>
@@ -948,7 +957,7 @@ body { padding-bottom: var(--space-96); }
     <div class="grid step-3">
       <span class="label axis-a rv">Where motion is allowed</span>
       <div class="axis-a-chart step-1 rv">
-        <table class="table">
+        <div class="table-scroll"><table class="table">
           <thead><tr><th>Pattern</th><th>Curve</th><th>Duration</th></tr></thead>
           <tbody>
             <tr><td>Colour, background and border on hover</td><td class="mono">ease-standard</td><td class="mono">200ms</td></tr>
@@ -958,7 +967,7 @@ body { padding-bottom: var(--space-96); }
             <tr><td>Chart line drawing itself in</td><td class="mono">ease-out-soft</td><td class="mono">500ms</td></tr>
             <tr><td>Chart bar growing from its base</td><td class="mono">ease-out-expo</td><td class="mono">350ms</td></tr>
           </tbody>
-        </table>
+        </table></div>
       </div>
     </div>
     <div class="grid step-3">
@@ -1093,7 +1102,7 @@ body { padding-bottom: var(--space-96); }
 
     <div class="grid step-2">
       <div class="axis-a-wide rv">
-        <table class="spec">
+        <div class="table-scroll"><table class="table">
           <thead><tr><th>Use</th><th>Class</th><th class="num">Duration</th><th>Curve</th></tr></thead>
           <tbody>
             <tr><td>Anchored surface opens</td><td class="mono">.motion-dropdown</td><td class="num">200 / 150</td><td class="mono">--ease-out-expo</td></tr>
@@ -1112,7 +1121,7 @@ body { padding-bottom: var(--space-96); }
             <tr><td>Action confirmed</td><td class="mono">.motion-check</td><td class="num">500</td><td class="mono">--ease-out-expo</td></tr>
             <tr><td>List becomes detail</td><td class="mono">.motion-pages</td><td class="num">200</td><td class="mono">--ease-out-expo</td></tr>
           </tbody>
-        </table>
+        </table></div>
       </div>
       <aside class="axis-b rv">
         <h4>Two painted exceptions</h4>
@@ -1906,7 +1915,7 @@ body { padding-bottom: var(--space-96); }
             <button class="filter" type="button" aria-pressed="false" data-filter="done">Completed <span class="n">1</span></button>
           </div>
           <div class="step-1" style="overflow-x: auto">
-            <table class="grid-table" id="filter-table">
+            <div class="table-scroll"><table class="grid-table" id="filter-table">
               <caption class="sr-only">Reorder tasks by status</caption>
               <thead><tr><th>Task</th><th>Date</th><th>Status</th><th>Advisor</th></tr></thead>
               <tbody>
@@ -1916,10 +1925,10 @@ body { padding-bottom: var(--space-96); }
                 <tr data-status="doing"><td>Taste-test batch 42</td><td class="num">Nov 08</td><td><span class="status status-serious">In progress</span></td><td>Maple Orbit</td></tr>
                 <tr data-status="done"><td>Order waffle cones</td><td class="num">Apr 14</td><td><span class="status status-good">Completed</span></td><td>Aurora Scoops</td></tr>
               </tbody>
-            </table>
+            </table></div>
           </div>
           <div class="step-2" style="overflow-x: auto">
-            <table class="grid-table">
+            <div class="table-scroll"><table class="grid-table">
               <caption class="sr-only">Menu cleanup the agent proposes</caption>
               <thead><tr><th>Flavour</th><th>Category</th><th>Supplier</th><th>Last interaction</th></tr></thead>
               <tbody>
@@ -1928,7 +1937,7 @@ body { padding-bottom: var(--space-96); }
                 <tr><td>Mint Chip</td><td>Classic</td><td>maple-orbit</td><td class="num">9 days ago</td></tr>
                 <tr data-diff="added"><td>Pistachio</td><td>Seasonal</td><td>maple-orbit</td><td class="num">15 days ago</td></tr>
               </tbody>
-            </table>
+            </table></div>
           </div>
         </div>
         <p class="note">One table base carries all three: the filtered list, the record grid and

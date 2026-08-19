@@ -34,7 +34,7 @@ Streamlit: copy `python/streamlit/config.toml` to `.streamlit/config.toml` and i
 tokens/tokens.json               source of truth
 web/tokens.css                   variables, four modes
 web/theme.css                    Tailwind v4 bridge
-web/patterns.css                 components, the glass material, the liquid material
+web/patterns.css                 components, the glass material, the liquid material, narrow
 web/motion.css                   motion layer, optional
 web/agent.css                    agent layer, optional
 python/pure/                     palette, mpl, plotly
@@ -310,7 +310,24 @@ What did not come across, and the exclusion is the rule working rather than a ga
 
 Behaviour, not material. Must fails the build or the review, should is the default and leaving it needs a written reason, never has no exception. The binding column names the class or token that already implements the rule.
 
-Five are script checked: `color-scheme` in all four modes, no `transition: all`, no transition of a layout property, the interaction tokens agreeing between `tokens.json` and `tokens.css`, and the presence of a focus ring.
+Eight are script checked: `color-scheme` in all four modes, no `transition: all`, no transition of a layout property, the interaction tokens agreeing between `tokens.json` and `tokens.css`, the presence of a focus ring, the width breakpoint equalling `--breakpoint-stack`, every control class reaching 44px under a coarse pointer, and `.table-scroll` existing to keep the body from scrolling sideways.
+
+### Narrow
+
+The narrow screen is not the wide one shrunk, and until 1.5.0 the language had not one width media query: `--breakpoint-stack` lived in `tokens.css` and in `tokens.json` and was read by nothing. A token nothing resolves is a token that lies, and this one lied about the most visible thing on the screen.
+
+| Rule | Level | Bound to |
+|---|---|---|
+| Every screen designed at 375 and at 1280, both swept | Must | `--breakpoint-stack` |
+| The narrow screen does not inherit the wide one's approval, nor the reverse | Must | — |
+| Hit area decided by `pointer: coarse`, never by width | Must | `--hit-min-touch` |
+| Body never scrolls sideways; a wide table scrolls inside its own container | Must | `.table-scroll` |
+| Deep glass drops one texture step below the breakpoint | Must | `.glass-deep`, `.overlay` |
+| Type size does not shrink; only the section title changes step | Must | `--text-*` |
+| Spacing collapses 96 to 48 and 48 to 24; nothing goes under 24 | Must | `--space-*` |
+| A menu that hides three links to save 40px | Never | — |
+
+A tablet at 1280px is touch and a phone with a mouse attached is not, so deciding hit area by width gets both wrong. The breakpoint literal in the media query cannot be `var()` — `@media` does not read custom properties — so it is written out and `check.mjs` fails the build when it diverges from the token, the same way `theme-color` and the goo filters are handled.
 
 ### Interaction tokens
 
@@ -341,6 +358,7 @@ Five are script checked: `color-scheme` in all four modes, no `transition: all`,
 | Rule | Level | Bound to |
 |---|---|---|
 | Hit area clears 24px, and 44px under a coarse pointer | Must | `--hit-min` |
+| Fourteen control classes carry that floor themselves under `pointer: coarse` | Must | `patterns.css`, `agent.css` |
 | Visual size may go under the floor, the hit area may not | Must | `.hit` |
 | Text field at 16px: below it iOS zooms the page on focus | Must | `--text-field` |
 | Browser zoom disabled through `user-scalable` or `maximum-scale` | Never | viewport |

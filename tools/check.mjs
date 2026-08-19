@@ -434,6 +434,46 @@ function craft() {
     gooMissing.length ? `sem definição no template: ${gooMissing.join(", ")}`
                       : "os três filtros goo estão definidos no template");
 
+  // ---------- estreito ----------
+  // o ponto de quebra e literal na consulta de midia porque @media nao
+  // le var(). Ele precisa bater com --breakpoint-stack, e sem esta
+  // checagem os dois divergem em silencio, que e como o token ficou
+  // sendo lido por nada ate 1.5.0.
+  const wantBp = T.layout["breakpoint-stack"];
+  const bpQueries = [...patterns.matchAll(/@media \(max-width:\s*([^)]+)\)/g)].map((m) => m[1].trim());
+  const bpOff = bpQueries.filter((q) => q !== wantBp);
+  check(bpQueries.length > 0 && !bpOff.length, "ponto de quebra",
+    !bpQueries.length ? "patterns.css não tem consulta de largura: o estreito não é da linguagem"
+      : bpOff.length ? `divergem de --breakpoint-stack (${wantBp}): ${bpOff.join(", ")}`
+                     : `${bpQueries.length} consulta(s) de largura em ${wantBp}, o valor de --breakpoint-stack`);
+
+  // ---------- area de toque ----------
+  // o piso de 44px e Must na tabela de oficio, e ate 1.5.0 o bloco
+  // pointer: coarse cobria campo e .hit e mais nada: a pilula media 35px
+  // no toque. O dedo nao sabe que a regra existia.
+  const blockOf = (src) => {
+    const i = src.indexOf("@media (pointer: coarse)");
+    return i < 0 ? "" : src.slice(i, src.indexOf("\n}\n", i));
+  };
+  const coarseBlock = blockOf(patterns) + blockOf(agent);
+  // a camada de agente e a que tem mais coisa apertavel por tela, e ela
+  // nao tinha bloco de toque nenhum ate 1.5.0
+  const TOUCH = [".pill", ".link-cta", ".control-round", ".liquid-item", ".check",
+    ".tab", ".filter", ".trace-head", ".menu-item", ".palette-item", ".side-item",
+    ".ask-option", ".followup", ".seg button"];
+  const untouched = TOUCH.filter((sel) => !coarseBlock.includes(sel));
+  check(!untouched.length, "alvo de toque",
+    untouched.length ? `sem piso de 44px no toque: ${untouched.join(", ")}`
+                     : `${TOUCH.length} classes de controle sobem para --hit-min-touch no toque`);
+
+  // ---------- tabela ----------
+  // o corpo da pagina nunca rola na horizontal, e essa regra so e
+  // cumprivel se alguem rolar no lugar dele
+  const scroller = /\.table-scroll \{[^}]*overflow-x:\s*auto/.test(patterns);
+  check(scroller, "rolagem da tabela",
+    scroller ? ".table-scroll rola no lugar do corpo da página"
+             : "sem .table-scroll: uma tabela larga empurra a página inteira de lado");
+
   // foco visível: outline none só é aceitável com substituto declarado
   const bareNone = /outline:\s*none/.test(patterns) && !/:focus-visible/.test(patterns);
   check(!bareNone, "foco visível",
