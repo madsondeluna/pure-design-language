@@ -310,7 +310,7 @@ What did not come across, and the exclusion is the rule working rather than a ga
 
 Behaviour, not material. Must fails the build or the review, should is the default and leaving it needs a written reason, never has no exception. The binding column names the class or token that already implements the rule.
 
-Eight are script checked: `color-scheme` in all four modes, no `transition: all`, no transition of a layout property, the interaction tokens agreeing between `tokens.json` and `tokens.css`, the presence of a focus ring, the width breakpoint equalling `--breakpoint-stack`, every control class reaching 44px under a coarse pointer, and `.table-scroll` existing to keep the body from scrolling sideways.
+Much of the table is script checked; `node tools/check.mjs` names each rule it covers, so read its output rather than a count here. Among them: `color-scheme` in all four modes, no `transition: all`, no transition of a layout property, the interaction tokens agreeing between `tokens.json` and `tokens.css`, the presence of a focus ring, the width breakpoint equalling `--breakpoint-stack`, every control class reaching 44px under a coarse pointer, `.table-scroll` existing to keep the body from scrolling sideways, and every class used in the guide having a rule somewhere.
 
 ### Narrow
 

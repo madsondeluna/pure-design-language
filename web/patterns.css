@@ -414,6 +414,17 @@ dl, dd { margin: 0; }
 .stage-readout .row { display: flex; gap: var(--space-12); }
 .stage-readout .row span:last-child { margin-left: auto; color: var(--text); }
 
+/* O svg que guarda os filtros nao e conteudo. Os atributos width="0" e
+   height="0" no template dao conta na maioria dos casos, mas um reset
+   que declare `svg { width: 100% }` os atropela e a pagina ganha uma
+   faixa vazia no topo sem que nada acuse. A regra fecha isso. */
+.pure-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
 /* ---------- liquido ----------
 
    O vidro filtra a si mesmo, e o texto que ele carrega atravessa o

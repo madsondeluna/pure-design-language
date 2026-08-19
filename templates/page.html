@@ -74,7 +74,10 @@ h2 { font-size: var(--text-display-section); }
   font-family: var(--font-mono);
   font-size: var(--text-12);
   letter-spacing: var(--tracking-eyebrow);
-  color: var(--secondary);
+  /* --muted: o sobrancelha e texto pequeno, e --secondary nao alcanca o
+     piso de 4,5 em modo nenhum. A regra esta na tabela do README e o
+     arquivo que todo projeto copia precisa ser o primeiro a obedece-la. */
+  color: var(--muted);
 }
 
 .lede { font-size: var(--text-18); line-height: var(--leading-normal); color: var(--muted); }
@@ -82,14 +85,21 @@ h2 { font-size: var(--text-display-section); }
 
 /* barra de modo. O estado mora no endereco, entao um link compartilhado
    abre no mesmo modo em que foi copiado. */
-.modes { display: flex; gap: var(--space-8); }
+/* flex-wrap porque em 375px os quatro rotulos nao cabem numa linha: sem
+   ele o navegador quebra DENTRO do rotulo e "Paper-like" vira duas
+   linhas dentro de uma pilula, que e o defeito que aparecia aqui. O
+   nowrap protege a palavra, o wrap deixa a fileira descer. */
+.modes { display: flex; flex-wrap: wrap; gap: var(--space-8); }
 .mode-btn {
   min-height: var(--hit-min);
   padding: var(--space-4) var(--space-12);
   border: var(--hairline) solid transparent;
   border-radius: var(--radius-control);
   background: none;
-  color: var(--secondary);
+  white-space: nowrap;
+  /* --muted, nao --secondary: secondary fica entre 2,61 e 5,53:1 e nao
+     alcanca o piso de 4,5 em modo nenhum. Ele e cor de borda. */
+  color: var(--muted);
   font-family: var(--font-mono);
   font-size: var(--text-12);
   cursor: pointer;
@@ -99,6 +109,12 @@ h2 { font-size: var(--text-display-section); }
 }
 .mode-btn:hover { color: var(--text); }
 .mode-btn[aria-pressed="true"] { color: var(--text); border-color: var(--text); }
+
+/* o proprio seletor de modo obedece o piso de toque: ele media 39px e
+   e o unico controle que toda pagina herda deste arquivo */
+@media (pointer: coarse) {
+  .mode-btn { min-height: var(--hit-min-touch); padding-block: var(--space-10); }
+}
 
 @media (max-width: 768px) {
   .shell { padding: 0 var(--space-24); }

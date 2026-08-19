@@ -440,11 +440,20 @@ function craft() {
   // checagem os dois divergem em silencio, que e como o token ficou
   // sendo lido por nada ate 1.5.0.
   const wantBp = T.layout["breakpoint-stack"];
-  const bpQueries = [...patterns.matchAll(/@media \(max-width:\s*([^)]+)\)/g)].map((m) => m[1].trim());
-  const bpOff = bpQueries.filter((q) => q !== wantBp);
+  // os TRES lugares que escrevem largura, nao so patterns.css: o
+  // template e o guia carregam o proprio bloco de empilhamento, e eram
+  // eles que ja divergiam entre si (768 contra 1080) antes de 1.5.0.
+  // 640px no guia e um segundo degrau declarado, nao divergencia.
+  const bpSources = [["web/patterns.css", patterns], ["templates/page.html", tpl], ["preview/index.html", html]];
+  const bpQueries = bpSources.flatMap(([f, src]) =>
+    [...src.matchAll(/@media \(max-width:\s*([^)]+)\)/g)]
+      .map((m) => m[1].trim())
+      .filter((v) => v !== "640px")
+      .map((v) => ({ f, v })));
+  const bpOff = bpQueries.filter((q) => q.v !== wantBp);
   check(bpQueries.length > 0 && !bpOff.length, "ponto de quebra",
-    !bpQueries.length ? "patterns.css não tem consulta de largura: o estreito não é da linguagem"
-      : bpOff.length ? `divergem de --breakpoint-stack (${wantBp}): ${bpOff.join(", ")}`
+    !bpQueries.length ? "nenhuma consulta de largura: o estreito não é da linguagem"
+      : bpOff.length ? `divergem de --breakpoint-stack (${wantBp}): ${bpOff.map((q) => `${q.v} em ${q.f}`).join(", ")}`
                      : `${bpQueries.length} consulta(s) de largura em ${wantBp}, o valor de --breakpoint-stack`);
 
   // ---------- area de toque ----------
@@ -473,6 +482,26 @@ function craft() {
   check(scroller, "rolagem da tabela",
     scroller ? ".table-scroll rola no lugar do corpo da página"
              : "sem .table-scroll: uma tabela larga empurra a página inteira de lado");
+
+  // ---------- classe sem regra ----------
+  // uma classe escrita na marcacao e definida em lugar nenhum nao gera
+  // erro: o elemento so sai sem estilo. Foi assim que duas tabelas do
+  // guia sairam cruas, com o check passando nas duas vezes. Aqui todo
+  // nome usado em class= precisa ter regra em algum dos tres CSS ou no
+  // <style> local do proprio guia.
+  const declared = new Set();
+  const localStyle = html.slice(html.indexOf("<style>"), html.indexOf("</style>"));
+  for (const src of [patterns, motion, agent, localStyle]) {
+    for (const m of src.matchAll(/\.(-?[_a-zA-Z][\w-]*)/g)) declared.add(m[1]);
+  }
+  const used = new Set();
+  for (const m of html.matchAll(/class="([^"]+)"/g)) {
+    for (const c of m[1].trim().split(/\s+/)) if (c) used.add(c);
+  }
+  const orphans = [...used].filter((c) => !declared.has(c));
+  check(!orphans.length, "classe sem regra",
+    orphans.length ? `usadas no guia e definidas em lugar nenhum: ${orphans.slice(0, 8).join(", ")}`
+                   : `${used.size} classes do guia têm regra em algum dos quatro lugares`);
 
   // foco visível: outline none só é aceitável com substituto declarado
   const bareNone = /outline:\s*none/.test(patterns) && !/:focus-visible/.test(patterns);
