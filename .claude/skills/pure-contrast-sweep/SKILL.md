@@ -26,6 +26,18 @@ ve qual token a pagina pos em qual fundo. Esta skill le a pagina.
 4. Repita nos quatro modos: `:root`, `.paper-like`, `.deep-blue`,
    `.dark`. Um valor que so funciona no claro e defeito, nao gosto.
 
+## Desligue a transicao antes de medir cor
+
+Trocar a classe de modo e ler a cor no mesmo instante devolve o valor
+INICIAL da transicao em curso, nao o final. Um botao que esta em 5,37:1
+foi lido em 2,65 desse jeito, e isso le exatamente como um defeito de
+cascata. Vale tambem para aba de fundo, onde nenhum quadro roda e toda
+transicao fica congelada no comeco.
+
+Injete `* { transition: none !important }` antes da varredura e remova
+depois. O elemento vizinho sem transicao lendo certo enquanto o
+transicionado le errado e a assinatura desse erro.
+
 ## Os pisos
 
 - texto normal: 4,5:1
