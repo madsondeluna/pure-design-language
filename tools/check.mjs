@@ -412,6 +412,20 @@ function craft() {
     loose.length ? `variante sem folga própria: ${loose.map(([c]) => c).join(", ")}`
                  : "cada variante do filtro goo troca de folga junto com o filtro");
 
+  // um transform por elemento, composto de tokens. Duas regras
+  // escrevendo transform no mesmo blob e o defeito de 1.4.2 e 1.4.3 por
+  // outro caminho: `:has()` pesa a especificidade do argumento mais
+  // especifico, entao o inchaco (0,6,0) vencia o leque (0,3,0) qualquer
+  // que fosse a ordem, e o aglomerado dobrado se espalhava no hover.
+  const liquidChapter = patterns.slice(
+    patterns.indexOf("/* ---------- liquido ----------"),
+    patterns.indexOf("/* ---------- pilulas ----------"));
+  const stateTransforms = [...liquidChapter.matchAll(/^\s*transform:/gm)].length;
+  check(stateTransforms === 1, "transform do líquido",
+    stateTransforms === 1
+      ? "um transform composto de --liquid-shift-* e --liquid-swell, e nenhum estado o reescreve"
+      : `${stateTransforms} declarações de transform no capítulo: um estado sobrescreve o outro`);
+
   // os tres filtros goo precisam existir no template, senao .liquid
   // referencia url() morta e a folha some sem erro nenhum
   const gooMissing = ["pure-goo-tight", "pure-goo", "pure-goo-wide"]

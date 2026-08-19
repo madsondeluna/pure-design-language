@@ -242,6 +242,10 @@ What does not cross into pure CSS: the spring, the droplet that trails a moving 
 
 Variants: `.liquid-tight`, `.liquid-wide`, `.liquid-sq` (surface radius instead of circle), `.liquid-stack` (vertical), `.liquid-fold` (units collapse into one drop; removing the class fans them out).
 
+One `transform` declaration per element, composed from `--liquid-shift-x`, `--liquid-shift-y` and `--liquid-swell`. Each state writes its own token and none writes `transform`. Two rules writing `transform` on the same blob is the 1.4.2 and 1.4.3 defect by another route: the fan wrote a translate and the swell wrote a scale, and `:has()` takes the specificity of its most specific argument, so the swell won at 0,6,0 against 0,3,0 whatever the file order. Focusing the second unit of a folded cluster returned its blob to the open position while the item stayed folded, and the mirror broke exactly where it is the material's premise. `check.mjs` covers it as `transform do líquido`.
+
+Folded units leave the tab order. `opacity: 0` with `pointer-events: none` takes the pointer and not the keyboard: Tab still reached an invisible unit stacked under the first one and the focus ring appeared over nothing. `visibility: hidden` takes both.
+
 ### Surface context
 
 Every class that paints a background redeclares `--surface-context` with what it paints. It serves one purpose, and it is the one the contrast sweep gets wrong on its own: the first opaque ancestor is not always the element painting. Inside `.liquid` the background comes from a **sibling** of the text, so walking the ancestry resolves against `--bg` and passes a page that is wrong on screen. The sweep reads `--surface-context`, which inherits, instead of guessing. `check.mjs` covers it as `contexto de superfície`.
@@ -292,7 +296,9 @@ Three px values were born with the layer, and they are blur radii, not a scale: 
 
 Classes: `.motion-dropdown`, `.motion-modal`, `.motion-scrim`, `.motion-toast`, `.motion-tip`, `.motion-icon-swap`, `.motion-text-swap`, `.motion-lines`, `.motion-badge`, `.motion-digits`, `.motion-shake`, `.motion-reveal`, `.motion-shimmer`, `.motion-tabs`, `.motion-check`, `.motion-switch-thumb`, `.motion-pages`.
 
-Four need JavaScript, and each says so in its own comment: `.motion-tabs` for the pill geometry (`--tab-x` and `--tab-s`, never a width), `.motion-digits` for the per-digit state, `.motion-shake` and `.motion-dropdown` for adding and clearing the state class.
+Four need JavaScript, and each says so in its own comment: `.motion-tabs` for the pill geometry (`--tab-x` and `--tab-w`), `.motion-digits` for the per-digit state, `.motion-shake` and `.motion-dropdown` for adding and clearing the state class.
+
+In `.motion-tabs` the width changes without a transition and the position moves with one. The two other routes were discarded on screen, not on paper: transitioning `width` recalculates layout every frame, which the language forbids, and `scaleX` on a full-radius pill stretches the end caps into ellipses, so any tab past the base width renders visibly oval. Swapping the width at once costs one layout instead of one per frame, and the shape stays a pill.
 
 Beyond `transform`, `opacity` and `filter` the layer animates two paint properties, both declared and neither layout: `stroke-dashoffset` in `.motion-check` and `background-position` in `.motion-shimmer`.
 

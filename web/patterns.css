@@ -502,6 +502,24 @@ dl, dd { margin: 0; }
   border-radius: var(--radius-circle);
 }
 
+/* UMA declaracao de transform por elemento, composta de tokens.
+   Duas regras escrevendo transform no mesmo blob e o defeito que esta
+   linguagem ja fechou duas vezes por outro caminho: o leque punha
+   translate e o inchaco punha scale, e o inchaco vencia por
+   especificidade (`:has()` pesa a do argumento mais especifico, 0,6,0
+   contra 0,3,0) independentemente da ordem no arquivo. Hover no
+   segundo item de um aglomerado dobrado devolvia o blob para a posicao
+   aberta enquanto o item continuava dobrado, e o espelho quebrava
+   exatamente onde ele e a premissa do material.
+
+   Cada estado escreve o SEU token; a composicao mora aqui. */
+.liquid-blob,
+.liquid-item {
+  transform:
+    translate(var(--liquid-shift-x, 0), var(--liquid-shift-y, 0))
+    scale(var(--liquid-swell, 1));
+}
+
 .liquid-blob {
   background: var(--liquid-fill);
   transition:
@@ -557,35 +575,68 @@ dl, dd { margin: 0; }
 .liquid:has(.liquid-item:nth-child(6):focus-visible) .liquid-blob:nth-child(6),
 .liquid:has(.liquid-item:nth-child(7):focus-visible) .liquid-blob:nth-child(7),
 .liquid:has(.liquid-item:nth-child(8):focus-visible) .liquid-blob:nth-child(8) {
-  transform: scale(1.14);
+  --liquid-swell: 1.14;
 }
 
 /* leque fechado: as unidades se sobrepoem numa gota so. Abrir e tirar a
    classe. Espelhado, entao a mesma regra move blob e item juntos: e o
-   que a lib chama de commit unico, aqui obtido pela geometria. */
+   que a lib chama de commit unico, aqui obtido pela geometria.
+   O leque escreve --liquid-shift-*, nunca transform: quem compoe o
+   transform e a regra unica la em cima. */
 .liquid-fold .liquid-blob:nth-child(1),
-.liquid-fold .liquid-item:nth-child(1) { transform: translateX(0); }
+.liquid-fold .liquid-item:nth-child(1) { --liquid-shift-x: calc(-0 * (var(--liquid-size) + var(--liquid-bridge))); }
 .liquid-fold .liquid-blob:nth-child(2),
-.liquid-fold .liquid-item:nth-child(2) { transform: translateX(calc(-1 * (var(--liquid-size) + var(--liquid-bridge)))); }
+.liquid-fold .liquid-item:nth-child(2) { --liquid-shift-x: calc(-1 * (var(--liquid-size) + var(--liquid-bridge))); }
 .liquid-fold .liquid-blob:nth-child(3),
-.liquid-fold .liquid-item:nth-child(3) { transform: translateX(calc(-2 * (var(--liquid-size) + var(--liquid-bridge)))); }
+.liquid-fold .liquid-item:nth-child(3) { --liquid-shift-x: calc(-2 * (var(--liquid-size) + var(--liquid-bridge))); }
 .liquid-fold .liquid-blob:nth-child(4),
-.liquid-fold .liquid-item:nth-child(4) { transform: translateX(calc(-3 * (var(--liquid-size) + var(--liquid-bridge)))); }
+.liquid-fold .liquid-item:nth-child(4) { --liquid-shift-x: calc(-3 * (var(--liquid-size) + var(--liquid-bridge))); }
 .liquid-fold .liquid-blob:nth-child(5),
-.liquid-fold .liquid-item:nth-child(5) { transform: translateX(calc(-4 * (var(--liquid-size) + var(--liquid-bridge)))); }
+.liquid-fold .liquid-item:nth-child(5) { --liquid-shift-x: calc(-4 * (var(--liquid-size) + var(--liquid-bridge))); }
 .liquid-fold .liquid-blob:nth-child(6),
-.liquid-fold .liquid-item:nth-child(6) { transform: translateX(calc(-5 * (var(--liquid-size) + var(--liquid-bridge)))); }
+.liquid-fold .liquid-item:nth-child(6) { --liquid-shift-x: calc(-5 * (var(--liquid-size) + var(--liquid-bridge))); }
 .liquid-fold .liquid-blob:nth-child(7),
-.liquid-fold .liquid-item:nth-child(7) { transform: translateX(calc(-6 * (var(--liquid-size) + var(--liquid-bridge)))); }
+.liquid-fold .liquid-item:nth-child(7) { --liquid-shift-x: calc(-6 * (var(--liquid-size) + var(--liquid-bridge))); }
 .liquid-fold .liquid-blob:nth-child(8),
-.liquid-fold .liquid-item:nth-child(8) { transform: translateX(calc(-7 * (var(--liquid-size) + var(--liquid-bridge)))); }
+.liquid-fold .liquid-item:nth-child(8) { --liquid-shift-x: calc(-7 * (var(--liquid-size) + var(--liquid-bridge))); }
 
-/* dobrado, so a primeira unidade recebe ponteiro e foco */
+/* na pilha vertical o leque desce pelo eixo Y, nao pelo X */
+.liquid-stack.liquid-fold .liquid-blob:nth-child(1),
+.liquid-stack.liquid-fold .liquid-item:nth-child(1) { --liquid-shift-x: 0; --liquid-shift-y: calc(-0 * (var(--liquid-size) + var(--liquid-bridge))); }
+.liquid-stack.liquid-fold .liquid-blob:nth-child(2),
+.liquid-stack.liquid-fold .liquid-item:nth-child(2) { --liquid-shift-x: 0; --liquid-shift-y: calc(-1 * (var(--liquid-size) + var(--liquid-bridge))); }
+.liquid-stack.liquid-fold .liquid-blob:nth-child(3),
+.liquid-stack.liquid-fold .liquid-item:nth-child(3) { --liquid-shift-x: 0; --liquid-shift-y: calc(-2 * (var(--liquid-size) + var(--liquid-bridge))); }
+.liquid-stack.liquid-fold .liquid-blob:nth-child(4),
+.liquid-stack.liquid-fold .liquid-item:nth-child(4) { --liquid-shift-x: 0; --liquid-shift-y: calc(-3 * (var(--liquid-size) + var(--liquid-bridge))); }
+.liquid-stack.liquid-fold .liquid-blob:nth-child(5),
+.liquid-stack.liquid-fold .liquid-item:nth-child(5) { --liquid-shift-x: 0; --liquid-shift-y: calc(-4 * (var(--liquid-size) + var(--liquid-bridge))); }
+.liquid-stack.liquid-fold .liquid-blob:nth-child(6),
+.liquid-stack.liquid-fold .liquid-item:nth-child(6) { --liquid-shift-x: 0; --liquid-shift-y: calc(-5 * (var(--liquid-size) + var(--liquid-bridge))); }
+.liquid-stack.liquid-fold .liquid-blob:nth-child(7),
+.liquid-stack.liquid-fold .liquid-item:nth-child(7) { --liquid-shift-x: 0; --liquid-shift-y: calc(-6 * (var(--liquid-size) + var(--liquid-bridge))); }
+.liquid-stack.liquid-fold .liquid-blob:nth-child(8),
+.liquid-stack.liquid-fold .liquid-item:nth-child(8) { --liquid-shift-x: 0; --liquid-shift-y: calc(-7 * (var(--liquid-size) + var(--liquid-bridge))); }
+
+/* Dobrado, so a primeira unidade recebe ponteiro E FOCO. `opacity: 0`
+   com `pointer-events: none` tira o ponteiro e nao tira o teclado: o
+   Tab continuava alcancando uma unidade invisivel e empilhada sob a
+   primeira, e o anel de foco aparecia sobre nada. `visibility: hidden`
+   tira das duas, e ela troca no fim da saida e no inicio da entrada
+   para nao cortar a propria animacao. */
 .liquid-fold .liquid-item:not(:nth-child(1)) {
   opacity: 0;
+  visibility: hidden;
   pointer-events: none;
+  transition-delay: 0s, 0s, var(--duration-4);
 }
-.liquid-fold .liquid-item { transition: transform var(--duration-5) var(--ease-out-soft), opacity var(--duration-4) var(--ease-out-soft); }
+
+.liquid-fold .liquid-item {
+  transition:
+    transform  var(--duration-5) var(--ease-out-soft),
+    opacity    var(--duration-4) var(--ease-out-soft),
+    visibility 0s;
+}
 
 /* ---------- pilulas ----------
 

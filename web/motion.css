@@ -419,14 +419,19 @@
   position: absolute;
   z-index: -1;
   inset: 0 auto 0 0;
-  /* largura base fixa, e a largura real sai de scaleX. Transicionar
-     width faria a barra recalcular layout a cada quadro, que e
-     exatamente o que a linguagem proibe. O javascript escreve
-     --tab-x (px) e --tab-s (razao entre a largura do botao ativo e
-     esta base), nunca uma largura. */
-  width: var(--control-lg);
-  transform-origin: left center;
-  transform: translateX(var(--tab-x, 0)) scaleX(var(--tab-s, 1));
+  /* A largura TROCA sem transicao, a posicao ANDA com transicao.
+     As duas outras saidas foram descartadas na tela, nao no papel:
+     transicionar width recalcula layout a cada quadro, que a
+     linguagem proibe; e scaleX numa pilula de raio cheio estica as
+     tampas em elipse, e como quase toda aba passa dos 44px do raio
+     base, a pilula sai ovalada em qualquer largura diferente da
+     base. Trocar a largura de uma vez custa um layout, nao um por
+     quadro, e a forma continua sendo uma pilula.
+
+     O javascript escreve --tab-x e --tab-w a partir do retangulo do
+     botao ativo. */
+  width: var(--tab-w, 0);
+  transform: translateX(var(--tab-x, 0));
   border-radius: var(--radius-control);
   background: var(--surface-hover);
   transition: transform var(--duration-3) var(--ease-out-expo);
