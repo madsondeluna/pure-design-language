@@ -157,8 +157,12 @@ const MODES = ["light", "paper-like", "deep-blue", "dark"];
 const RULES = MODES.flatMap((m) => [
   [m, "text", "bg", 4.5, "texto principal"],
   [m, "muted", "bg", 4.5, "prosa de apoio"],
-  // no deep-blue muted sobre surface fica em 4,02, que so cobre texto grande
-  [m, "muted", "surface", m === "deep-blue" ? 3 : 4.5, "prosa em cartão"],
+  // a excecao do deep-blue caiu em 1.5.1: muted subiu para o passo 400 e
+  // agora limpa 4,5 sobre a superficie. O piso e o mesmo nos quatro modos,
+  // e o hover tambem entra: era sobre --surface-hover que o 400 original
+  // ficava em 4,49, um centesimo abaixo do piso.
+  [m, "muted", "surface", 4.5, "prosa em cartão"],
+  [m, "muted", "surface-hover", 4.5, "prosa em cartão sob o ponteiro"],
   [m, "accent", "bg", 3, "anel de foco"],
 ]);
 
@@ -486,7 +490,7 @@ function craft() {
   // nao tinha bloco de toque nenhum ate 1.5.0
   const TOUCH = [".pill", ".link-cta", ".control-round", ".liquid-item", ".check",
     ".tab", ".filter", ".trace-head", ".menu-item", ".palette-item", ".side-item",
-    ".ask-option", ".followup", ".seg button"];
+    ".ask-option", ".followup", ".seg button", ".numfield", ".selection-bar button"];
   const untouched = TOUCH.filter((sel) => !coarseBlock.includes(sel));
   check(!untouched.length, "alvo de toque",
     untouched.length ? `sem piso de 44px no toque: ${untouched.join(", ")}`

@@ -47,16 +47,34 @@ transicionado le errado e a assinatura desse erro.
 
 ## Os dois erros que se repetem
 
-- **`--secondary` nao e cor de texto em modo nenhum.** 3,19 a 5,53:1
-  sobre `--bg` e 2,61 a 4,25:1 sobre `--surface`, abaixo do piso em
-  todos os quatro. E cor de BORDA, e a tabela do README diz isso.
-  Texto pequeno e metadado tomam `--muted`. Desde 1.4.2 o
-  `patterns.css` ja obedece em `.field-label` e no placeholder;
-  `agent.css` ainda gasta `--secondary` em texto em 27 lugares,
-  `.tok-com` entre eles, e essa contradicao continua aberta.
+- **`--secondary` nao e cor de texto em modo nenhum.** 2,61 a 4,25:1
+  sobre `--surface`, abaixo do piso nos quatro modos. E cor de BORDA.
+  Texto pequeno e metadado tomam `--muted`. Nos arquivos da linguagem
+  isso fechou em 1.5.1 (`patterns.css` desde 1.4.2, `agent.css` com as
+  27 trocas em 1.5.1), entao um achado desses hoje e codigo do APP, e a
+  correcao e trocar por `--muted`, nunca clarear o secondary.
 - **Slot de grafico como tipo tambem falha.** `--chart-2` da 3,38:1 a
   20px e 3,66:1 a 13px. Cor de serie vai na MARCA (ponto, barra,
   disco); o rotulo fica na tinta de texto.
+
+## Como resolver a cor de verdade
+
+Tres armadilhas de conversao, e cada uma ja produziu numero errado:
+
+- **Fundo com alfa compoe, nao cobre.** Uma etiqueta com
+  `rgba(45, 90, 122, 0.24)` sobre a superficie NAO tem esse rgba como
+  fundo: o fundo real e a mistura. Tratar o alfa como opaco reprovou
+  as tres etiquetas em 1,0-1,6 quando o composto real dava 5,4-6,8.
+  Suba a ancestralidade acumulando camadas translucidas ate o primeiro
+  fundo opaco e componha na ordem inversa.
+- **`color-mix` sai como `oklab(...)` no valor computado**, e um parser
+  de rgb devolve lixo silencioso. Converta toda cor pelo canvas: pinte
+  um pixel com `fillStyle` e leia com `getImageData`. O canvas aceita
+  qualquer sintaxe de cor que o CSS aceite.
+- **O CSS ligado vem do cache mesmo em navegacao nova.** So a troca do
+  `href` por um com sufixo aleatorio garante o arquivo do disco, e a
+  sonda que confirma e ler a cor de um elemento conhecido antes e
+  depois. Ja aconteceu duas vezes na mesma sessao.
 
 ## Saida
 

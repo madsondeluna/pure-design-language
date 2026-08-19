@@ -4,7 +4,7 @@ Design system for web and Python. Four modes, script-verified tokens, plotting t
 
 Derived from `madsondeluna.github.io`. Numeric token architecture in the format of `devouringdetails.com`. Easing curves from `motion.dev`.
 
-Pure Design 1.5.0.
+Pure Design 1.5.1.
 
 ## Use
 
@@ -107,15 +107,18 @@ WCAG 2.1 ratios, recomputed by `check.mjs` on every run.
 | Pair | light | paper-like | deep-blue | dark |
 |---|---|---|---|---|
 | `--text` / `--bg` | 17.13 | 17.45 | 17.13 | 17.68 |
-| `--muted` / `--bg` | 6.47 | 6.59 | 5.37 | 7.15 |
-| `--muted` / `--surface` | 6.02 | 5.87 | 4.02 | 5.49 |
-| `--accent` / `--bg` | 6.47 | 6.59 | 6.94 | 9.86 |
-| `--secondary` / `--bg` | 3.19 | 3.25 | 2.65 | 5.53 |
+| `--muted` / `--bg` | 6.47 | 6.59 | 7.11 | 7.15 |
+| `--muted` / `--surface` | 6.02 | 5.87 | 5.32 | 5.49 |
+| `--muted` / `--surface-hover` | 5.55 | 5.30 | 4.60 | 4.72 |
+| `--accent` / `--bg` | 6.47 | 6.59 | 9.61 | 9.86 |
+| `--secondary` / `--bg` | 3.19 | 3.25 | 5.37 | 5.53 |
 | `--border` / `--bg` | 1.39 | 1.47 | 1.73 | 1.79 |
 
 Usage rule: above 4.5 any text; 3 to 4.5 large text and UI components; below 3 decoration. `--secondary` is a border colour in light, paper-like and deep-blue.
 
-Read the second half of that rule against `--surface` as well, which is where small text usually sits: `--secondary` lands between 2.61 and 4.25 there, so it is under the floor in all four modes, not only in the light ones. Small text takes `--muted`. `patterns.css` follows this from 1.4.2 on, in `.field-label` and in the placeholder; `agent.css` still spends `--secondary` on text in 27 places, including `.tok-com`, which the syntax-highlight table below documents on purpose. That contradiction is open.
+Read the second half of that rule against `--surface` as well, which is where small text usually sits: `--secondary` lands between 2.61 and 4.25 there, so it is under the floor in all four modes, not only in the light ones. Small text takes `--muted`. `patterns.css` follows this from 1.4.2; `agent.css` followed in 1.5.1, when its 27 text uses of `--secondary` (`.tok-com` among them) moved to `--muted`. In the language's own files `--secondary` now paints only borders and one non-text glyph, and a rendered sweep of the guide, 5068 text nodes in four modes, returns zero nodes under the floor.
+
+`muted / surface` cleared 4.5 in every mode in 1.5.1. Deep-blue was the holdout at 4.02, an exception `check.mjs` used to carry with a floor of 3 "for large text only" while the agent layer set 12px text on cards in that very pair. `--muted` moved from `slate-500` to `slate-400`, `--accent` moved up to `slate-300` to stay one step lighter than muted (the same relation dark keeps between graphite-300 and graphite-400), and slate-400 itself lightened two RGB points, `#8CA0BA` to `#8EA2BC`, because the original value sat at 4.49 against `--surface-hover`, one hundredth under the floor. The exception is deleted: the floor is 4.5 in all four modes, over `--surface` and over `--surface-hover` both.
 
 Tags (`congress`, `conference`, `symposium`) sit between 7.7 and 11.6 in both dark modes.
 
@@ -572,7 +575,7 @@ Agent layer, new in 1.3, in `agent.css`: see the agent layer chapter below.
 |---|---|---|
 | Task or metric state | `--status-good`, `--status-warning`, `--status-serious`, `--status-critical` | `.task-row[data-state]`, `.up`, `.down`, `tr[data-diff]` |
 | Series identity | `--chart-1` to `--chart-8`, in slot order | dot beside a metric name, chart line |
-| Syntax highlight | `--text`, `--muted`, `--secondary` | `.tok-str`, `.tok-key`, `.tok-com` |
+| Syntax highlight | `--text`, `--muted` | `.tok-str`, `.tok-key`, `.tok-com` |
 
 A diff tint is `color-mix(in oklab, var(--status-*) 12%, transparent)`. A selection mark is `color-mix(in oklab, var(--accent) 22%, transparent)`. No new hex enters the language.
 

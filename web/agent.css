@@ -42,7 +42,7 @@
   font-family: var(--font-mono);
   font-size: var(--text-12);
   font-variant-numeric: tabular-nums;
-  color: var(--secondary);
+  color: var(--muted);
 }
 
 /* grade de pixels: nove celulas acendendo fora de fase. A onda e um
@@ -203,7 +203,7 @@
   margin-left: auto;
   font-family: var(--font-mono);
   font-size: var(--text-12);
-  color: var(--secondary);
+  color: var(--muted);
 }
 
 /* ---------- 3. texto que chega ----------
@@ -262,7 +262,7 @@
 .source:hover { border-color: var(--border-hover); background: var(--surface-hover); }
 .source .host {
   font-family: var(--font-mono);
-  color: var(--secondary);
+  color: var(--muted);
 }
 
 /* continuacoes: sugestao de proxima pergunta. Alinhadas a esquerda,
@@ -437,7 +437,10 @@
   font-size: var(--text-11);
 }
 .task-row[data-state="done"]    .glyph { color: var(--status-good); }
-.task-row[data-state="running"] .glyph { color: var(--secondary); }
+/* o glyph carrega digito quando a tarefa esta na fila, e digito e texto:
+   piso de 4,5, entao muted. Nao sobrou nenhum uso de secondary em tinta
+   nesta camada; ele so aparece como cor de borda. */
+.task-row[data-state="running"] .glyph { color: var(--muted); }
 .task-row[data-state="waiting"] .glyph { color: var(--status-warning); }
 .task-row[data-state="failed"]  .glyph { color: var(--status-critical); }
 
@@ -446,7 +449,7 @@
   font-family: var(--font-mono);
   font-size: var(--text-12);
   font-variant-numeric: tabular-nums;
-  color: var(--secondary);
+  color: var(--muted);
 }
 
 /* subtarefas: mesma calha, um degrau de recuo, tipo um passo menor */
@@ -489,7 +492,7 @@
   border: 0;
   border-radius: var(--radius-control);
   background: none;
-  color: var(--secondary);
+  color: var(--muted);
   font-family: inherit;
   font-size: var(--text-12);
   cursor: pointer;
@@ -532,7 +535,7 @@
   margin-bottom: var(--space-4);
   font-family: var(--font-mono);
   font-size: var(--text-12);
-  color: var(--secondary);
+  color: var(--muted);
 }
 .msg-agent .step b {
   color: var(--muted);
@@ -570,7 +573,7 @@
   resize: none;
 }
 .composer-field:focus { outline: none; }
-.composer-field::placeholder { color: var(--secondary); }
+.composer-field::placeholder { color: var(--muted); }
 .composer-actions {
   display: flex;
   align-items: center;
@@ -608,7 +611,7 @@
 .menu-item:hover,
 .menu-item[aria-selected="true"] { background: var(--surface-hover); }
 .menu-item .cmd { font-family: var(--font-mono); flex: none; }
-.menu-item .d { color: var(--secondary); }
+.menu-item .d { color: var(--muted); }
 .menu-item .end { margin-left: auto; color: var(--muted); }
 
 /* ditado: barras que sobem com a voz. scaleY, com origem embaixo, para
@@ -731,7 +734,7 @@
   margin-left: auto;
   font-family: var(--font-mono);
   font-size: var(--text-12);
-  color: var(--secondary);
+  color: var(--muted);
 }
 
 /* ---------- 10. trechos recuperados ----------
@@ -765,7 +768,7 @@
   font-family: var(--font-mono);
   font-size: var(--text-12);
   font-variant-numeric: tabular-nums;
-  color: var(--secondary);
+  color: var(--muted);
 }
 .chunk-body {
   display: flex;
@@ -814,7 +817,7 @@
   font-size: var(--text-12);
   font-weight: var(--weight-regular);
   letter-spacing: var(--tracking-wide);
-  color: var(--secondary);
+  color: var(--muted);
   text-align: left;
   white-space: nowrap;
 }
@@ -835,11 +838,14 @@
 .grid-table tr[data-diff="removed"] {
   background: color-mix(in oklab, var(--status-critical) 12%, transparent);
 }
-.grid-table tr[data-diff="removed"] td { color: var(--status-critical); }
+/* o texto fica em --text: o tom da linha e o risco ja dizem "removida",
+   e status-critical a 15px ficava em 2,95 sobre a linha tingida. Cor de
+   estado vai na tinta da linha (o tint), nunca na tinta do texto corrido. */
+.grid-table tr[data-diff="removed"] td { color: var(--text); }
 .grid-table tr[data-diff="added"] {
   background: color-mix(in oklab, var(--status-good) 12%, transparent);
 }
-.grid-table tr[data-diff="added"] td { color: var(--status-good); }
+.grid-table tr[data-diff="added"] td { color: var(--text); }
 .strike { text-decoration: line-through; }
 
 /* chips de filtro: rotulo mais contagem. A contagem e mono e fica dentro
@@ -876,7 +882,7 @@
 .filter .n {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
-  color: var(--secondary);
+  color: var(--muted);
 }
 .filter[aria-pressed="true"] .n { color: var(--muted); }
 
@@ -926,14 +932,14 @@
 }
 .side-head .sub {
   font-size: var(--text-12);
-  color: var(--secondary);
+  color: var(--muted);
 }
 .side-group {
   padding: var(--space-16) var(--space-8) var(--space-4);
   font-family: var(--font-mono);
   font-size: var(--text-12);
   letter-spacing: var(--tracking-eyebrow);
-  color: var(--secondary);
+  color: var(--muted);
 }
 .side-item {
   display: flex;
@@ -956,7 +962,7 @@
   font-family: var(--font-mono);
   font-size: var(--text-12);
   font-variant-numeric: tabular-nums;
-  color: var(--secondary);
+  color: var(--muted);
 }
 .key {
   display: inline-grid;
@@ -968,7 +974,7 @@
   border-radius: var(--radius-mark);
   font-family: var(--font-mono);
   font-size: var(--text-11);
-  color: var(--secondary);
+  color: var(--muted);
 }
 
 /* ---------- 15. paleta de comando ----------
@@ -1002,7 +1008,7 @@
   font-size: var(--text-field);
 }
 .palette-field input:focus { outline: none; }
-.palette-field input::placeholder { color: var(--secondary); }
+.palette-field input::placeholder { color: var(--muted); }
 .palette-list {
   list-style: none;
   margin: 0;
@@ -1047,7 +1053,7 @@
   font-family: var(--font-mono);
   font-size: var(--text-12);
   letter-spacing: var(--tracking-eyebrow);
-  color: var(--secondary);
+  color: var(--muted);
 }
 .insight-pager {
   margin-left: auto;
@@ -1092,7 +1098,7 @@
   font-family: var(--font-mono);
   font-size: var(--text-12);
   font-variant-numeric: tabular-nums;
-  color: var(--secondary);
+  color: var(--muted);
 }
 .up   { color: var(--status-good); }
 .down { color: var(--status-critical); }
@@ -1122,7 +1128,7 @@
   font-size: var(--text-12);
   color: var(--text);
 }
-.code-head .lang { color: var(--secondary); }
+.code-head .lang { color: var(--muted); }
 .code-head .end { margin-left: auto; }
 .code-body {
   margin: 0;
@@ -1144,13 +1150,13 @@
   flex: none;
   width: var(--gutter-code);
   text-align: right;
-  color: var(--secondary);
+  color: var(--muted);
   user-select: none;
 }
 .tok-key { color: var(--muted); font-weight: var(--weight-medium); }
 .tok-fn  { color: var(--muted); }
 .tok-str { color: var(--text); }
-.tok-com { color: var(--secondary); }
+.tok-com { color: var(--muted); }
 
 /* ---------- 18. inspetor ----------
 
@@ -1179,7 +1185,7 @@
   font-family: var(--font-mono);
   font-size: var(--text-12);
   letter-spacing: var(--tracking-eyebrow);
-  color: var(--secondary);
+  color: var(--muted);
 }
 .inspect-row {
   display: grid;
@@ -1203,7 +1209,7 @@
   flex: none;
   font-family: var(--font-mono);
   font-size: var(--text-12);
-  color: var(--secondary);
+  color: var(--muted);
 }
 .numfield input {
   flex: 1;
@@ -1219,7 +1225,7 @@
 .numfield .unit {
   font-family: var(--font-mono);
   font-size: var(--text-12);
-  color: var(--secondary);
+  color: var(--muted);
 }
 
 /* controle segmentado: uma escolha entre poucas, sempre visiveis */
@@ -1236,7 +1242,7 @@
   border: 0;
   border-radius: var(--radius-control);
   background: none;
-  color: var(--secondary);
+  color: var(--muted);
   font-family: inherit;
   font-size: var(--text-12);
   cursor: pointer;
@@ -1358,7 +1364,9 @@
   .side-item,
   .ask-option,
   .followup,
-  .seg button {
+  .seg button,
+  .numfield,
+  .selection-bar button {
     min-height: var(--hit-min-touch);
   }
 

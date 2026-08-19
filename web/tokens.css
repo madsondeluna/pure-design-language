@@ -15,7 +15,7 @@
   --slate-200: #dde1e9;
   --slate-250: #ced3dc;
   --slate-300: #adbcd0;
-  --slate-400: #8ca0ba;
+  --slate-400: #8ea2bc;
   --slate-500: #748cab;
   --slate-600: #667e9c;
   --slate-700: #3e5c76;
@@ -494,11 +494,16 @@
   --border:              var(--slate-800);
   --border-hover:        var(--slate-700);
   --text:                var(--slate-50);
-  --muted:               var(--slate-500);
-  /* accent sobe para 400 no escuro: em 700 o anel de foco fica em 2,65
-     contra --bg, abaixo do minimo de 3:1 para indicador de foco.
-     secondary permanece em 500, como no site, para nao regredir nada. */
-  --accent:              var(--slate-400);
+  /* muted subiu de 500 para 400 em 1.5.1: em 500 ele ficava em 4,02
+     sobre --surface, abaixo do piso de 4,5 para texto pequeno, e a
+     camada de agente inteira poe texto de 12px em muted sobre cartao.
+     O proprio passo 400 clareou dois pontos de RGB (#8CA0BA para
+     #8EA2BC) para fechar 4,5 tambem sobre --surface-hover, onde ficava
+     em 4,49. accent sobe junto para o 300, mantendo-se um passo mais
+     claro que muted, como no dark (graphite-300 sobre graphite-400).
+     secondary permanece em 500: e cor de borda, nao de texto. */
+  --muted:               var(--slate-400);
+  --accent:              var(--slate-300);
   --secondary:           var(--slate-500);
 
   --tag-congress-color:    #7eb8d4;

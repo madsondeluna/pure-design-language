@@ -36,6 +36,12 @@
 
 .shell { max-width: var(--container-xl); margin: 0 auto; padding: 0 var(--space-32); }
 .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: var(--space-24); }
+/* min-width zero: sem ele o minimo automatico do item de grade e o
+   conteudo, o ellipsis nunca engata, e no estreito a grade forca o
+   viewport de layout alem do aparelho: a pagina inteira renderiza
+   encolhida e deslocada. O template sempre teve esta regra; o guia
+   nao a tinha, e era o defeito de diagramacao do estreito. */
+.grid > * { min-width: 0; }
 
 .axis-a { grid-column: 1 / 7; }
 .axis-a-wide { grid-column: 1 / 10; }
@@ -66,12 +72,12 @@
           padding: var(--space-16) var(--space-32); display: flex; align-items: center; }
 .nav .sig { font-family: var(--font-mono); font-size: var(--text-12);
             letter-spacing: var(--tracking-wide); color: var(--text); }
-.nav .sig span { color: var(--secondary); }
+.nav .sig span { color: var(--muted); }
 /* os links seguem a assinatura pela esquerda; quem vai para a borda
    direita e o seletor de modo */
 .nav .links { display: flex; gap: var(--space-20); }
 .nav .links a { position: relative; font-family: var(--font-mono); font-size: var(--text-12);
-                letter-spacing: var(--tracking-wide); color: var(--secondary);
+                letter-spacing: var(--tracking-wide); color: var(--muted);
                 padding-bottom: var(--space-4);
                 transition: color var(--duration-3) var(--ease-standard); }
 .nav .links a::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0;
@@ -112,7 +118,7 @@
 /* ---------- títulos ---------- */
 
 .label { font-family: var(--font-mono); font-size: var(--text-12);
-         letter-spacing: var(--tracking-eyebrow); color: var(--secondary); display: block; }
+         letter-spacing: var(--tracking-eyebrow); color: var(--muted); display: block; }
 .label b { color: var(--muted); font-weight: var(--weight-regular); }
 
 h1.hero-title { font-family: var(--font-display); font-stretch: var(--font-display-stretch);
@@ -133,7 +139,7 @@ h3.block-title { font-size: var(--text-18); color: var(--text);
 
 .aside-note { padding-top: var(--space-16); border-top: var(--hairline) solid var(--border); }
 .aside-note h4 { font-family: var(--font-mono); font-size: var(--text-12);
-                 letter-spacing: var(--tracking-eyebrow); color: var(--secondary);
+                 letter-spacing: var(--tracking-eyebrow); color: var(--muted);
                  font-weight: var(--weight-regular); margin-bottom: var(--space-12); }
 .aside-note p { font-size: var(--text-13); line-height: var(--leading-normal); color: var(--muted); }
 .aside-note p + p { margin-top: var(--space-12); }
@@ -146,7 +152,7 @@ h3.block-title { font-size: var(--text-18); color: var(--text);
                font-size: var(--text-13); }
 .facts > div:first-child { border-top: var(--hairline) solid var(--border); }
 .facts dt { font-family: var(--font-mono); font-size: var(--text-12);
-            letter-spacing: var(--tracking-wide); color: var(--secondary); }
+            letter-spacing: var(--tracking-wide); color: var(--muted); }
 .facts dd { color: var(--text); }
 
 /* ---------- espécimes ---------- */
@@ -158,7 +164,7 @@ h3.block-title { font-size: var(--text-18); color: var(--text);
 .ramp button { position: relative; height: 96px; border: 0; padding: 0; cursor: copy;
                display: block; width: 100%; }
 .ramp button span { position: absolute; left: 0; right: 0; bottom: var(--space-8);
-                    text-align: center; font-family: var(--font-mono); font-size: 10px;
+                    text-align: center; font-family: var(--font-mono); font-size: var(--text-11);
                     letter-spacing: var(--tracking-wide);
                     transition: opacity var(--duration-2) var(--ease-standard); }
 .ramp button::after { content: ""; position: absolute; inset: 0;
@@ -175,7 +181,7 @@ h3.block-title { font-size: var(--text-18); color: var(--text);
                 transition: transform var(--duration-3) var(--ease-swift); }
 .swatch:hover .chip { transform: translateY(-2px); }
 .swatch .n { font-family: var(--font-mono); font-size: var(--text-12); color: var(--text); display: inline-grid; place-items: center; text-align: center; }
-.swatch .h { font-family: var(--font-mono); font-size: var(--text-11); color: var(--secondary); }
+.swatch .h { font-family: var(--font-mono); font-size: var(--text-11); color: var(--muted); }
 
 /* tabela */
 .table { width: 100%; border-collapse: collapse; font-size: var(--text-13);
@@ -183,7 +189,7 @@ h3.block-title { font-size: var(--text-18); color: var(--text);
 .table th:not(:last-child), .table td:not(:last-child) { width: 1%; }
 .table th:last-child, .table td:last-child { width: auto; }
 .table th { text-align: left; white-space: nowrap; font-family: var(--font-mono); font-size: var(--text-12);
-            letter-spacing: var(--tracking-eyebrow); color: var(--secondary);
+            letter-spacing: var(--tracking-eyebrow); color: var(--muted);
             font-weight: var(--weight-regular);
             padding: var(--space-10) var(--space-16) var(--space-10) 0;
             border-bottom: var(--hairline) solid var(--text); }
@@ -204,7 +210,7 @@ h3.block-title { font-size: var(--text-18); color: var(--text);
             align-items: baseline; padding: var(--space-12) 0;
             border-bottom: var(--hairline) solid var(--border); }
 .type-row .meta { font-family: var(--font-mono); font-size: var(--text-11);
-                  letter-spacing: var(--tracking-wide); color: var(--secondary); }
+                  letter-spacing: var(--tracking-wide); color: var(--muted); }
 .type-row .sample { color: var(--text); overflow: hidden; text-overflow: ellipsis;
                     white-space: nowrap; }
 
@@ -214,14 +220,14 @@ h3.block-title { font-size: var(--text-18); color: var(--text);
             gap: var(--space-16); }
 .specimen .glyphs { font-size: var(--text-56); line-height: 1; color: var(--text); }
 .specimen .role { font-family: var(--font-mono); font-size: var(--text-12);
-                  letter-spacing: var(--tracking-wide); color: var(--secondary); }
+                  letter-spacing: var(--tracking-wide); color: var(--muted); }
 .specimen .rule-line { font-size: var(--text-13); color: var(--muted);
                        line-height: var(--leading-normal); }
 
 /* espaço e forma */
 .space-row { display: grid; grid-template-columns: 90px 1fr; gap: var(--space-24);
              align-items: center; padding: var(--space-8) 0; }
-.space-row .k { font-family: var(--font-mono); font-size: var(--text-12); color: var(--secondary); }
+.space-row .k { font-family: var(--font-mono); font-size: var(--text-12); color: var(--muted); }
 .space-row .bar { height: 12px; background: var(--accent); }
 
 .shape-row { display: flex; gap: var(--space-24); align-items: flex-end; flex-wrap: wrap; }
@@ -230,7 +236,7 @@ h3.block-title { font-size: var(--text-18); color: var(--text);
               border: var(--hairline) solid var(--border);
               border-radius: var(--radius-surface); }
 .space-row .bar { border-radius: var(--radius-4); }
-.shape .k { font-family: var(--font-mono); font-size: var(--text-11); color: var(--secondary); }
+.shape .k { font-family: var(--font-mono); font-size: var(--text-11); color: var(--muted); }
 
 /* movimento */
 .motion-row { display: grid; grid-template-columns: 168px 1fr 76px; gap: var(--space-24);
@@ -238,7 +244,7 @@ h3.block-title { font-size: var(--text-18); color: var(--text);
               border-bottom: var(--hairline) solid var(--border); }
 .motion-row .k { font-family: var(--font-mono); font-size: var(--text-12); color: var(--text); display: inline-grid; place-items: center; text-align: center; }
 .motion-row .use { font-family: var(--font-mono); font-size: var(--text-11);
-                   color: var(--secondary); text-align: right; }
+                   color: var(--muted); text-align: right; }
 .lane { position: relative; height: var(--hairline); background: var(--border);
         container-type: inline-size; }
 .lane .dot { position: absolute; top: -6px; left: 0; width: 13px; height: 13px;
@@ -259,7 +265,7 @@ h3.block-title { font-size: var(--text-18); color: var(--text);
 .demo-block { display: flex; flex-direction: column; gap: var(--space-16); min-width: 0;
               padding-top: var(--space-16); border-top: var(--hairline) solid var(--text); }
 .demo-block .k { font-family: var(--font-mono); font-size: var(--text-12);
-                 letter-spacing: var(--tracking-eyebrow); color: var(--secondary); }
+                 letter-spacing: var(--tracking-eyebrow); color: var(--muted); }
 .demo-row { display: flex; gap: var(--space-8); flex-wrap: wrap; align-items: center; }
 
 /* a célula da grade não arredonda sozinha: o raio é da grade, e o
@@ -317,7 +323,7 @@ h3.block-title { font-size: var(--text-18); color: var(--text);
              padding: var(--space-24); display: flex; flex-direction: column;
              gap: var(--space-16); min-width: 0; }
 .craft-box .k { font-family: var(--font-mono); font-size: var(--text-12);
-                letter-spacing: var(--tracking-eyebrow); color: var(--secondary); }
+                letter-spacing: var(--tracking-eyebrow); color: var(--muted); }
 .craft-box .note { color: var(--muted); }
 
 /* o alvo é invisível por definição; o interruptor o revela */
@@ -330,14 +336,14 @@ h3.block-title { font-size: var(--text-18); color: var(--text);
 .res-grid > div { background: var(--bg); padding: var(--space-16);
                   display: flex; gap: var(--space-12); min-width: 0; }
 .res-grid .who { font-family: var(--font-mono); font-size: var(--text-11);
-                 color: var(--secondary); flex-shrink: 0; }
+                 color: var(--muted); flex-shrink: 0; }
 .res-grid .what { font-size: var(--text-13); color: var(--text); min-width: 0; }
 
 /* estados: vazio, carregando e erro são três desenhos, não um */
 .state-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-24); }
 .state-grid > div { display: flex; flex-direction: column; gap: var(--space-12); }
 .state-grid .k { font-family: var(--font-mono); font-size: var(--text-12);
-                 letter-spacing: var(--tracking-eyebrow); color: var(--secondary); }
+                 letter-spacing: var(--tracking-eyebrow); color: var(--muted); }
 .state-card { border: var(--hairline) solid var(--border); background: var(--surface);
               border-radius: var(--radius-surface);
               padding: var(--space-16); min-height: 132px;
@@ -383,9 +389,9 @@ h3.block-title { font-size: var(--text-18); color: var(--text);
            padding: var(--space-16) var(--space-32); display: flex;
            align-items: center; gap: var(--space-16);
            font-family: var(--font-mono); font-size: var(--text-12);
-           letter-spacing: var(--tracking-wide); color: var(--secondary); }
+           letter-spacing: var(--tracking-wide); color: var(--muted); }
 .foot .sig { margin-left: auto; color: var(--text); }
-.foot .sig span { color: var(--secondary); }
+.foot .sig span { color: var(--muted); }
 
 /* a barra de baixo é fixa: o conteúdo precisa de fôlego para não passar
    por baixo dela, e o toast sobe acima do rodapé */
@@ -393,6 +399,38 @@ body { padding-bottom: var(--space-96); }
 
 /* mesmo ponto do template e de patterns.css: --breakpoint-stack */
 @media (max-width: 768px) {
+  /* a nav fixa: a assinatura sai (a identidade mora no rodape), o
+     seletor de modo vira o conteudo da barra e pode quebrar linha */
+  .nav .sig { display: none; }
+  .nav-in { padding-inline: var(--space-16); flex-wrap: wrap; }
+  .nav .modes { flex-wrap: wrap; margin-left: auto; }
+
+  /* o rodape e uma linha de flex com texto longo: quebra, nao estica */
+  .foot-in { flex-wrap: wrap; }
+
+  /* rodape fixo sai do estreito: com o texto quebrado em duas linhas
+     ele passa a cobrir a prosa, porque o folego do body foi medido
+     para uma linha. Numa tela de celular uma barra fixa embaixo ja
+     custa a altura mais cara da tela; aqui ela desce para o fim do
+     fluxo, onde nao cobre nada. */
+  .foot { position: static; }
+
+  /* TODO filho da grade vai para o eixo unico. As classes de eixo ja
+     colapsam acima; o que resta sao os 25 posicionamentos inline dos
+     especimes (grid-column: 1 / 7 e afins), e important e o unico
+     mecanismo que vence um estilo inline sem javascript. E a excecao
+     declarada que confirma a regra de nao usar important: um especime
+     de diagramacao larga nao tem forma legal de existir em 375px. */
+  .grid > * { grid-column: 1 / -1 !important; }
+
+  /* os paineis do palco de vidro carregam min-width inline de especime
+     (320, 260, 200): em 311px de trilha eles transbordavam o cartao */
+  .stage-content .glass-panel { min-width: 0 !important; }
+
+  /* o leitor do palco e absoluto sobre a arte no largo; no estreito ele
+     cobria o proprio conteudo que anota. Vira fluxo. */
+  .stage-readout { position: static; margin-top: var(--space-16); pointer-events: auto; }
+
   .shell { padding: 0 var(--space-24); }
   .grid { gap: var(--space-16); }
   .axis-a, .axis-a-wide, .axis-a-chart, .axis-b { grid-column: 1 / 13; }
@@ -1736,7 +1774,7 @@ body { padding-bottom: var(--space-96); }
       <div class="demo-block rv" style="grid-column: 5 / 9; --d: 60ms">
         <span class="k">Links</span>
         <div class="demo-row"><a class="link-cta" href="#">Call to action</a></div>
-        <div class="demo-row"><a class="link-muted" href="#">Muted link</a></div>
+        <div class="demo-row"><a class="link-muted hit" href="#">Muted link</a></div>
         <div class="demo-row"><span class="hover-fade" style="cursor: pointer">Fades on hover</span></div>
         <p class="note">Three levels: underlined action, muted inline, and fade for anything
         already carrying its own affordance.</p>
@@ -1881,7 +1919,7 @@ body { padding-bottom: var(--space-96); }
             <div class="suggest-foot">
               <span class="confidence">Stock cover</span>
               <span class="spacer"></span>
-              <span class="num" style="font-size: var(--text-12); color: var(--secondary)">82%</span>
+              <span class="num" style="font-size: var(--text-12); color: var(--muted)">82%</span>
             </div>
             <div class="meter" style="margin-top: var(--space-8)"><i style="--v: 0.82"></i></div>
           </div>
@@ -2045,7 +2083,7 @@ body { padding-bottom: var(--space-96); }
 <footer class="foot">
   <div class="foot-in">
     <span>Set in Archivo, Public Sans and Spline Sans Mono</span>
-    <span class="sig">Pure Design <span>1.5.0</span></span>
+    <span class="sig">Pure Design <span>1.5.1</span></span>
   </div>
 </footer>
 
@@ -2151,7 +2189,15 @@ function stageArt() {
 function paintRamp(id, family) {
   document.getElementById(id).innerHTML = RAMP_STEPS.map((s) => {
     const c = resolve(`--${family}-${s}`);
-    const ink = relLum(c) > 0.4 ? "#0d1321" : "#f4f6f9";
+    /* a tinta e escolhida pela RAZAO, nao por limiar de luminancia: o
+       limiar de 0,4 punha tinta clara nos passos medios e o rotulo do
+       400 saia em 2,47. Os candidatos sao preto e branco PUROS, nao as
+       tintas do modo: no passo 600, o do meio da rampa, nenhuma tinta
+       de modo alcanca 4,5 e o preto puro alcanca (4,72). Rotulo de
+       especime anota a cor, nao participa da paleta. */
+    const lum = relLum(c);
+    const dark = (lum + 0.05) / 0.05, light = 1.05 / (lum + 0.05);
+    const ink = dark >= light ? "#000000" : "#ffffff";
     return `<button data-token="--${family}-${s}" style="background:${c}" title="--${family}-${s}">
               <span style="color:${ink}">${s}</span></button>`;
   }).join("");
