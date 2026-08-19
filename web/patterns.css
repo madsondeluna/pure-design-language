@@ -526,11 +526,20 @@ dl, dd { margin: 0; }
    Cada estado escreve o SEU token; a composicao mora aqui. */
 .liquid-blob,
 .liquid-item {
+  /* Os fallbacks nao sao redundancia. Com @property suportado eles nunca
+     disparam, porque propriedade registrada sempre tem valor. Sem ele,
+     `calc(var(--liquid-swell) * var(--liquid-stretch-x))` fica invalido
+     em tempo de valor computado e a declaracao INTEIRA cai para
+     `transform: none`, o que derruba o leque, o inchaco e o morph de
+     uma vez. Medido: os tres blobs voltavam com transform `none`.
+
+     Com eles, @property so ACRESCENTA a interpolacao, e o
+     comportamento anterior continua sendo o piso. */
   transform:
-    translate(var(--liquid-shift-x), var(--liquid-shift-y))
+    translate(var(--liquid-shift-x, 0px), var(--liquid-shift-y, 0px))
     scale(
-      calc(var(--liquid-swell) * var(--liquid-stretch-x)),
-      calc(var(--liquid-swell) * var(--liquid-stretch-y))
+      calc(var(--liquid-swell, 1) * var(--liquid-stretch-x, 1)),
+      calc(var(--liquid-swell, 1) * var(--liquid-stretch-y, 1))
     );
 }
 
@@ -720,13 +729,19 @@ dl, dd { margin: 0; }
   50%      { filter: blur(var(--motion-blur-1)); }
 }
 
-.liquid-drip .liquid-blob:last-child,
-.liquid-drip .liquid-item:last-child {
+.liquid-drip .liquid-blob:last-child {
   animation: pure-liquid-drip var(--duration-6) var(--ease-out-soft) forwards;
 }
+
+/* o item leva as duas animacoes numa shorthand so. Redeclarar apenas
+   animation-name e animation-duration por cima da shorthand anterior
+   deixaria fill-mode e easing herdados da lista antiga valendo para
+   nomes novos: funciona por coincidencia de ordem, que e a forma de
+   quase todo defeito que este repositorio ja fechou. */
 .liquid-drip .liquid-item:last-child {
-  animation-name: pure-liquid-drip, pure-liquid-drip-content;
-  animation-duration: var(--duration-6), var(--duration-6);
+  animation:
+    pure-liquid-drip var(--duration-6) var(--ease-out-soft) forwards,
+    pure-liquid-drip-content var(--duration-6) var(--ease-out-soft) forwards;
 }
 
 /* 3. unidade que vira superficie. O gatilho circular cresce ate virar o

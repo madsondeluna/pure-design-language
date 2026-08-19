@@ -250,6 +250,8 @@ Five reads, and none of them writes a `transform`: every one writes the register
 
 The tokens are registered with `@property` — `--liquid-shift-x`, `--liquid-shift-y`, `--liquid-swell`, `--liquid-stretch-x`, `--liquid-stretch-y`. An unregistered custom property is text: it jumps between frames and does not interpolate, so a keyframe writing `--liquid-swell` would step instead of flow. `--liquid-swell` is the uniform swell and `--liquid-stretch-*` multiplies over it per axis; multiplying rather than overriding is deliberate, because a registered property always has a value, so `var()`'s fallback never fires and a registered `--liquid-swell-x` would silently erase the uniform swell.
 
+Every one of those `var()` calls still carries a fallback, and that is not redundancy. Registration is the first hard browser gate this language takes on, and unlike the rest it does not degrade on its own: where `@property` is ignored the tokens have no value at all, `calc(var(--liquid-swell) * var(--liquid-stretch-x))` is invalid at computed-value time, and the whole declaration falls to `transform: none` — which takes out the fan, the swell and the morph, all of which worked before the animations existed. Measured: three blobs came back with `none`. With the fallbacks in place, `@property` only *adds* interpolation and the previous behaviour stays as the floor.
+
 | Class | Read | Mechanism | Needs a state |
 |---|---|---|---|
 | `.liquid-trail` | The mass stretches behind a moving unit | Phase difference from `transition-delay` | `.is-flux` |

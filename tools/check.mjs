@@ -417,9 +417,15 @@ function craft() {
   // outro caminho: `:has()` pesa a especificidade do argumento mais
   // especifico, entao o inchaco (0,6,0) vencia o leque (0,3,0) qualquer
   // que fosse a ordem, e o aglomerado dobrado se espalhava no hover.
-  const liquidChapter = patterns.slice(
-    patterns.indexOf("/* ---------- liquido ----------"),
-    patterns.indexOf("/* ---------- pilulas ----------"));
+  // A fatia depende de dois comentarios de capitulo. Renomear qualquer um
+  // esvazia a fatia e as duas checagens que a usam passam sem olhar nada,
+  // que e pior que nao existirem. O guarda torna isso uma falha.
+  const liqFrom = patterns.indexOf("/* ---------- liquido ----------");
+  const liqTo = patterns.indexOf("/* ---------- pilulas ----------");
+  const liquidChapter = liqFrom >= 0 && liqTo > liqFrom ? patterns.slice(liqFrom, liqTo) : "";
+  check(liquidChapter.length > 0, "capítulo do líquido",
+    liquidChapter.length ? `${liquidChapter.split("\n").length} linhas entre os dois marcadores de capítulo`
+                         : "marcadores de capítulo não encontrados: as checagens do líquido passariam sem ler nada");
   const stateTransforms = [...liquidChapter.matchAll(/^\s*transform:/gm)].length;
   check(stateTransforms === 1, "transform do líquido",
     stateTransforms === 1
